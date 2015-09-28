@@ -1,0 +1,3061 @@
+From: <Saved by Microsoft Internet Explorer 5>
+Subject: gp2/GP2/gp2.bb - view - 1.1.1.1
+Date: Sun, 9 Feb 2003 15:28:18 +0100
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	boundary="----=_NextPart_000_0000_01C2D04F.DF228350";
+	type="text/html"
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2800.1106
+
+This is a multi-part message in MIME format.
+
+------=_NextPart_000_0000_01C2D04F.DF228350
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/gp2/GP2/gp2.bb?rev=1.1.1.1&content-type=text/vnd.viewcvs-markup
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>gp2/GP2/gp2.bb - view - 1.1.1.1</TITLE>
+<META http-equiv=3DContent-Type content=3D"text/html; =
+charset=3Diso-8859-1"><!-- ViewCVS       -- =
+http://viewcvs.sourceforge.net/=0A=
+     by Greg Stein -- mailto:gstein@lyra.org=0A=
+  -->
+<META content=3D"MSHTML 6.00.2800.1141" name=3DGENERATOR></HEAD>
+<BODY bgColor=3D#eeeeee>
+<TABLE cellSpacing=3D0 cellPadding=3D1 width=3D"100%" bgColor=3D#9999ee =
+border=3D0>
+  <TBODY>
+  <TR vAlign=3Dbottom>
+    <TD><A=20
+      =
+href=3D"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/gp2/GP2/gp2.bb#rev=
+1.1.1.1"><IMG=20
+      height=3D16 alt=3D[BACK_ICON]=20
+      src=3D"http://cvs.sourceforge.net/viewcvs/back.gif" width=3D16 =
+border=3D0></A>=20
+      <B>Return to <A=20
+      =
+href=3D"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/gp2/GP2/gp2.bb#rev=
+1.1.1.1">gp2.bb</A>=20
+      CVS log</B> <IMG height=3D16 alt=3D[FILE_ICON]=20
+      src=3D"http://cvs.sourceforge.net/viewcvs/text.gif" width=3D16 =
+border=3D0></TD>
+    <TD align=3Dright><IMG height=3D16 alt=3D[DIR_ICON]=20
+      src=3D"http://cvs.sourceforge.net/viewcvs/dir.gif" width=3D16 =
+border=3D0> <B>Up=20
+      to <A href=3D"http://sourceforge.net/">[SourceForge]</A> / <A=20
+      =
+href=3D"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/gp2/#dirlist">gp2<=
+/A>=20
+      / <A=20
+      =
+href=3D"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/gp2/GP2/#dirlist">=
+GP2</A></B></TD></TR></TBODY></TABLE>
+<HR noShade>
+
+<TABLE width=3D"100%">
+  <TBODY>
+  <TR>
+    <TD bgColor=3D#ffffff>File: <A=20
+      href=3D"http://sourceforge.net/">[SourceForge]</A> / <A=20
+      =
+href=3D"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/gp2/#dirlist">gp2<=
+/A>=20
+      / <A=20
+      =
+href=3D"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/gp2/GP2/#dirlist">=
+GP2</A>=20
+      / <A=20
+      =
+href=3D"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/gp2/GP2/gp2.bb#dir=
+list">gp2.bb</A>=20
+      </B>(<A=20
+      =
+onclick=3D"window.open('about:blank','cvs_checkout','resizeable=3D1,scrol=
+lbars=3D1 ');"=20
+      =
+href=3D"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/*checkout*/gp2/GP2=
+/gp2.bb?rev=3D1.1.1.1"=20
+      target=3Dcvs_checkout><B>download</B></A>) <BR>Revision =
+<B>1.1.1.1</B>=20
+      <I>(vendor branch)</I> , <I>Tue Nov 7 20:33:16 2000 UTC</I> (2 =
+years, 3=20
+      months ago) by <I>spontificus</I> <BR>Branch: <B>vendor, MAIN</B> =
+<BR>CVS=20
+      Tags: <B>start, HEAD</B> <BR>Changes since <B>1.1: +0 -0 lines</B> =
+<PRE>Initial Commit (3rd time lucky?)
+</PRE></TD></TR></TBODY></TABLE>
+<HR noShade>
+<PRE>; Remember to DISABLE Debug :)
+;
+; Gravity Force II and Gravity Power were originally written by:
+; 	Jens Andersson &amp; Jan Kronqvist
+;
+; BlitzPC version by Richard Franks, <A =
+href=3D"mailto:spontificus@yahoo.com">spontificus@yahoo.com</A>
+;
+; Beta V0.6 -&gt; For latest updates check out:
+;	<A href=3D"http://fly.to/GP2">http://fly.to/GP2</A>
+;
+; If you spot any bugs, chances are that there's a version with them =
+fixed at the web-site
+;
+;
+; F1 to change levels
+; F4 to toggle debugging
+; F5-F6 for different views
+; F9 Save screen
+; Esc to quit
+;
+; Player 1
+; LEFT	- Rotate Left | select rear weapon when landed
+; RIGHT	- Rotate Right | select forward weapon when landed
+; UP	- Fire Cannon
+; DOWN	- Second Weapon
+; RCTRL - Thrust!
+; kpad0	- Air Brake | reverse weapon selection (temporary command)
+
+; Player 2
+; Z		- Rotate Left | select rear weapon when landed
+; C		- Rotate Right | select forward weapon when landed
+; S		- Fire Cannon
+; X		- Second Weapon
+; L-ALT	- Thrust!
+; V		- Air Brake | reverse weapon selection (temporary command)
+
+AppTitle ("GP2 v0.6")
+
+Gosub DoIncludes
+
+; Init some variables for playing around with
+
+Global DEBUG=3DTrue
+
+;prefgfx_x =3D 800		; change this to 0 for no preference
+prefgfx_y =3D 600
+
+;prefgfx_x =3D 640
+prefgfx_y =3D 480
+
+
+
+autorefuel =3D 1		; 0 =3D refuel only on pads, 1 =3D refuel constantly =
+(for testing or wimpy players)
+softplay =3D 1		; only used when autorefuel=3D1, 0 =3D default =
+autorefuel,
+					;							   1 =3D recharge only shields, but slowly
+Global numrots =3D 32	; original =3D 32
+Const amodf# =3D 0.3	; if using 32 rotations then 0.3 here is quite good
+
+gravity# =3D 0.01		; &lt;-\
+thrust#=3D0.028		; play with these to get 'original' feel
+
+maxbullets =3D 50		; max bullets
+firedelay =3D 3		; lower =3D less delay
+firerate# =3D 2		; higher =3D more per second
+
+Const maxshipinc# =3D 1.0 ; how many pixels horizontally and vertically =
+can the ship move per frame?
+Const maxshipfallinc# =3D 1.5
+
+maxnumtypes=3D20		; how many different level types can be supported
+maxlevels=3D500		; how many levels of a certain type can be supported?
+
+maxfuel=3D15000:	deffuel=3D5000:	strtfuel=3Ddeffuel:		=
+fuelinc#=3D1000/78.0
+maxshield=3D100:	defshield=3D30:	strtshield=3Ddefshield:	=
+shieldinc#=3D20/78.0
+maxammo=3D1000:	defammo=3D300:	strtammo=3Ddefammo:		ammoinc#=3D200/78.0
+
+
+; define keys
+Dim keyleft(2)	:keyleft(0)=3D203	:keyleft(1)=3D44
+Dim keyright(2)	:keyright(0)=3D205:keyright(1)=3D46
+Dim keyup(2)	:keyup(0)=3D200	:keyup(1)=3D31
+Dim keydwn(2)	:keydwn(0)=3D208	:keydwn(1)=3D45
+Dim keythrst(2)	:keythrst(0)=3D157:keythrst(1)=3D56
+Dim keystop(2)	:keystop(0)=3D82	:keystop(1)=3D47
+
+
+
+
+; some variables not really for playing around with :)
+
+; with all the recent hacks, making this a one player game would take a =
+while
+; but there are plans to clean up and make it 1-4 player at least
+Global numplayers =3D 2 		; how many players? (1-2)
+
+maxweap =3D 100
+
+Global maxsounds=3D10		; increase for more sounds!
+Global maxchannels=3D2	; how many instances of *each* sound are =
+supported?
+
+Dim sounds.soundtype(maxsounds)
+Dim ammorot(maxweap,numrots+1)
+Dim weapon.WeaponType(maxweap)
+
+
+Gosub InitDisplay		; SETUP Display
+menu=3D1
+
+dir$ =3D "gfx/GR/"
+SeedRnd(MilliSecs())
+
+max_shapes =3D 300
+Global numshapes =3D 0
+shipang# =3D 0
+Global dispheight =3D (GraphicsHeight() - 32)/numplayers
+Global map
+Global supermap
+Global water_s#
+Global water_e
+Global water_spd#
+Global gpfont
+
+Global numsounds=3D0
+
+
+
+;Dim dispoff(2)
+;dispoff(0) =3D 0
+;dispoff(1) =3D GraphicsHeight() - dispheight
+
+Global shipangmod# =3D 360/numrots
+
+
+Type rot
+	Field x#,y#
+End Type
+Dim rots.rot(200)
+
+Type airobj
+	Field x#
+	Field y#
+	Field ox#
+	Field oy#
+	Field xinc#,yinc#
+	Field weight
+	Field dead
+	Field player
+	Field antigrav
+	Field s.shooter
+	Field pang#
+	Field oang#
+	Field wi.WeaponInstance
+End Type
+
+Type shooter
+	Field pretimer
+	Field timer
+	Field timeout
+	Field x,y
+	Field mx,my
+	Field dx,dy
+	Field ex,ey
+	Field dir
+	Field checked
+	Field inv
+	Field dead
+End Type
+
+Type magnet
+	Field x,y,w,h, dir
+End Type
+
+Type ship
+	Field x#
+	Field y#
+	Field ox#
+	Field oy#
+	Field xinc#,yinc#
+	Field landed
+	Field onpad
+	Field player
+	Field ang#, oang#
+	Field shipstate, oshipstate
+	Field weap1,weap2=09
+End Type
+
+Type playertype
+	Field xpos#,ypos#
+	Field score
+	Field shield#
+	Field fuel#
+	Field ammo1#
+	Field reloadammo1
+	Field numweap1
+	Field ammo2#
+	Field reloadammo2
+	Field numweap2
+	Field lives
+	Field numbullets
+	Field seep
+	Field fireround
+	Field firedelay
+	Field firerate
+	Field dead
+	Field underwater
+	Field keylock
+	Field lap,pos
+	Field v.vport
+	Field vs.vport
+	Field state
+;	Field score
+End Type
+
+Type podtype
+	Field x,y,w,h
+End Type
+
+
+Type levtypes
+	Field ap$, bitmap$, name$, title$, author$
+	Field numshapes,numlevels
+	Field shapeslot
+	Field loaded
+	Field lp1,lp2,lp3
+End Type
+
+lv.levtypes=3DNull
+
+;Dim levtype.levtypes(20)
+
+Type rec
+	Field x,y,width,height
+End Type
+
+Dim recs.rec(2)
+recs(0) =3D New rec
+recs(1) =3D New rec
+
+Dim player.playertype(2)
+player(0) =3D New playertype
+player(1) =3D New playertype
+player(2) =3D New playertype ; for shooters
+
+fpsv.vport =3D New vport
+
+player(0)\vs =3D New vport
+player(1)\vs =3D New vport
+
+player(0)\v =3D New vport
+player(1)\v =3D New vport
+
+
+fpsv\x =3D GraphicsWidth()/2
+fpsv\y =3D GraphicsHeight()/2
+fpsv\w =3D 200
+fpsv\h =3D 30
+fpsv\hide =3D 1
+
+Dim ships.ship(4)
+ships(0) =3D New ship
+ships(1) =3D New ship
+;ships(curship)\x =3D 20
+
+; dim some arrays
+;Dim levelfil(30000)
+;Dim level(30000)
+
+
+Dim shapes(max_shapes,2,maxnumtypes)
+Dim minshapes(max_shapes)
+Dim shipshape(128+1,9)
+Dim dpckout(40000,3)
+Dim dpckin(40000,3)
+Dim quotes$(200)
+Dim cols(16,3)
+Dim mcols(16,3,maxnumtypes)
+Dim levelnames$(maxlevels,maxnumtypes)
+Dim pod.podtype(4)
+Global numpods=3D0
+Dim lap(4,2)
+Dim charfont(95,8)
+Dim charwidth(95)
+Dim charcol(8,3)
+
+Dim playerfire(numplayers,maxweap)
+Dim kaboomanim(20)
+
+Dim levs.levtypes(maxnumtypes)
+
+xoff =3D GraphicsWidth()/2 - 336/2
+
+player(0)\v\x =3D xoff
+player(0)\v\y =3D 0
+player(0)\v\w =3D 336
+player(0)\v\h =3D dispheight
+
+player(0)\vs\x =3D xoff+336
+player(0)\vs\y =3D 0
+player(0)\vs\w =3D 64
+player(0)\vs\h =3D 100
+
+player(1)\v\x =3D xoff
+player(1)\v\y =3D GraphicsHeight() - dispheight
+player(1)\v\w =3D 336
+player(1)\v\h =3D dispheight
+
+player(1)\vs\x =3D xoff+336
+player(1)\vs\y =3D GraphicsHeight() - dispheight
+player(1)\vs\w =3D 64
+player(1)\vs\h =3D 100
+
+pod(0)=3DNew podtype:pod(1)=3DNew podtype:pod(2)=3DNew =
+podtype:pod(3)=3DNew podtype
+
+
+
+.main
+	Gosub InitDebug
+	Gosub doquotes
+	Gosub ReadTypes
+	Gosub ReadWeapons
+	Gosub InitPlayers
+=09
+	DoFont()
+	Gosub LoadSounds
+	Gosub LoadGFX
+
+	If menu =3D 1 Then
+		Gosub TypeMenu
+		Gosub LevelMenu
+	Else
+		Gosub LoadLevel
+	EndIf
+
+	For i=3D0 To 1
+		ships(i)\weap1 =3D GetWeapon("Standard Cannon")
+		ships(i)\weap2 =3D GetWeapon("Standard Bomb")
+	Next
+
+	Gosub Control
+
+	FreeImage(map):map=3D0
+	End
+
+
+.InitDebug
+	CreateDebug( "Thrust0", 15, 0, 0 )
+;	CreateDebug( "Thrust1", 15, 300, 0 )
+;	CreateDebug( "Landing", 3, 200, 0 )
+	CreateDebug( "Colour", 17, 200, 0 )
+	CreateDebug( "RCol", 17, 100, 0 )
+Return
+
+
+.InitPlayers
+	For i=3D0 To 1
+		Gosub InitPlayer	=09
+	Next
+Return
+
+
+.InitPlayer
+		player(i)\numweap1=3D0
+		player(i)\numweap2=3D0
+		player(i)\shield=3Dstrtshield
+		player(i)\fuel=3Dstrtfuel
+		player(i)\ammo1=3Dweapon(ships(i)\weap1)\load
+		player(i)\ammo2=3Dweapon(ships(i)\weap2)\load
+		player(i)\lap =3D 0
+		player(i)\pos =3D 0
+	=09
+		ships(i)\onpad =3D 1
+		ships(i)\xinc =3D 0
+		ships(i)\yinc =3D 0
+		ships(i)\ang =3D 0
+;		ships(i)\weap1 =3D GetWeapon("Standard Cannon")
+;		ships(i)\weap2 =3D GetWeapon("Standard Bomb")
+	=09
+		lap(0,i)=3D0
+Return
+
+
+.InitDisplay
+	If prefgfx_x &lt;&gt; 0
+		If GetGraphics(prefgfx_x,prefgfx_y,16) =3D False
+			prefgfx_x =3D 0
+		EndIf
+	EndIf=09
+=09
+	If prefgfx_x =3D 0
+		If GetGraphics(400, 300, 16) =3D False
+			If GetGraphics(640,480,16) =3D False
+				If GetGraphics(800,600,16) =3D False
+					Print "Can't find any graphics mode to run in!"
+					End
+				EndIf
+			EndIf
+		EndIf
+	EndIf
+=09
+	panel =3D LoadImage("gfx/panel.bmp")
+=09
+	SetDisplay(BackBuffer(), Null)
+
+	supermap =3D CreateImage(336,1008)
+Return
+
+
+Function GetGraphics(width, height, depth)
+	For d =3D depth To 32 Step 8
+		If FindGfxMode(width, height, d)
+			Graphics width, height, d
+			Return True
+		EndIf
+	Next
+	Return False
+End Function
+
+
+Function GetWeapon( name$ )
+	For w.weapontype =3D Each weapontype
+		If w\name =3D name
+			Return w\id
+		EndIf
+	Next
+	Return 0
+End Function
+
+
+.Control
+
+	lap(0,0) =3D 0
+	lap(0,1) =3D 0
+=09
+	moosex =3D MouseX()
+	moosey =3D MouseY()
+=09
+	vp.vport =3D Null
+
+	tchk =3D MilliSecs()
+
+	While KeyDown(1)=3D0
+		round =3D round + 1
+	=09
+		SetBuffer ImageBuffer(map)
+
+		For curship =3D 0 To numplayers-1
+			If player(curship)\dead &gt; 0
+				player(curship)\dead =3D player(curship)\dead - 1
+				Goto skip
+			EndIf
+	=09
+			DoDebug ( "Thrust"+curship, 1, ships(curship)\yinc )
+	=09
+			xpos# =3D player(curship)\xpos
+			ypos# =3D player(curship)\ypos
+			shipang# =3D ships(curship)\ang
+
+
+			; Fire!
+			If KeyDown(keyup(curship))
+				LaunchWeapon(curship, ships(curship)\weap1, round,0)
+			End If
+
+			If KeyDown(keydwn(curship))
+				LaunchWeapon(curship, ships(curship)\weap2, round,1)
+			EndIf
+		=09
+	=09
+			If KeyDown(keyleft(curship)) And ships(curship)\landed =3D 0	;left
+				shipang =3D (shipang + numrots-amodf) Mod numrots
+			EndIf
+	=09
+			If KeyDown(keyright(curship)) And ships(curship)\landed =3D 0	;right
+				shipang =3D (shipang + amodf) Mod numrots
+			EndIf
+
+
+	=09
+			If ships(curship)\onpad=3D1
+				If KeyDown(keyright(curship))
+					If player(curship)\keylock=3D0
+						wp =3D ships(curship)\weap1
+						If KeyDown(keystop(curship))
+							wp =3D wp - 1:If wp &lt; 0 Then wp=3Dwp+numweap
+							While weapon(wp)\fitting =3D "back"
+								wp =3D wp - 1:If wp &lt; 0 Then wp=3Dwp+numweap
+							Wend
+						Else
+							wp =3D (wp + 1) Mod numweap
+							While weapon(wp)\fitting =3D "back"
+								wp =3D (wp + 1) Mod numweap
+							Wend
+						EndIf
+						ships(curship)\weap1 =3D wp
+						player(curship)\numweap1 =3D 0
+						player(curship)\ammo1 =3D 0 ; weapon(ships(curship)\weap1)\load
+						player(curship)\keylock =3D 1
+					EndIf
+				ElseIf KeyDown(keyleft(curship))
+					If player(curship)\keylock=3D0
+						wp =3D ships(curship)\weap2
+						If KeyDown(keystop(curship))
+							wp =3D wp - 1:If wp &lt; 0 Then wp=3Dwp+numweap
+							While weapon(wp)\fitting =3D "front"
+								wp =3D wp - 1:If wp &lt; 0 Then wp=3Dwp+numweap
+							Wend						=09
+						Else
+							wp =3D (wp + 1) Mod numweap
+							While weapon(wp)\fitting =3D "front"
+								wp =3D (wp + 1) Mod numweap
+							Wend
+						EndIf
+						ships(curship)\weap2 =3D wp
+						player(curship)\numweap2 =3D 0
+						player(curship)\ammo2 =3D 0 ; weapon(ships(curship)\weap2)\load
+						player(curship)\keylock =3D 1
+					EndIf
+				Else
+					player(curship)\keylock =3D 0
+				EndIf
+			EndIf
+		=09
+=09
+			; keep window nicely positioned
+			If ships(curship)\x-xpos&lt;0.4*player(curship)\v\w Then
+				If xpos &gt; 0 Then
+					If ships(curship)\x-xpos&lt;0.15*player(curship)\v\w
+						xpos =3D xpos - maxshipinc*2
+					Else
+						xpos =3D xpos - maxshipinc
+					EndIf
+				End If
+			End If
+
+			; keep window nicely positioned
+			If ships(curship)\x-xpos&gt;0.6*player(curship)\v\w Then
+				If xpos &lt; 336-player(curship)\v\w Then
+					If ships(curship)\x-xpos&gt;0.85*player(curship)\v\w
+						xpos =3D xpos + maxshipinc*2
+					Else
+						xpos =3D xpos + maxshipinc
+					EndIf
+				End If
+			End If
+
+
+
+			; keep window nicely positioned
+			If ships(curship)\y-ypos&lt;0.4*player(curship)\v\h Then
+				If ypos &gt; 0 Then
+					If ships(curship)\y-ypos&lt;0.15*player(curship)\v\h
+						ypos =3D ypos - maxshipinc*2
+					Else
+						ypos =3D ypos - maxshipinc
+					EndIf
+				End If
+			End If
+
+			; keep window nicely positioned
+			If ships(curship)\y-ypos&gt;0.6*player(curship)\v\h Then
+				If ypos &lt; 1008-player(curship)\v\h Then
+					If ships(curship)\y-ypos&gt;0.85*player(curship)\v\h
+						ypos =3D ypos + maxshipfallinc*2
+					Else
+						ypos =3D ypos + maxshipfallinc
+					EndIf
+				End If
+			End If
+		=09
+			If ypos+player(curship)\v\h &gt; 1008 Then ypos =3D =
+1008-player(curship)\v\h
+			If xpos+player(curship)\v\w &gt; 336 Then xpos =3D =
+336-player(curship)\v\w
+							=09
+			If KeyDown(keythrst(curship)) And player(curship)\fuel &gt; 0 Then		=
+;thrust!!
+				shipstate =3D 1
+				ships(curship)\xinc =3D ships(curship)\xinc + =
+Float(rots(shipang)\x)*thrust#
+				ships(curship)\yinc =3D ships(curship)\yinc + =
+Float(rots(shipang)\y)*thrust#
+				player(curship)\fuel =3D player(curship)\fuel-1
+				anythrust=3D1
+				If numpods &gt; 0
+					If lap(0,curship) =3D 0
+						lap(0,curship) =3D MilliSecs()
+					EndIf
+				EndIf
+			Else
+				shipstate =3D 0
+			EndIf
+	=09
+			DoDebug ( "Thrust"+curship, 2, ships(curship)\yinc )
+		=09
+			recs(curship)\x =3D xpos
+			recs(curship)\y =3D ypos
+
+			Gosub do_physics
+			Gosub UnDrawShip
+
+
+			If numpods &gt; 0
+				Gosub CheckPorts
+			EndIf
+		=09
+			If KeyDown(keystop(curship))
+				ships(curship)\xinc =3D 0
+				ships(curship)\yinc =3D 0
+			EndIf
+		=09
+			player(curship)\xpos =3D xpos
+			player(curship)\ypos =3D ypos
+		=09
+			ships(curship)\ang =3D shipang
+			ships(curship)\shipstate =3D shipstate
+			If autorefuel=3D1 Then Gosub refuel
+
+			.skip
+		Next		; end of player loop
+
+		SetDisplay(BackBuffer(), player(curship)\v)
+		Gosub DoWater
+
+		For curship=3D0 To numplayers-1
+			xpos =3D player(curship)\xpos
+			ypos =3D player(curship)\ypos
+			shipang =3D ships(curship)\ang
+			shipstate =3D ships(curship)\shipstate
+
+			SetDisplay(BackBuffer(),player(curship)\v)
+			HandleImage map, xpos, ypos
+			DrawImage map, 0, 0
+			Gosub drawship
+		Next
+
+
+		HandleImage map,0,0
+
+		Gosub DoShooters
+		Gosub animate_bops			=09
+=09
+		DrawBullets()
+
+		For curship =3D 0 To numplayers-1
+			SetDisplay(BackBuffer(),player(curship)\v)
+			HandleImage supermap, player(curship)\xpos, player(curship)\ypos
+			DrawImage supermap, 0, 0
+			Gosub DrawStats
+		Next
+
+		HandleImage supermap,0,0
+
+
+		If KeyDown(60)
+			fps =3D 1-fps
+			fpsv\hide =3D 1-fps
+		EndIf
+
+															=09
+		If fps =3D 1															=09
+			SetDisplay(BackBuffer(), fpsv)
+;			Color 0,100,0
+;			Rect fpsv\x,fpsv\y,fpsv\w,fpsv\h
+	=09
+			lag =3D MilliSecs()-tchk
+			tchk =3D MilliSecs()
+		=09
+			tlag=3Dtlag+lag
+			trounds#=3Dtrounds+1
+
+			tav# =3D tlag/trounds
+			Color 255,0,255
+			DoText (0,0,"FPS:"+1000.0/tav,0)
+			tcnt =3D tcnt + 1
+			If tcnt =3D 150
+				trounds =3D 0
+				tlag=3D0
+				tcnt=3D0
+			EndIf
+		EndIf
+	=09
+		DebugUpdate()
+
+		If MouseX() &lt;&gt; moosex Or moosey &lt;&gt; MouseY()
+			mousecount =3D 78
+		EndIf
+	=09
+		If mousecount &gt; 0
+			vp =3D DoMouse(vp, moosex, moosey)
+			mousecount =3D mousecount - 1
+		EndIf
+	=09
+		moosex =3D MouseX()
+		moosey =3D MouseY()
+
+		Flip
+
+
+		If KeyDown(67)
+			sc =3D CreateImage (336,304)
+			GrabImage sc,0,0
+			SaveImage sc, "gp.bmp"
+		EndIf
+
+		If anythrust =3D 1
+			If ImagesCollide(shipshape(ships(0)\ang,0),ships(0)\x, ships(0)\y, 0, =
+shipshape(ships(1)\ang,0),ships(1)\x, ships(1)\y,0)
+				txi# =3D ships(0)\xinc
+				tyi# =3D ships(0)\yinc
+				ships(0)\xinc =3D ships(1)\xinc
+				ships(0)\yinc =3D ships(1)\yinc
+		=09
+				ships(1)\xinc =3D txi
+				ships(1)\yinc =3D tyi
+				anythrust =3D 0
+			=09
+				If Not SoundPlaying(sounds(shipcollide2)\s\s) Then PlaySound =
+sounds(shipcollide2)\s\s
+			EndIf
+		EndIf
+	=09
+		If KeyDown(62)
+			If DEBUG=3DTrue
+				DebugOff()
+			Else
+				DebugOn()
+			EndIf
+		EndIf
+	=09
+		If KeyDown(63) Then	Gosub View1
+
+		If KeyDown(64) Then	Gosub View2
+	=09
+		If KeyDown(65) Then	Gosub View3
+				=09
+		If KeyDown(59)
+			Cls
+			Gosub TypeMenu
+			FreeImage(map):map=3D0
+			Gosub LevelMenu
+			Gosub InitPlayers
+
+		EndIf
+		SetBuffer BackBuffer()
+;		ClsColor 255,0,255
+		Cls
+	Wend
+Return
+
+
+
+.CheckPorts
+	pos =3D player(curship)\pos
+	If =
+RectsOverlap(pod(pos)\x,pod(pos)\y,pod(pos)\w,pod(pos)\h,ships(curship)\x=
+,ships(curship)\y,1,1)
+		pos =3D pos + 1
+
+		If pos &gt; numpods-1
+			tlap =3D player(curship)\lap + 1
+			lap(tlap,curship) =3D MilliSecs()
+			player(curship)\lap =3D tlap
+			pos =3D 0
+		EndIf
+		player(curship)\pos =3D pos
+	EndIf
+=09
+Return
+
+
+.View1
+	xoff =3D GraphicsWidth()/2 - 336/2
+
+	player(0)\v\x =3D xoff
+	player(0)\v\y =3D 0
+	player(0)\v\w =3D 336
+	player(0)\v\h =3D dispheight
+
+	player(0)\vs\x =3D xoff+336
+	player(0)\vs\y =3D 0
+	player(0)\vs\w =3D 64
+	player(0)\vs\h =3D 100
+
+	player(1)\v\x =3D xoff
+	player(1)\v\y =3D GraphicsHeight() - dispheight
+	player(1)\v\w =3D 336
+	player(1)\v\h =3D dispheight
+
+	player(1)\vs\x =3D xoff+336
+	player(1)\vs\y =3D GraphicsHeight() - dispheight
+	player(1)\vs\w =3D 64
+	player(1)\vs\h =3D 100
+Return
+
+.View2
+	xoff =3D Max(GraphicsWidth()/2 - 338,0)
+	player(1)\v\x =3D xoff
+	player(1)\v\y =3D 0
+	player(1)\v\w =3D Min(GraphicsWidth()/2 - 2,336)
+	player(1)\v\h =3D GraphicsHeight()
+
+	player(1)\vs\x =3D xoff
+	player(1)\vs\y =3D 0
+	player(1)\vs\w =3D 64
+	player(1)\vs\h =3D 100
+
+	xoff =3D GraphicsWidth()/2 + 2
+
+	player(0)\v\x =3D xoff
+	player(0)\v\y =3D 0
+	player(0)\v\w =3D Min(GraphicsWidth()-xoff,336)
+	player(0)\v\h =3D GraphicsHeight()
+
+	player(0)\vs\x =3D xoff
+	player(0)\vs\y =3D 0
+	player(0)\vs\w =3D 64
+	player(0)\vs\h =3D 100
+
+Return
+
+
+.View3
+	xoff =3D Max(GraphicsWidth()/2 - 338,0)
+	player(1)\v\x =3D xoff
+	player(1)\v\y =3D 0
+	player(1)\v\w =3D Min(GraphicsWidth()/2 - 2,336)
+	player(1)\v\h =3D GraphicsHeight()
+
+	player(1)\vs\x =3D 0
+	player(1)\vs\y =3D 0
+	player(1)\vs\w =3D 64
+	player(1)\vs\h =3D 100
+
+	xoff =3D GraphicsWidth()/2 + 2
+
+	player(0)\v\x =3D xoff
+	player(0)\v\y =3D 0
+	player(0)\v\w =3D Min(GraphicsWidth()-xoff,336)
+	player(0)\v\h =3D GraphicsHeight()
+
+	player(0)\vs\x =3D GraphicsWidth()-64
+	player(0)\vs\y =3D 0
+	player(0)\vs\w =3D 64
+	player(0)\vs\h =3D 100
+Return
+
+
+.DrawStats
+	SetDisplay(BackBuffer(),player(curship)\vs)
+	DrawImage panel,0,0
+
+	Color 40,170,20
+	Rect 7,16,52*player(curship)\shield / strtshield,3
+	Rect 7,32,52*player(curship)\fuel / strtfuel,3
+	Rect 7,48,52*player(curship)\ammo1 / =
+weapon(ships(curship)\weap1)\load,3
+	Rect 7,64,52*player(curship)\ammo2 / =
+weapon(ships(curship)\weap2)\load,3
+
+
+	tw# =3D 25.0
+	Color 255,0,0
+	Rect =
+34,52,tw*player(curship)\numweap1/weapon(ships(curship)\weap1)\atonce,1
+	Rect =
+34,68,tw*player(curship)\numweap2/weapon(ships(curship)\weap2)\atonce,1
+
+	DrawImage shipshape(numrots/4,curship*2),24,75
+	DrawImage weapon(ships(curship)\weap2)\icon,10,70
+	DrawImage weapon(ships(curship)\weap1)\icon,30,70
+=09
+	Color 20,200,240
+	Text 45,70,player(curship)\score
+Return
+
+
+.LoadSounds
+	bigexp =3D DoSound("sfx/bigexp.wav")
+	bingo =3D DoSound("sfx/bingo.wav")
+	bullethit =3D DoSound("sfx/bullethit.wav")
+	checkpoint =3D DoSound("sfx/checkpoint.wav")
+;	firemissile =3D DoSound("sfx/firemissile.wav")
+	shipcollide =3D DoSound("sfx/shipcollide.wav")
+	shipcollide2 =3D DoSound("sfx/shipcollide2.wav")
+	splash =3D DoSound("sfx/splash.wav")
+	tingaling =3D DoSound("sfx/tingaling.wav")
+	touchdown =3D DoSound("sfx/touchdown.wav")
+Return
+
+
+.LoadGFX
+	Global mousep =3D LoadImage("gfx/mousepoint.bmp")
+	Global mouser =3D LoadImage("gfx/mouseresize.bmp") : HandleImage =
+mouser, 6, 6
+	Global mousem =3D LoadImage("gfx/mousemove.bmp") : HandleImage mousem, =
+6, 6
+
+	shipshape(0,0) =3D LoadImage ("gfx/gship.bmp")
+	shipshape(0,1) =3D LoadImage ("gfx/gshipf.bmp")
+	shipshape(0,2) =3D LoadImage ("gfx/gship2.bmp")
+	shipshape(0,3) =3D LoadImage ("gfx/gship2f.bmp")
+=09
+	shipshape(0,4) =3D LoadImage ("gfx/_gship.bmp")
+	shipshape(0,5) =3D LoadImage ("gfx/_gshipf.bmp")
+=09
+	shipshape(0,6) =3D LoadImage ("gfx/lpad.bmp")
+	shipshape(0,7) =3D LoadImage ("gfx/rpad.bmp")
+
+
+	For loop=3D0 To 20
+		kaboomanim(loop) =3D LoadImage("gfx/bigexp_"+loop+".bmp")
+		HandleImage kaboomanim(loop),13,13
+	Next
+	MaskImage kaboomanim(20),255,255,255
+
+
+	MaskImage shipshape(0,4),255,255,255
+	MaskImage shipshape(0,5),255,255,255
+
+	HandleImage(shipshape(0,0), 3, 6)
+	HandleImage(shipshape(0,1), 3, 6)
+	HandleImage(shipshape(0,2), 3, 6)
+	HandleImage(shipshape(0,3), 3, 6)
+	HandleImage(shipshape(0,4), 3, 6)
+	HandleImage(shipshape(0,5), 3, 6)
+	HandleImage(shipshape(0,6), 3, 6)
+	HandleImage(shipshape(0,7), 3, 6)
+
+	shipshape(0,8) =3D CopyImage(shipshape(0,0))
+
+
+
+	Global bullet =3D LoadImage("gfx/bullet.bmp")
+	mask =3D LoadImage("gfx/mask.bmp")
+	bulletexp1 =3D LoadImage("gfx/bulletexp1.bmp"):HandleImage bulletexp1, =
+1,2
+	bulletexp2 =3D LoadImage("gfx/bulletexp2.bmp"):HandleImage bulletexp2, =
+1,2
+	bulletexp3 =3D LoadImage("gfx/bulletexp3.bmp"):HandleImage bulletexp3, =
+1,2
+	bulletmask =3D LoadImage("gfx/bulletmask.bmp"):HandleImage bulletmask, =
+1,2
+	MaskImage bulletmask, 255, 255, 255
+	bombmask =3D LoadImage("gfx/bombmask.bmp")
+=09
+	MaskImage mask,255,255,255
+=09
+	deg# =3D 360.0/numrots
+	off =3D 90
+=09
+	For loop =3D 1 To numrots
+		ang# =3D 1.0/numrots
+		For shiploop =3D 0 To 8
+			shipshape(loop,shiploop) =3D CopyImage (shipshape(0,shiploop))
+			If shiploop &lt; 4 Then
+				TFormFilter 1
+			Else
+				TFormFilter 0
+			EndIf
+			RotateImage(shipshape(loop,shiploop), deg*loop)
+		Next
+
+		Cls
+		DrawImage shipshape(loop,0),GraphicsWidth()/2,GraphicsHeight()/2
+=09
+		r.rot =3D New rot
+		r\x =3D Cos(deg * loop - off)
+		r\y =3D Sin(deg * loop - off)
+		rots(loop) =3D r
+	Next
+=09
+	r =3D New rot
+	r\x =3D 0: r\y =3D -1
+	rots(0) =3D r
+;	Gosub LoadLvlGFX
+Return
+
+
+Function CheckBit (byte, bit)
+	Return (byte Sar bit) And 1
+End Function
+
+
+Function bits_to_number (bt1, bt2, bt3, bt4)
+	value =3D value + bt1 * 1
+	value =3D value + bt2 * 2
+	value =3D value + bt3 * 4
+	value =3D value + bt4 * 8
+
+	Return value
+End Function
+
+
+Function LoadLvlGFX( lv.levtypes, slot )
+
+	If lv\loaded =3D 1 Then Return
+
+
+	SetBuffer FrontBuffer()
+
+	lvlf =3D ReadFile ("gfx/"+lv\bitmap)
+	fsize =3D FileSize ("gfx/"+lv\bitmap)
+
+	count =3D 0
+	While Not Eof( lvlf )
+		byte =3D ReadByte(lvlf)
+		dpckin(count, slot) =3D byte
+		count =3D count + 1
+	Wend
+
+	CloseFile lvlf
+
+	fsize =3D depack(fsize, slot)
+
+
+	bt1 =3D dpckin(0,slot)
+	bt2 =3D dpckin(1,slot)
+	bt3 =3D dpckin(2,slot)
+	bt4 =3D dpckin(3,slot)
+
+=20
+	colpos =3D (fsize-32)
+
+	tst$ =3D Chr$(bt1)+Chr$(bt2)+Chr$(bt3)+Chr$(bt4)
+					=09
+    For loop=3D0 To 15
+	  	byte1 =3D dpckout(colpos,slot)
+	  	colpos=3Dcolpos + 1
+
+	  	byte2 =3D dpckout(colpos,slot)
+	  	colpos=3Dcolpos + 1
+
+	 	long =3D byte1*256+byte2
+=09
+		If long&lt;0 Then long=3Dlong+2^16
+		If long&gt;16384 Then long=3Dlong-16384
+		If long&gt;16384 Then long=3Dlong-16384
+
+;Print "long:"+long
+
+      	rpr1 =3D long/256
+
+      	long=3Dlong-(rpr1*256)
+      	rpg1 =3D (long/16)
+
+      	long=3Dlong-(rpg1*16)
+      	rpb1=3Dlong
+
+		cols(loop,0) =3D rpr1*16
+		cols(loop,1) =3D rpg1*16
+		cols(loop,2) =3D rpb1*16
+	=09
+		DoDebug("RCol", loop+1, rpr1*16+":"+rpg1*16+":"+rpb1*16)
+	=09
+		GetTrueColour(rpr1*16, rpg1*16, rpb1*16)
+
+		DoDebug("Colour", loop+1, ColorRed()+":"+ColorGreen()+":"+ColorBlue())
+	=09
+
+		mcols(loop,0,lv\shapeslot) =3D ColorRed()
+		mcols(loop,1,lv\shapeslot) =3D ColorGreen()
+		mcols(loop,2,lv\shapeslot) =3D ColorBlue()
+
+
+		Plot 0,0
+	=09
+		cols(loop,0) =3D CreateImage(1,1)
+		GrabImage cols(loop,0),0,0
+
+		Color 0,0,0
+		Plot 0,0
+
+    Next
+
+	pos =3D 7
+	name$ =3D ""
+	While dpckout(pos,slot) &gt; 0
+		name$=3Dname$+Chr$(dpckout(pos,slot))
+		pos =3D pos + 1
+	Wend
+;	Print "Level:"+name$
+=09
+	pos =3D 29
+	author$ =3D ""
+	While dpckout(pos,slot) &gt; 0
+		author$=3Dauthor$+Chr$(dpckout(pos,slot))
+		pos =3D pos + 1
+	Wend
+;	Print "Author:"+author$
+
+
+    numshapes=3D(fsize-54-32)/128
+	lv\numshapes=3Dnumshapes
+
+	off=3D54
+	bpl_off =3D 2
+
+	xpos =3D 0
+	ypos =3D 0
+
+
+	SetBuffer FrontBuffer()
+	=09
+
+	tmp =3D CreateImage(16,16)
+
+	shapes(0,0,lv\shapeslot) =3D CreateImage(16,16)
+	minshapes(0) =3D CreateImage(4,4)
+
+	If tst$ =3D "BPCK" Then
+		bpl_off =3D numshapes*32
+		For shape_loop =3D 1 To numshapes - 1
+			indust=3D0
+			shp =3D CreateImage(16,16)
+			SetBuffer ImageBuffer(shp)
+		=09
+			For yloop =3D 0 To 15
+				For xloop =3D 0 To 1
+					For bit_loop =3D 0 To 7
+						bit1 =3D CheckBit(dpckout(off + bpl_off*0,slot), 7-bit_loop)
+						bit2 =3D CheckBit(dpckout(off + bpl_off*1,slot), 7-bit_loop)
+						bit3 =3D CheckBit(dpckout(off + bpl_off*2,slot), 7-bit_loop)
+						bit4 =3D CheckBit(dpckout(off + bpl_off*3,slot), 7-bit_loop)
+
+						pxl =3D bits_to_number(bit1, bit2, bit3, bit4)
+;						Color cols(pxl,0,slot),cols(pxl,1,slot),cols(pxl,2,slot)
+				=09
+						If pxl &gt;=3D 8
+							SetBuffer ImageBuffer(tmp)
+							DrawBlock cols(pxl,0),xpos+bit_loop,ypos
+							indust=3D1
+							SetBuffer ImageBuffer(shp)
+						EndIf
+
+						DrawBlock cols(pxl,0),xpos+bit_loop,ypos
+					Next
+					off =3D off + 1
+					xpos =3D xpos + 8
+				Next
+;				off =3D off + 6
+				ypos =3D ypos + 1
+				xpos =3D xpos-16
+			Next
+			ypos =3D ypos - 16
+	=09
+			If indust=3D1 Then
+				If shapes(shape_loop,1,lv\shapeslot) &lt;&gt; 0 Then =
+FreeImage(shapes(shape_loop,1,lv\shapeslot))
+				shapes(shape_loop,1,lv\shapeslot) =3D tmp
+				tmp =3D CreateImage(16,16)
+			Else
+				shapes(shape_loop,1,lv\shapeslot) =3D 0
+			EndIf
+			If shapes(shape_loop,0,lv\shapeslot) &lt;&gt; 0 Then =
+FreeImage(shapes(shape_loop,0,lv\shapeslot))
+			shapes(shape_loop,0,lv\shapeslot) =3D shp
+		Next
+	Else
+		bpl_off =3D 2
+		For shape_loop =3D 1 To numshapes - 1
+			indust=3D0
+			shp =3D CreateImage(16,16)
+			SetBuffer ImageBuffer(shp)
+			For yloop =3D 0 To 15
+				For xloop =3D 0 To 1
+					For bit_loop =3D 0 To 7
+						bit1 =3D CheckBit(dpckout(off + bpl_off*0,slot), 7-bit_loop)
+						bit2 =3D CheckBit(dpckout(off + bpl_off*1,slot), 7-bit_loop)
+						bit3 =3D CheckBit(dpckout(off + bpl_off*2,slot), 7-bit_loop)
+						bit4 =3D CheckBit(dpckout(off + bpl_off*3,slot), 7-bit_loop)
+
+						pxl =3D bits_to_number(bit1, bit2, bit3, bit4)
+;						Color cols(pxl,0,slot),cols(pxl,1,slot),cols(pxl,2,slot)
+				=09
+						If pxl &gt;=3D 8
+							SetBuffer ImageBuffer(tmp)
+							DrawBlock cols(pxl,0),xpos+bit_loop,ypos
+							indust=3D1
+							SetBuffer ImageBuffer(shp)
+						EndIf
+
+						DrawBlock cols(pxl,0),xpos+bit_loop,ypos
+					Next
+					off =3D off + 1
+					xpos =3D xpos + 8
+				Next
+				off =3D off + 6
+				ypos =3D ypos + 1
+				xpos =3D xpos-16
+			Next
+			ypos =3D ypos - 16
+	=09
+			If indust=3D1
+				If shapes(shape_loop,1,lv\shapeslot) &lt;&gt; 0 Then =
+FreeImage(shapes(shape_loop,1,lv\shapeslot))
+				shapes(shape_loop,1,lv\shapeslot) =3D tmp
+				tmp =3D CreateImage(16,16)
+			Else
+				shapes(shape_loop,1,lv\shapeslot) =3D 0
+			EndIf
+			If shapes(shape_loop,0,lv\shapeslot) &lt;&gt; 0 Then =
+FreeImage(shapes(shape_loop,0,lv\shapeslot))
+			shapes(shape_loop,0,lv\shapeslot) =3D shp	=09
+		Next
+	EndIf
+
+;	For loop =3D 1 To numshapes-1
+;		If minshapes(loop) &lt;&gt; 0 Then FreeImage(minshapes(loop))
+;	=09
+;		If shapes(loop,0,lv\shapeslot) &lt;&gt; 0 Then minshapes(loop) =3D =
+CopyImage(shapes(loop,0,lv\shapeslot))
+;		TFormFilter 1
+;		ScaleImage(minshapes(loop),0.25,0.25)
+;	Next
+		=09
+	For loop =3D 0 To 15
+		FreeImage cols(loop,0)
+	Next
+=09
+	lv\loaded =3D 1
+End Function
+
+
+.drawship
+	If numpods &gt; 0
+		Color 255,255,255
+		If player(curship)\lap &lt; 3
+			DoText(ships(curship)\x-5-xpos, ships(curship)\y+5-ypos, =
+player(curship)\pos+1,2)
+		Else
+			Text ships(curship)\x-5-xpos, ships(curship)\y+5-ypos, =
+(lap(1,curship)-lap(0,curship))/1000.0
+			Text ships(curship)\x-5-xpos, ships(curship)\y+15-ypos, =
+(lap(2,curship)-lap(1,curship))/1000.0
+			Text ships(curship)\x-5-xpos, ships(curship)\y+25-ypos, =
+(lap(3,curship)-lap(2,curship))/1000.0
+		EndIf	=09
+	EndIf
+
+	y0 =3D ships(curship)\y
+	SetDisplay(BackBuffer(),player(curship)\v)
+	DrawImage shipshape(shipang,shipstate+(curship*2)), =
+ships(curship)\x-xpos, y0-ypos
+
+	If numplayers=3D2 Then =09
+		y1 =3D player(1-curship)\ypos
+		If y0&gt;y1 And y0&lt;y1+player(1-curship)\v\h
+			SetDisplay(BackBuffer(),player(1-curship)\v)
+			DrawImage shipshape(shipang,shipstate+(curship*2)), =
+ships(curship)\x-player(1-curship)\xpos, y0-y1
+		EndIf
+	EndIf
+
+
+Return
+
+.UnDrawShip
+	SetBuffer ImageBuffer(map)
+	DrawImage shipshape(shipang,4), ships(curship)\x, ships(curship)\y
+Return
+
+
+.fire_ammo2
+	tship# =3D shipang
+	shipang =3D (shipang-8+Rnd(numrots/8)) Mod numrots
+	If shipang&lt;0 Then shipang =3D shipang + numrots
+	Gosub fire_bop
+	shipang =3D tship
+Return
+
+
+.fire_bop
+
+	a.airobj =3D New airobj
+		=09
+	x# =3D rots(shipang)\x
+	y# =3D rots(shipang)\y
+
+	a\x =3D ships(curship)\x+x#*9
+	a\y =3D ships(curship)\y+y#*9
+=09
+	a\ox =3D a\x
+	a\oy =3D a\y
+=09
+	a\xinc =3D ships(curship)\xinc+x#*1.5
+	a\yinc =3D ships(curship)\yinc+y#*1.5
+=09
+	a\player =3D curship
+
+Return
+
+
+.animate_bops
+	y1 =3D player(0)\ypos
+	y2 =3D player(1)\ypos
+=09
+	SetBuffer ImageBuffer(map)
+
+=09
+	For a=3DEach airobj
+	=09
+		wi.WeaponInstance =3D a\wi
+	=09
+		If a\dead &gt; 0 Then
+			If wi &lt;&gt; Null
+				ex$	=3D wi\t\explosion
+			Else
+				ex$ =3D ""
+			EndIf
+		=09
+			If ex$ =3D "big"
+				If a\dead =3D 1 DoPlaySound bigexp:Gosub DoShockwave
+				If a\dead &lt; 20
+					DrawImage kaboomanim(a\dead),a\x,a\y
+				Else
+					DrawImage kaboomanim(a\dead),a\x,a\y
+					If wi\mounted=3D0
+						player(a\player)\numweap1 =3D player(a\player)\numweap1 - 1
+					Else
+						player(a\player)\numweap2 =3D player(a\player)\numweap2 - 1
+					EndIf
+					Delete a
+					Delete wi\t
+					Delete wi
+					Goto lo
+				EndIf
+			Else
+				SetBuffer ImageBuffer(map)
+				Select a\dead
+					Case 1
+						DrawImage bulletexp1,a\x,a\y
+						DoPlaySound bullethit
+			=09
+					Case 3
+						DrawImage bulletexp2,a\x,a\y
+			=09
+					Case 5
+						DrawImage bulletexp3,a\x,a\y
+			=09
+					Case 7
+						DrawImage bulletmask,a\x,a\y
+						player(a\player)\numbullets =3D player(a\player)\numbullets - 1
+						If wi &lt;&gt; Null
+							If wi\mounted=3D0
+								player(a\player)\numweap1 =3D player(a\player)\numweap1 - 1
+							Else
+								player(a\player)\numweap2 =3D player(a\player)\numweap2 - 1
+							EndIf
+							Delete wi\t
+							Delete wi
+						EndIf
+						Delete a
+						Goto lo
+				End Select
+			EndIf
+
+			a\dead =3D a\dead + 1
+
+			Goto lo
+		EndIf
+
+=09
+		; Do position increments	=09
+		If a\antigrav =3D 0
+			If wi &lt;&gt; Null
+				If wi\t\power &gt; 0
+					If wi\t\guided &gt; 0
+						If round &gt; wi\guidedframe + (75/wi\t\guided)
+							wi\guidedframe =3D round
+							ang# =3D (ATan2(ships(1-a\player)\x - a\x, =
+a\y-ships(1-a\player)\y)+360) Mod 360
+						=09
+							ang =3D ang * (numrots/360.0)
+;							If ang &lt; 0 Then ang=3Dang+numrots
+							If Abs(ang-a\pang) &lt; numrots/2
+								a\pang =3D (a\pang+a\pang+ang)/3
+							Else
+								a\pang =3D (a\pang+a\pang+ang+numrots)/3  Mod numrots
+							EndIf
+						EndIf
+					EndIf
+		=09
+
+					xinc# =3D rots(a\pang)\x*wi\t\speed
+					yinc# =3D rots(a\pang)\y*wi\t\speed
+					wi\t\power =3D wi\t\power - 1
+				Else
+					xinc# =3D a\xinc ; * 0.995
+					yinc# =3D a\yinc + gravity#*2
+				EndIf
+			Else
+				xinc# =3D a\xinc ; * 0.995
+				yinc# =3D a\yinc + gravity#*2
+			EndIf
+		Else
+			xinc# =3D a\xinc
+			yinc# =3D a\yinc
+		EndIf
+	=09
+		If wi&lt;&gt;Null
+			mspeed =3D wi\t\speed
+		Else
+			mspeed =3D 2
+		EndIf
+	=09
+		If xinc# &lt; -mspeed Then=20
+			xinc# =3D -mspeed
+		ElseIf xinc# &gt; mspeed Then=20
+			xinc# =3D mspeed
+		EndIf
+=09
+		If yinc# &lt; -mspeed Then=20
+			yinc# =3D -mspeed
+		ElseIf yinc# &gt; mspeed Then=20
+			yinc# =3D mspeed
+		EndIf
+
+		a\xinc =3D xinc#
+		a\yinc =3D yinc#
+		a\x =3D a\x + xinc#
+		a\y =3D a\y + yinc#
+	=09
+		If a\x&lt;0 Then a\x=3D a\ox:a\dead=3D1:Goto lo
+		If a\y&lt;0 Then a\y=3D a\oy:a\dead=3D1:Goto lo
+		If a\y&gt;1008 Then a\y=3D a\oy:a\dead=3D1:Goto lo
+		If a\x&gt;336 Then a\x =3D a\ox:a\dead=3D1:Goto lo
+	=09
+	=09
+		If wi&lt;&gt;Null
+			If wi\t\rotate =3D "true"
+				abc =3D ((ATan2(a\x-a\ox, a\oy-a\y)/360.0) * numrots) Mod numrots
+				If abc&lt;0 Then abc=3Dabc+numrots
+			=09
+				abc =3D (abc+a\oang)/2
+				a\oang =3D abc
+
+			=09
+				wi\t\image =3D ammorot( wi\t\id, abc )
+;				Stop
+			EndIf
+		EndIf
+	=09
+				=09
+		a\ox =3D a\x
+		a\oy =3D a\y			=09
+
+		If wi&lt;&gt;Null
+			img =3D wi\t\image
+		Else
+			img =3D bullet
+		EndIf
+					=09
+		For curship =3D 0 To 1
+			If ImagesCollide(img, a\x, a\y, 0, shipshape(shipang,0), =
+ships(curship)\x, ships(curship)\y, 0)
+				If wi&lt;&gt;Null
+					If wi\t\explodetarget =3D "true"
+						; Give a few rounds of 'grace' to avoid player killing themselves =
+;-)
+						If round - wi\startframe &gt; 5
+							a\dead=3D1
+							Goto lo
+						EndIf
+					Else
+						player(curship)\shield =3D player(curship)\shield - 1
+					EndIf
+				Else
+					player(curship)\shield =3D player(curship)\shield - 1
+				EndIf
+
+			=09
+				If player(curship)\shield &lt; 0 Then Gosub KillPlayer
+			EndIf
+		Next
+
+		Color 0,0,0
+		hit =3D 0
+		If a\antigrav =3D 0 Then
+			If ImagesCollide(bullet, a\x, a\y, 0, map, 0, 0, 0 ) Or =
+ImagesCollide(bullet, a\x, a\y, 0, supermap, 0, 0, 0 ) Then
+				hit =3D 1
+			EndIf
+		ElseIf a\antigrav =3D 1
+			If a\x =3D a\s\ex And a\y =3D a\s\ey Then
+				If ImagesCollide(bullet, a\x, a\y, 0, map, 0, 0, 0 ) Or =
+ImagesCollide(bullet, a\x, a\y, 0, supermap, 0, 0, 0 ) Then
+					player(a\player)\numbullets =3D player(a\player)\numbullets - 1
+					Delete a
+					Goto lo
+				Else
+					a\s\ex =3D a\x + a\xinc
+					a\s\ey =3D a\y + a\yinc
+				EndIf
+			EndIf
+		EndIf
+=09
+		If hit=3D1
+			a\dead =3D 1
+			Goto lo
+		EndIf
+
+		.lo
+	Next
+Return
+
+
+.DoShockwave
+	damdist=3D80
+	shockdist=3D120
+	For l=3D0 To numplayers-1
+		dx=3D(ships(l)\x-a\x)
+		dy=3D(a\y-ships(l)\y)
+		dist =3D Sqr(dx^2+dy^2)
+		If dist &lt; damdist
+			If dist =3D 0 Then dist =3D 1
+			dam# =3D Float(damdist/dist)
+			If player(l)\shield - dam &lt; 0
+				curship=3Dl
+				Gosub KillPlayer
+			Else
+				player(l)\shield =3D player(l)\shield - dam
+			EndIf
+		EndIf
+	=09
+		If dist &lt; shockdist
+			pow# =3D 1-Float(dist/shockdist)
+			mrot# =3D (ATan2(dx,dy) * (numrots/360.0)) Mod numrots
+			If mrot&lt;0 Then mrot=3Dmrot+numrots
+			ships(l)\xinc =3D ships(l)\xinc+rots(mrot)\x*pow
+			ships(l)\yinc =3D ships(l)\yinc+rots(mrot)\y*pow
+		EndIf
+	Next
+Return
+
+
+.DoShooters
+	For s.shooter=3DEach shooter
+		s\timeout =3D s\timeout - 1
+		If s\timeout =3D 0 And s\dead =3D 0
+			If ImagesCollide (bulletexp1, s\mx, s\my, 0, map, 0, 0, 0) Or s\inv =
+=3D 1
+				a.airobj =3D New airobj
+
+				a\xinc# =3D rots(s\dir*(numrots/4))\x
+				a\yinc# =3D rots(s\dir*(numrots/4))\y
+=09
+				a\x =3D s\x+a\xinc*2
+				a\y =3D s\y+a\yinc*2
+=09
+				If s\ex =3D s\x And s\ey =3D s\y Then
+					s\ex =3D a\x + a\xinc
+					s\ey =3D a\y + a\yinc
+				EndIf
+=09
+				a\ox =3D a\x
+				a\oy =3D a\y
+=09
+				a\player =3D 2
+				a\antigrav =3D 1
+				a\s =3D s
+				s\timeout =3D s\timer
+			Else
+				s\dead =3D 1
+			EndIf
+		EndIf
+	Next
+Return
+
+
+
+Function DrawBullets()
+	x1 =3D player(0)\xpos
+	x2 =3D player(1)\xpos
+
+	y1 =3D player(0)\ypos
+	y2 =3D player(1)\ypos
+
+;	For wi.WeaponInstance=3DEach WeaponInstance
+	For a.airobj =3D Each airobj
+		If a\dead =3D 0
+			If a\wi &lt;&gt; Null
+				image =3D a\wi\t\image
+			Else
+				image =3D bullet
+			EndIf
+		=09
+			If a\y &gt; y1 And a\y &lt; y1 + player(0)\v\h
+				SetDisplay(BackBuffer(),player(0)\v)
+				DrawImage image, a\x-x1, a\y-y1
+			EndIf
+		=09
+			If a\y &gt; y2 And a\y &lt; y2 + player(1)\v\h
+				SetDisplay(BackBuffer(),player(1)\v)
+				DrawImage image, a\x-x2, a\y-y2
+			EndIf
+		EndIf
+	Next
+
+;	For a.airobj=3DEach airobj
+;		If a\dead =3D 0
+;			If a\y &gt; y1 And a\y &lt; y1 + player(0)\v\h
+;				SetDisplay(BackBuffer(),player(0)\v)
+;				DrawImage bullet, a\x-x1, a\y-y1
+;			EndIf
+;		=09
+;			If numplayers =3D 2=20
+;				If a\y &gt; y2 And a\y &lt; y2 + player(1)\v\h
+;					SetDisplay(BackBuffer(),player(1)\v)
+;					DrawImage bullet, a\x-x2, a\y-y2
+;				EndIf
+;			EndIf
+;		EndIf
+;	Next
+End Function
+
+
+
+.do_physics
+
+	DoDebug ( "Thrust"+curship, 3, ships(curship)\yinc )
+
+	SetBuffer FrontBuffer()
+
+	If ships(curship)\landed =3D 0 Then
+		If ships(curship)\y &lt; water_s
+			yinc# =3D ships(curship)\yinc + gravity#
+			If player(curship)\underwater =3D 1 Then yinc =3D yinc * 0.5
+			player(curship)\underwater =3D 0
+		Else
+			If player(curship)\underwater =3D 0 Then DoPlaySound splash
+			yinc# =3D ships(curship)\yinc - gravity#*1.3
+			player(curship)\underwater =3D 1
+		EndIf
+	Else
+		yinc# =3D ships(curship)\yinc
+;		ships(curship)\landed =3D 0
+	EndIf
+=09
+=09
+	xinc# =3D ships(curship)\xinc  * 0.99
+
+	For m.magnet =3D Each magnet
+		If RectsOverlap(ships(curship)\x, ships(curship)\y, 1, 1, m\x, m\y, =
+m\w, m\h)
+			If m\dir =3D 0
+				xinc# =3D xinc# - ( thrust * 1.5 * ((m\x + m\w - ships(curship)\x) / =
+64.0) )
+			Else
+				xinc# =3D xinc# + ( thrust * 1.5 * ((ships(curship)\x - m\x) / 64.0) =
+)
+			EndIf
+		Else
+;		SetBuffer ImageBuffer(map)
+;			Color 255,0,200
+;			Rect m\x,m\y,m\w,m\h
+;		SetBuffer FrontBuffer()
+		EndIf
+	Next
+=09
+
+=09
+	If player(curship)\underwater =3D 0
+		If xinc# &lt; -maxshipinc# Then=20
+			xinc# =3D -maxshipinc#
+		ElseIf xinc# &gt; maxshipinc# Then=20
+			xinc# =3D maxshipinc#
+		EndIf
+=09
+		If yinc# &lt; -maxshipinc# Then=20
+			yinc# =3D -maxshipinc#
+		ElseIf ships(curship)\shipstate =3D 1=20
+			If yinc# &gt; maxshipfallinc#
+				yinc# =3D maxshipfallinc#
+			EndIf
+		ElseIf yinc# &gt; maxshipinc#
+			yinc =3D yinc * 0.99
+		EndIf
+	Else
+		If xinc# &lt; -maxshipinc#/2 Then=20
+			xinc# =3D -maxshipinc#/2
+		ElseIf xinc# &gt; maxshipinc#/2 Then=20
+			xinc# =3D maxshipinc#/2
+		EndIf
+=09
+		If yinc# &lt; -maxshipinc#/2 Then=20
+			yinc# =3D -maxshipinc#/2
+		ElseIf yinc# &gt; maxshipfallinc#/2 Then=20
+			yinc# =3D maxshipfallinc#/2
+		EndIf
+	EndIf
+
+	DoDebug ( "Thrust"+curship, 8, ships(curship)\yinc )
+	DoDebug ( "Thrust"+curship, 9, ships(curship)\y )
+
+	ships(curship)\xinc =3D xinc#
+	ships(curship)\yinc =3D yinc# ;+ (Abs(yinc#) *gravity#)
+	ships(curship)\x =3D ships(curship)\x + ships(curship)\xinc
+	ships(curship)\y =3D ships(curship)\y + ships(curship)\yinc
+
+	DoDebug ( "Thrust"+curship, 11, ships(curship)\yinc )
+	DoDebug ( "Thrust"+curship, 12, ships(curship)\y )
+
+	If ships(curship)\x &lt; 0 Then
+		ships(curship)\x =3D 0
+		ships(curship)\xinc =3D -ships(curship)\xinc * 0.5
+	EndIf
+=09
+	If ships(curship)\x &gt; 336 Then
+		ships(curship)\x =3D 336
+		ships(curship)\xinc =3D -ships(curship)\xinc * 0.5
+	EndIf
+=09
+	If ships(curship)\y &lt; 0 Then
+		ships(curship)\y =3D 0
+	EndIf
+
+
+	If ImagesCollide( shipshape(shipang,8) , ships(curship)\x, =
+ships(curship)\y, 0, supermap, 0, 0, 0 )			=09
+		If ImagesCollide( shipshape(shipang,8) , =
+ships(curship)\x-ships(curship)\xinc, ships(curship)\y, 0, supermap, 0, =
+0, 0 )
+			ships(curship)\y =3D ships(curship)\y - ships(curship)\yinc
+			ships(curship)\yinc =3D -ships(curship)\yinc*0.3
+			player(curship)\shield =3D player(curship)\shield - 8
+			ships(curship)\xinc =3D ships(curship)\xinc * 0.8
+		ElseIf ImagesCollide( shipshape(shipang,8) , ships(curship)\x, =
+ships(curship)\y-ships(curship)\yinc, 0, supermap, 0, 0, 0 )
+			ships(curship)\x =3D ships(curship)\x - ships(curship)\xinc
+			ships(curship)\xinc =3D -ships(curship)\xinc*0.3
+			player(curship)\shield =3D player(curship)\shield - 8
+			ships(curship)\yinc =3D ships(curship)\yinc * 0.8
+		Else
+			player(curship)\shield =3D player(curship)\shield - 1
+		EndIf
+	ElseIf ImagesCollide( shipshape(shipang,8) , ships(curship)\x, =
+ships(curship)\y, 0, map, 0, 0, 0 )
+		ships(curship)\xinc =3D ships(curship)\xinc * 0.8
+		ships(curship)\yinc =3D ships(curship)\yinc * 0.8
+		player(curship)\shield =3D player(curship)\shield - 1
+	EndIf
+
+	If player(curship)\shield &lt; 0 Then Gosub KillPlayer
+
+=09
+	xc# =3D ships(curship)\xinc
+	yc# =3D ships(curship)\yinc
+	shipvect# =3D (ATan2(xc + xc*shipstate, yc+yc*shipstate)) Mod 360
+	shiprang =3D deg*ships(curship)\ang
+
+
+
+
+;	GetColor(nosex, nosey)
+;	If ColorRed() =3D 0 And ColorGreen() =3D 0 And ColorBlue() =3D 0 Then
+;		nosehit=3D0
+;	Else
+;		nosehit=3D1
+;	EndIf
+
+;	Color 255,255,255:Plot nosex,nosey
+
+
+
+;	GetColor(leftx, lefty)
+;	If ColorRed() =3D 0 And ColorGreen() =3D 0 And ColorBlue() =3D 0 Then
+;		lefthit=3D0
+;	Else
+;		lefthit=3D1
+;		If ColorRed()=3Dlp1 And ColorGreen()=3Dlp2 And ColorBlue()=3Dlp2
+;			pad =3D 1
+;		Else
+;			pad =3D 0
+;		EndIf
+;		ships(curship)\landed =3D 1
+;	EndIf
+
+	If ImagesCollide =
+(shipshape(shipang,6),ships(curship)\x,ships(curship)\y,0, map,0,0,0) Or =
+ImagesCollide(shipshape(shipang,6),ships(curship)\x,ships(curship)\y,0, =
+supermap,0,0,0)
+		lefthit=3D1
+		shipcollide=3D0
+	ElseIf ImagesCollide =
+(shipshape(shipang,6),ships(curship)\x,ships(curship)\y,0, =
+shipshape(ships(1-curship)\ang,0),ships(1-curship)\x,ships(1-curship)\y,0=
+)
+		lefthit=3D1
+		shipcollide=3D1
+	Else
+		lefthit=3D0
+	EndIf
+
+	If ImagesCollide =
+(shipshape(shipang,7),ships(curship)\x,ships(curship)\y,0, map,0,0,0) Or =
+ImagesCollide(shipshape(shipang,7),ships(curship)\x,ships(curship)\y,0, =
+supermap,0,0,0)
+		righthit=3D1
+		shipcollide=3D0
+	ElseIf ImagesCollide =
+(shipshape(shipang,7),ships(curship)\x,ships(curship)\y,0, =
+shipshape(ships(1-curship)\ang,0),ships(1-curship)\x,ships(1-curship)\y,0=
+)
+		righthit=3D1
+		shipcollide=3D1
+	Else
+		righthit=3D0
+	EndIf
+=09
+	ships(curship)\onpad=3D0
+
+	If lefthit =3D 1 And righthit	=3D 1 And shipcollide=3D0
+
+		If (player(curship)\underwater=3D0 And (shiprang&lt;70 Or =
+shiprang&gt;290)) Or (player(curship)\underwater=3D1 And =
+(shiprang&gt;110 And shiprang&lt;250))
+			If Abs(ships(curship)\yinc) &gt; 0.3 Or shipstate =3D 1 Then
+				ships(curship)\xinc =3D ships(curship)\xinc * 0.7
+				ships(curship)\yinc =3D -ships(curship)\yinc * 0.5
+			Else
+				ships(curship)\xinc =3D 0
+				ships(curship)\yinc =3D 0
+			=09
+				ships(curship)\x =3D Int(ships(curship)\x)
+				ships(curship)\y =3D Int(ships(curship)\y)
+			=09
+				landang# =3D (shipang + numrots/2) Mod numrots
+			=09
+				If player(curship)\underwater=3D0 Then lmod =3D 3 Else lmod=3D4
+			=09
+				landx =3D ships(curship)\x+rots(landang)\x*lmod
+				landy =3D ships(curship)\y+rots(landang)\y*lmod
+
+				If curship=3D0 Then DoDebug ( "Landing", 1, =
+mcols(12,0,lv\shapeslot)+":"+mcols(12,1,lv\shapeslot)+":"+mcols(12,2,lv\s=
+hapeslot))
+
+				SetBuffer ImageBuffer(supermap)
+				GetColor(landx, landy)
+
+				If curship=3D0 Then DoDebug ( "Landing", 2, =
+ColorRed()+":"+ColorGreen()+":"+ColorBlue())
+				If curship=3D0 Then DoDebug("Colour", 17, =
+ColorRed()+":"+ColorGreen()+":"+ColorBlue())
+		=09
+				If ColorRed()=3Dmcols(12,0,lv\shapeslot) And =
+ColorGreen()=3Dmcols(12,1,lv\shapeslot) And =
+ColorBlue()=3Dmcols(12,2,lv\shapeslot)
+					If ships(curship)\landed =3D 0 Then DoPlaySound touchdown
+					ships(curship)\onpad =3D 1
+					Gosub refuel
+				Else
+					ships(curship)\onpad =3D 0
+				EndIf
+
+				ships(curship)\landed =3D 1
+;				Plot landx-player(curship)\xpos,landy-player(curship)\ypos
+
+
+			EndIf
+		EndIf
+	Else
+		ships(curship)\landed=3D0
+		If lefthit =3D 1
+			If shipvect &gt; (shipangmod*((shipang+numrots*0.7) Mod numrots))
+				shipang =3D (shipang + numrots-amodf) Mod numrots
+			Else
+				shipang =3D (shipang + amodf) Mod numrots
+			EndIf
+			If shipcollide=3D0
+				ships(curship)\xinc =3D ships(curship)\xinc * 0.8
+				ships(curship)\yinc =3D ships(curship)\yinc * 0.8
+			EndIf
+		ElseIf righthit =3D 1
+			If shipvect &lt; (shipangmod*((shipang+numrots*0.3) Mod numrots))
+				shipang =3D (shipang + numrots-amodf) Mod numrots
+			Else
+				shipang =3D (shipang + amodf) Mod numrots
+			EndIf
+			If shipcollide=3D0
+				ships(curship)\xinc =3D ships(curship)\xinc * 0.8
+				ships(curship)\yinc =3D ships(curship)\yinc * 0.8
+			EndIf
+		EndIf
+	=09
+	EndIf
+=09
+
+	If Abs(ships(curship)\xinc) &lt; 0.005 Then ships(curship)\xinc =3D 0
+	If Abs(ships(curship)\yinc) &lt; 0.005 Then ships(curship)\yinc =3D 0
+
+	DoDebug ( "Thrust"+curship, 6, ships(curship)\yinc )
+																	=09
+	If ships(curship)\y &gt; 1008 Then
+		ships(curship)\y =3D 1004
+		ships(curship)\yinc =3D 0
+;		ships(curship)\yinc =3D -ships(curship)\yinc * 0.5
+	EndIf
+Return
+
+
+.refuel
+
+	If softplay=3D1 And ships(curship)\onpad =3D 0
+		If player(curship)\shield&lt;strtshield Then =
+player(curship)\shield=3Dplayer(curship)\shield+shieldinc/5
+
+		Return
+	EndIf	=09
+
+	If player(curship)\shield&lt;strtshield Then =
+player(curship)\shield=3Dplayer(curship)\shield+shieldinc
+
+
+	If player(curship)\fuel&lt;strtfuel Then =
+player(curship)\fuel=3Dplayer(curship)\fuel+fuelinc
+=09
+	If player(curship)\ammo1&lt;weapon(ships(curship)\weap1)\load
+;		If player(curship)\reloadammo1 &lt; round - =
+75/(weapon(ships(curship)\weap1)\loadtime)
+			=
+player(curship)\ammo1=3Dplayer(curship)\ammo1+weapon(ships(curship)\weap1=
+)\loadtime/75.0
+;			player(curship)\reloadammo1 =3D round
+;		EndIf
+	EndIf
+
+	If player(curship)\ammo2&lt;weapon(ships(curship)\weap2)\load
+;		If player(curship)\reloadammo2 &lt; round - =
+75/(weapon(ships(curship)\weap2)\loadtime)
+			=
+player(curship)\ammo2=3Dplayer(curship)\ammo2+weapon(ships(curship)\weap2=
+)\loadtime/75.0
+;			player(curship)\reloadammo2 =3D round
+;		EndIf
+	EndIf
+Return
+
+
+.ReadTypes
+	SetBuffer FrontBuffer()
+;EndGraphics
+	lvcount=3D0
+	gdir=3DReadDir("types")
+	skip=3D0
+	Repeat
+		f$=3DNextFile$( gdir )
+		If f$=3D"" Then Exit
+		t=3DFileType( "types/"+f$ )
+;		f$=3DLSet$( rf$,32 )
+;		Print f$+" "+rf$
+		If t=3D1 And f$&lt;&gt;".." And f$&lt;&gt;""
+			lv.levtypes =3D New levtypes
+			lv\ap =3D Left$(f$,2)
+
+			levs(lvcount)=3Dlv
+
+			info =3D ReadFile("types/"+f$)
+		=09
+			bitmap$ =3D ""
+			ch =3D ReadByte(info)
+			While ch &gt; 0
+				bitmap=3Dbitmap+Chr$(ch)
+				ch =3D ReadByte(info)
+			Wend
+;Print "b:"+bitmap
+
+			SeekFile(info, 43)	=09
+			name$ =3D ""
+			ch =3D ReadByte(info)
+			While ch &gt; 0
+				name=3Dname+Chr$(ch)
+				ch =3D ReadByte(info)
+			Wend
+
+;Print "n:"+name
+
+			SeekFile(info, 90)	=09
+			title$ =3D ""
+			ch =3D ReadByte(info)
+			While ch &lt;&gt; 185 And ch &gt; 0
+				title=3Dtitle+Chr$(ch)
+				ch =3D ReadByte(info)
+			Wend
+		=09
+;Print title
+			lv\bitmap =3D bitmap
+			lv\name =3D name
+			lv\title =3D title
+			lv\shapeslot =3D lvcount
+											=09
+;			Text 10,30+lvcount*20, lv\name
+																					=09
+			CloseFile info
+		=09
+;			Color 255,255,255
+			lvcount =3D lvcount + 1
+		EndIf
+
+	Forever
+;	numlevtypes =3D tcount
+	CloseDir gdir
+
+Return
+
+
+.TypeMenu
+	SetBuffer FrontBuffer()
+	Cls
+	lev =3D 0
+	Color 0,200,0
+	DoBigTextLined(97,20,"Gravity Power 2  (Muchly beta v0.6)",4)
+	SetBuffer FrontBuffer()
+=09
+
+	DoText(100,35,quotes(Rnd(qcnt)),7)
+=09
+	lvcount =3D 0
+	For lv.levtypes =3D Each levtypes
+		DoText(110, 50+lvcount*10, lv\name, 2)
+		lvcount =3D lvcount + 1
+	Next
+=09
+	lv =3D First levtypes
+=09
+	kdly=3D0
+	pos =3D 0
+	curship=3D0
+	Repeat
+		curship =3D 1-curship
+	=09
+		If kdly &gt; 0 Then kdly =3D kdly - 1 Else kdly =3D 0
+	=09
+		If kdly =3D 0=20
+			If KeyDown(keyup(curship)) And pos &gt; 0
+				pos =3D pos - 1
+				lv =3D levs(pos)
+				kdly =3D 5
+			ElseIf KeyDown(keydwn(curship)) And pos &lt; lvcount-1
+				pos =3D pos + 1
+				lv =3D levs(pos)
+				kdly =3D 5
+			EndIf
+		EndIf
+
+;Text 100,100,kdly
+=09
+		VWait
+		Color 0,0,0
+		Rect 90,50,17,300
+		Color 255,255,255
+		DrawImage shipshape(numrots/4,0),100,50+pos*10+3
+		If KeyDown(1) Then End
+	Until KeyDown(28)=3D1 Or KeyDown(57)=3D1 Or KeyDown(keythrst(curship))
+
+;	dir$=3D"gfx/"+levtype(lev)\ap+"/"
+;	dir$=3D"gfx/GR/"
+;	lp1=3Dlevtype(lev)\lp1
+;	lp2=3Dlevtype(lev)\lp2
+;	lp3=3Dlevtype(lev)\lp3
+=09
+;	numshapes=3Dlevtype(lev)\numshapes
+=09
+	LoadLvlGFX(lv, 1)
+=09
+	SetBuffer BackBuffer()
+Return
+
+.ReadLevels
+	levcount =3D 0
+	Repeat
+		f$=3DNextFile$( gdir )
+		If f$=3D"" Then Exit
+		t=3DFileType( "levels/"+f$ )
+
+		If t=3D1
+			If Left$(f$,2)=3Dlv\ap Then
+				levelnames(levcount,lv\shapeslot)=3Df$
+				levcount=3Dlevcount+1
+			EndIf
+		EndIf
+	Forever
+	CloseDir gdir
+Return
+
+
+.LevelMenu
+	gdir=3DReadDir("levels")
+=09
+	If levelnames(0,lv\shapeslot) &lt;&gt; ""
+		levcount =3D lv\numlevels
+	Else
+		Gosub ReadLevels
+		lv\numlevels =3D levcount
+	EndIf
+=09
+	levt =3D 0
+=09
+	SetBuffer BackBuffer()
+	Cls
+=09
+	SetBuffer FrontBuffer()
+	lev =3D 0
+	Cls
+=09
+=09
+=09
+	olvname$=3D""
+=09
+	curply=3D0
+	yoff=3D3
+	kdly=3D3
+	Repeat
+		curply =3D 1-curply
+		If kdly &gt; 0 Then kdly=3Dkdly - 1 Else kdly =3D 0
+	=09
+		If kdly =3D 0
+			If KeyDown(keyup(curply))
+				If lev&gt;0
+					lev=3Dlev-1
+					scnt =3D 40
+					kdly =3D 1
+				EndIf
+			ElseIf KeyDown(keydwn(curply)) Then
+				If lev&lt;levcount-1
+					lev=3Dlev+1
+					scnt =3D 40
+					kdly =3D 1
+				EndIf
+			EndIf
+		EndIf
+
+
+
+;		If KeyDown(keyright(curship)) Then
+
+;		If KeyDown(keyleft(curship)) Then
+;		=09
+;		EndIf
+
+		lvlname$=3D"levels/"+levelnames(lev, lv\shapeslot)	=09
+		If olvname$ &lt;&gt; lvlname$ And scnt=3D0
+			If map &lt;&gt; 0 Then FreeImage(map):map=3D0
+		=09
+			Gosub LoadLevel
+		=09
+			map=3DPreviewDrawMap(lv)
+;			ScaleImage(map,0.25,0.25)
+			olvname$ =3D lvlname$
+		=09
+		EndIf
+	=09
+		SetBuffer BackBuffer()
+		HandleImage map,0,yscr
+		DrawBlock map,0,0
+
+		yscr=3Dyscr + yoff
+	=09
+		If yscr &lt;=3D 0 Or yscr &gt; (1008-GraphicsHeight())
+			yoff =3D yoff * -1
+		EndIf
+
+;		VWait
+;		SetBuffer FrontBuffer()
+;		Color 0,0,0
+;		Rect -5,20,15,300
+
+		DoBigText (97,20,lv\title,1)
+
+		amtl=3D(GraphicsHeight()-50)/10
+
+		For loop =3D levt To levt+amtl
+			If loop &lt; levcount
+				DoText (110,35+(loop-levt)*10, Mid$(levelnames(loop,lv\shapeslot), =
+3, Len(levelnames(loop,lv\shapeslot))-6),2)
+			EndIf
+		Next
+
+;Text 30,150,"Pods:"+numpods+" x1:"+pod(0)\x+" y1:"+pod(0)\y+" =
+w:"+pod(0)\w+" h:"+pod(0)\h
+		If lev &gt; levt+amtl-3 And levt+amtl &lt; levcount-1
+			levt =3D levt+1
+		EndIf
+	=09
+		If lev &lt; levt+3 And levt &gt; 0
+			levt =3D levt-1
+		EndIf
+	=09
+		DrawImage shipshape(numrots/4,0),100,35+(lev-levt)*10+3
+		If scnt&gt; 0 Then scnt =3D scnt - 1
+;		Text 20,250,"s:"+water_s+" e:"+water_e+" d:"+water_spd
+		If KeyDown(1) Then End
+		Flip
+	Until KeyDown(28)=3D1 Or KeyDown(57)=3D1 Or KeyDown(keythrst(curply))
+=09
+	scnt =3D 0
+=09
+	lvlname$=3D"levels/"+levelnames(lev,lv\shapeslot)
+=09
+	Gosub LoadLevel
+	SetBuffer BackBuffer()
+
+Return
+
+
+.LoadLevel
+	lvlf =3D ReadFile (lvlname$)
+	fsize =3D FileSize (lvlname$)
+
+	count =3D 0
+	While Not Eof( lvlf )
+		byte =3D ReadByte(lvlf)
+		dpckin(count, 0) =3D byte
+		count =3D count + 1
+	Wend
+
+	depack(count, 0)
+
+	numpods =3D 0
+
+	; Check for race ports
+	If dpckout(35,0) &lt;&gt; 1
+		For loop =3D 0 To 3
+			x1 =3D dpckout(36+loop*8,0)*256+dpckout(37+loop*8,0)
+			y1 =3D dpckout(38+loop*8,0)*256+dpckout(39+loop*8,0)
+			x2 =3D dpckout(40+loop*8,0)*256+dpckout(41+loop*8,0)
+			y2 =3D dpckout(42+loop*8,0)*256+dpckout(43+loop*8,0)
+
+			If x1 =3D 0 And x2 =3D 0 Then Exit
+		=09
+			pod(loop)\x =3D x1
+			pod(loop)\y =3D y1
+			pod(loop)\w =3D x2 - x1+16
+			pod(loop)\h =3D y2 - y1+16
+			numpods =3D numpods + 1
+		Next
+	EndIf
+
+
+	;player 1
+	bt1 =3D dpckout(94, 0)
+	bt2 =3D dpckout(95, 0)
+	ships(0)\x =3D bt1*256+bt2-108+4
+	ships(0)\ox =3D ships(0)\x
+
+	bt1 =3D dpckout(98, 0)
+	bt2 =3D dpckout(99, 0)
+	ships(0)\y =3D bt1*256+bt2+10
+	ships(0)\oy =3D ships(1)\y
+
+	;player 2
+	bt1 =3D dpckout(102, 0)
+	bt2 =3D dpckout(103, 0)
+	ships(1)\x =3D bt1*256+bt2-108+4
+	ships(1)\ox =3D ships(1)\x
+
+	bt1 =3D dpckout(106, 0)
+	bt2 =3D dpckout(107, 0)
+	ships(1)\y =3D bt1*256+bt2+10
+	ships(1)\oy =3D ships(1)\y
+=09
+	For curship =3D 0 To 1	=09
+		player(curship)\xpos =3D ships(curship)\x - player(curship)\v\w/2
+		player(curship)\ypos =3D ships(curship)\y - player(curship)\v\h/2
+
+		If player(curship)\xpos &lt; 0 Then player(curship)\xpos =3D 0
+		If player(curship)\xpos &gt; 336-player(curship)\v\w Then =
+player(curship)\xpos =3D 336-player(curship)\v\w
+
+	=09
+		If player(curship)\ypos &lt; 0 Then player(curship)\ypos =3D 0
+		If player(curship)\ypos &gt; 1008-player(curship)\v\h Then =
+player(curship)\ypos =3D 1008-player(curship)\v\h
+	Next
+=09
+
+
+	; water positions and speed
+	bt1 =3D dpckout(110,0)
+	bt2 =3D dpckout(111,0)
+	water_s =3D bt1*256+bt2
+=09
+	If water_s =3D 32768
+		water_flg =3D False
+	Else
+		water_flg =3D True
+	EndIf
+
+	bt1 =3D dpckout(114,0)
+	bt2 =3D dpckout(115,0)
+	water_e =3D bt1*256+bt2
+=09
+	If water_s=3D0 And water_e=3D0 Then water_s =3D 32768
+	If water_s=3D32767 Then water_s =3D 32768
+=09
+	bt1 =3D dpckout(118,0)
+	bt2 =3D dpckout(119,0)
+	bt3 =3D dpckout(120,0)
+	bt4 =3D dpckout(121,0)
+=09
+	water_spd =3D Abs((bt1*16777216)+(bt2*65536)+(bt3*256)+bt4)
+=09
+	If water_spd &gt; 0 Then water_spd =3D (50.0/78.0) * ((water_e-water_s) =
+/ water_spd)
+
+	;remove any existing shooters
+	For s.shooter =3D Each shooter
+		Delete s
+	Next
+=09
+	For a.airobj =3D Each airobj
+		Delete a
+	Next
+=09
+	Delete Each WeaponInstance
+=09
+	For sloop =3D 0 To 9
+		bt1 =3D dpckout(1453+sloop*12+0,0)
+		bt2 =3D dpckout(1453+sloop*12+1,0)
+		timer =3D (bt1*256)+bt2
+		If timer =3D 0 Then Exit
+	=09
+		s.shooter =3D New shooter
+	=09
+		s\pretimer =3D timer * (78/50.0)  ; 78 frames vs 50 frames/sec
+		s\timeout =3D s\pretimer
+	=09
+	=09
+		bt1 =3D dpckout(1453+sloop*12+2,0)
+		bt2 =3D dpckout(1453+sloop*12+3,0)
+		mby =3D bt1*256+bt2
+		my =3D mby/42
+		mx =3D (mby - (my*42))*8
+		mbx =3D dpckout(1453+sloop*12+4,0)
+		s\mx =3D mx+(7-mbx)
+		s\my =3D my
+	=09
+		s\inv =3D dpckout(1453+sloop*12+5,0)
+	=09
+		s\timer =3D dpckout(1453+sloop*12+6,0) * (78/50.0)
+=09
+		s\dir =3D dpckout(1453+sloop*12+7,0)
+	=09
+		If s\dir =3D 2 Then
+			s\dir =3D 3
+		ElseIf s\dir =3D 3 Then
+			s\dir =3D 2
+		EndIf
+	=09
+		bt1 =3D dpckout(1453+sloop*12+8,0)
+		bt2 =3D dpckout(1453+sloop*12+9,0)
+;		s\x =3D (bt1*256)+bt2 - dpckout(1453+sloop*12+4,0) - 1
+		s\x =3D (bt1*256)+bt2 ;- dpckout(1453+sloop*12+4,0)
+
+
+	=09
+		bt1 =3D dpckout(1453+sloop*12+10,0)
+		bt2 =3D dpckout(1453+sloop*12+11,0)=20
+		s\y =3D (bt1*256)+bt2 ;- dpckout(1453+sloop*12+4,0)
+
+		s\dx =3D s\x	=09
+		s\dy =3D s\y
+	=09
+		s\ex =3D s\x
+		s\ey =3D s\y
+	=09
+	=09
+;		If dir =3D 0 Then s\y =3D s\y-10
+=09
+	Next
+=09
+	For m.magnet =3D Each magnet
+		Delete m
+	Next
+=09
+
+	For mloop =3D 0 To 9
+		x =3D dpckout(1573+mloop*2,0)
+		y =3D dpckout(1574+mloop*2,0)
+=09
+;		Stop
+
+		If x =3D 0 Then Exit
+	=09
+		m.magnet =3D New magnet
+			=09
+		If CheckBit(x,7)
+			m\w =3D 64
+			m\x =3D (x-128)*16
+			m\dir =3D 0
+		Else
+			m\w =3D 64
+			m\x =3D ((x-1)*16) - m\w
+			m\dir =3D 1
+		EndIf
+	=09
+		m\y =3D ((y-1)*16)-2
+		m\h =3D 20
+	Next
+=09
+	map =3D DrawMap(lv)
+Return
+
+
+.DoWater
+;Color 255,225,195
+;Text 30,150,"Water Start:"+water_s+" End:"+water_e+" Spd:"+water_spd
+;Text 30,150,"Avail VidMem:"+AvailVidMem()+" Used: =
+"+(startvid-AvailVidMem())
+
+	If water_s =3D 32768 Then Return
+;	If Abs(water_e - water_s) &gt; 1008 Then Return
+=09
+	If water_spd &gt; 0 And water_s &lt; water_e Then water_s =3D water_s + =
+water_spd*10
+	If water_spd &lt; 0 And water_s &gt; water_e Then water_s =3D water_s + =
+water_spd*10
+=09
+	Color 0,40,100
+=09
+	For curship =3D 0 To numplayers-1
+		SetDisplay(BackBuffer(),player(curship)\v)
+		yoff =3D water_s-player(curship)\ypos
+		If yoff&lt;0 Then yoff=3D0
+		Rect 0,yoff,336,player(curship)\v\h-yoff
+	Next
+Return
+
+
+.KillPlayer
+	If player(curship)\dead &gt; 0 Then Return
+
+	player(1-curship)\score =3Dplayer(1-curship)\score+1
+
+	ang =3D numrots/15
+	For floop =3D 0 To 15
+		a.airobj =3D New airobj
+		=09
+		x# =3D rots(ang*floop)\x
+		y# =3D rots(ang*floop)\y
+
+		a\x =3D ships(curship)\x+x#*9
+		a\y =3D ships(curship)\y+y#*9
+=09
+;		a\ox =3D a\x
+;		a\oy =3D a\y
+=09
+		a\xinc =3D ships(curship)\xinc+x#
+		a\yinc =3D ships(curship)\yinc+y#
+=09
+		a\player =3D 2
+	Next
+
+	player(curship)\dead=3D70
+
+	DoPlaySound bigexp
+	DoPlaySound bingo
+
+	bt1 =3D dpckout(94+curship*8, 0)
+	bt2 =3D dpckout(95+curship*8, 0)
+	ships(curship)\x =3D bt1*256+bt2-108+4
+	ships(curship)\ox =3D ships(0)\x
+
+	bt1 =3D dpckout(98+curship*8, 0)
+	bt2 =3D dpckout(99+curship*8, 0)
+	ships(curship)\y =3D bt1*256+bt2+10
+	ships(curship)\oy =3D ships(1)\y
+=09
+	xpos =3D ships(curship)\x - player(curship)\v\w/2
+	ypos =3D ships(curship)\y - player(curship)\v\h/2
+	player(curship)\xpos =3D xpos
+	player(curship)\ypos =3D ypos
+
+	If player(curship)\xpos &lt; 0 Then player(curship)\xpos =3D 0
+	If player(curship)\xpos &gt; 336-player(curship)\v\w Then =
+player(curship)\xpos =3D 336-player(curship)\v\w
+
+	=09
+	If player(curship)\ypos &lt; 0 Then player(curship)\ypos =3D 0
+	If player(curship)\ypos &gt; 1008-player(curship)\v\h Then =
+player(curship)\ypos =3D 1008-player(curship)\v\h
+
+	xpos =3D player(curship)\xpos
+	ypos =3D player(curship)\ypos
+				=09
+	shipang =3D 0
+	shipstate =3D 0
+
+	i =3D curship
+	Gosub InitPlayer
+Return
+
+
+Function DrawMap(lv.levtypes)
+	map =3D CreateImage(336,1008)
+
+	SetBuffer ImageBuffer(supermap)
+	Cls
+=09
+	SetBuffer ImageBuffer(map)
+
+	VWait
+
+	For yloop =3D 0 To 62
+		For xloop =3D 0 To 20
+			num =3D dpckout(130+xloop+yloop*21, 0)
+			If num &lt;=3D lv\numshapes-1 Then
+				DrawBlock shapes(num,0,lv\shapeslot),xloop*16, yloop*16
+				If shapes(num,1,lv\shapeslot) &lt;&gt; 0 Then
+					SetBuffer ImageBuffer(supermap)
+					DrawBlock shapes(num,1,lv\shapeslot),xloop*16, yloop*16
+					SetBuffer ImageBuffer(map)
+				EndIf
+			Else
+				DrawBlock shapes(0,0,lv\shapeslot),xloop*16, yloop*16
+			EndIf
+		Next
+	Next
+
+;	For s.shooter =3D Each shooter
+;		Color 250,10,210
+;		Plot s\mx,s\my
+;	Next
+		=09
+	Return map
+End Function
+
+
+Function PreviewDrawMap(lv.levtypes)
+	map =3D CreateImage(336,1008)
+=09
+	SetBuffer ImageBuffer(map)
+	Cls
+
+=09
+	If water_s &lt;&gt; 32768
+		If water_s &gt; water_e
+			If water_spd &lt;&gt; 0
+				Color 0,30,75
+				Rect 0,water_e,336,1008
+			EndIf
+			Color 0,40,100
+			Rect 0,water_s,336,1008
+		Else
+			Color 0,40,100
+			Rect 0,water_s,336,1008
+			If water_spd &lt;&gt; 0
+				Color 0,30,75
+				Rect 0,water_e,336,1008
+			EndIf
+		EndIf
+	EndIf
+
+	If numpods &gt; 0
+		For loop =3D 0 To numpods-1
+			Color 200,40,100
+;			Rect pod(loop)\x,pod(loop)\y,pod(loop)\w,pod(loop)\h
+		Next
+	EndIf=09
+
+;	For s.shooter =3D Each shooter
+;		Color 250,10,210
+;		Plot s\mx,s\my
+;	Next
+
+
+	For yloop =3D 0 To 62
+		For xloop =3D 0 To 20
+			num =3D dpckout(130+xloop+yloop*21, 0)
+			If num &lt;=3D lv\numshapes-1 Then
+				DrawImage shapes(num,0,lv\shapeslot),xloop*16, yloop*16
+			Else
+				DrawImage shapes(0,0,lv\shapeslot),xloop*16, yloop*16
+			EndIf
+		Next
+	Next
+
+	DrawImage shipshape(0,0), ships(0)\x, ships(0)\y
+	DrawImage shipshape(0,2), ships(1)\x, ships(1)\y
+=09
+
+
+	For s.shooter =3D Each shooter
+		Color 10,10,10
+		Plot s\dx,s\dy
+	Next
+		=09
+	Return map
+End Function
+
+
+Function MiniDrawMap(lv.levtypes)
+	minimap =3D CreateImage(84,252)
+
+	SetBuffer ImageBuffer(minimap)
+
+	For yloop =3D 0 To 62
+		For xloop =3D 0 To 20
+			num =3D dpckout(130+xloop+yloop*21, 0)
+			If num &lt;=3D lv\numshapes-1 Then
+				DrawBlock minshapes(num),xloop*4, yloop*4
+			Else
+				DrawBlock minshapes(0),xloop*4, yloop*4
+			EndIf
+		Next
+	Next
+
+	Return minimap
+End Function
+
+
+Function Draw(mx, my)
+	Stop	; deprecated
+	DrawArea(mx, my, 0, 0, 336, player(curship)\v\h,0)
+End Function
+
+
+Function DrawArea(mx, my, dx, dy, dwidth, dheight, yoff)
+	Stop	; deprecated
+	ty=3D(my+dy)/16
+	sy=3Ddy-((dy+my) Mod 16)
+	While sy&lt;=3D(dy+dheight)
+		ty=3Dty Mod 63
+		tx=3D(mx+dx)/16
+		sx=3Ddx-((dx+mx) Mod 16)
+		While sx&lt;(dx+dwidth)
+			num =3D dpckout(130+tx+ty*21, 0)
+			If num &lt;=3D numshapes-1 Then
+				DrawBlock shapes(num,0,shapeslot),sx,sy+yoff
+			Else
+				DrawBlock shapes(0,0,shapeslot),sx,sy+yoff
+			EndIf
+			tx=3Dtx+1:sx=3Dsx+16
+		Wend
+		ty=3Dty+1:sy=3Dsy+16
+	Wend
+End Function
+
+
+Function gf(cnt,slot)
+	num=3Ddpckin(cnt,slot)
+	Return num
+End Function
+
+
+Function depack(size, slot)
+	bt1 =3D dpckin(0,slot)
+	bt2 =3D dpckin(1,slot)
+	bt3 =3D dpckin(2,slot)
+	bt4 =3D dpckin(3,slot)
+
+	tst$ =3D Chr$(bt1)+Chr$(bt2)+Chr$(bt3)+Chr$(bt4)
+=09
+	If tst$ &lt;&gt; "BPCK"
+;		Print "Not Compressed.."
+		For loop =3D 0 To size
+			dpckout(loop, slot) =3D dpckin(loop, slot)
+		Next
+		Return size
+	EndIf
+=09
+  	bit8=3Ddpckin(4,slot)
+  	bit16=3Ddpckin(5,slot)
+
+  	If bit8&lt;0 Then bit8=3Dbit8+256
+  	If bit16&lt;0 Then bit16=3Dbit16+256
+
+
+  	bt1=3Ddpckin(10,slot)
+  	bt2=3Ddpckin(11,slot)
+
+  	If bt1&lt;0 Then bt1=3Dbt1+256
+  	If bt2&lt;0 Then bt2=3Dbt2+256
+
+  grot_size=3D(bt1*256)+bt2
+;Print "grot:"+grot_size
+ =20
+;  Dim gfx(grot_size)
+
+    char=3D0
+    chr_rpt=3D0
+
+    cnt=3D12
+    decount=3D0
+
+    While decount&lt;grot_size
+      num =3D gf(cnt, slot):cnt=3Dcnt+1
+      If num&lt;0 Then num=3Dnum+256
+
+      If num=3Dbit8 Or num=3Dbit16
+
+        If num=3Dbit8
+          num =3D gf(cnt, slot):cnt=3Dcnt+1
+          If num&lt;0 Then num=3Dnum+256
+          ch_rpt=3Dnum
+          num =3D gf(cnt, slot):cnt=3Dcnt+1
+          If num&lt;0 Then num=3Dnum+256
+
+          char=3Dnum
+		 =20
+;Print "ch:"+ch_rpt	=09
+          For loop=3D1 To ch_rpt
+            dpckout(decount,slot)=3Dchar
+            decount=3Ddecount+1
+          Next
+        End If
+
+        If num=3Dbit16
+          num =3D gf(cnt, slot):cnt=3Dcnt+1
+          If num&lt;0 Then num=3Dnum+256
+          bt1=3Dnum
+          num =3D gf(cnt, slot):cnt=3Dcnt+1
+          If num&lt;0 Then num=3Dnum+256
+          bt2=3Dnum
+          ch_rpt=3D(bt1*256)+bt2
+          num =3D gf(cnt, slot):cnt=3Dcnt+1
+;Print "ch16:"+ch_rpt
+
+          If num&lt;0 Then num=3Dnum+256
+          char=3Dnum
+		  For loop=3D1 To ch_rpt
+            dpckout(decount,slot)=3Dchar
+            decount=3Ddecount+1
+          Next
+        End If
+
+      Else
+        dpckout(decount,slot)=3Dnum
+        decount=3Ddecount+1
+      End If
+    Wend
+
+
+	Return decount
+End Function
+
+
+Function DoFont()
+	gpfont =3D LoadImage ("gfx/gpfont.bmp")
+
+	fil =3D ReadFile("gfx/gp.exe")
+	SeekFile(fil,177770)
+	For loop =3D 0 To 93
+		charwidth(loop)=3DReadByte(fil)
+	Next
+	CloseFile fil
+
+	Return
+
+	; don't need to read amiga exe just now...
+	For loop =3D 0 To 7
+		charcol(loop,0) =3D 100+Rnd(155)
+		charcol(loop,1) =3D 100+Rnd(155)
+		charcol(loop,2) =3D 100+Rnd(155)
+	Next
+
+	charcol(0,0)=3D000:	charcol(0,1)=3D000:	charcol(0,2)=3D000
+	charcol(1,0)=3D255:	charcol(1,1)=3D000:	charcol(1,2)=3D000=09
+	charcol(2,0)=3D000:	charcol(2,1)=3D255:	charcol(2,2)=3D000
+	charcol(3,0)=3D000:	charcol(3,1)=3D000:	charcol(3,2)=3D255
+	charcol(4,0)=3D000:	charcol(4,1)=3D255:	charcol(4,2)=3D255
+	charcol(5,0)=3D255:	charcol(5,1)=3D000:	charcol(5,2)=3D255
+	charcol(6,0)=3D255:	charcol(6,1)=3D255:	charcol(6,2)=3D000
+	charcol(7,0)=3D255:	charcol(7,1)=3D255:	charcol(7,2)=3D255
+
+	fil =3D ReadFile("gfx/gp.exe")
+	SeekFile(fil,176520)
+
+	gpfont =3D CreateImage(800,64)
+	SetBuffer ImageBuffer(gpfont)
+=09
+	For charloop =3D 0 To 93
+		For lineloop =3D 0 To 7
+			byte =3D ReadByte(fil)
+			For loop =3D 0 To 7
+				If CheckBit(byte, 7-loop)
+					For coloop =3D 0 To 7=09
+						Color charcol(coloop,0),charcol(coloop,1),charcol(coloop,2)
+						Plot charloop*8+loop,lineloop+coloop*8
+					Next
+				EndIf
+			Next
+			ypos=3Dypos+1
+		Next
+
+;		For coloop =3D 0 To 7
+;			charfont(charloop,coloop) =3D CreateImage(8,8)
+;			GrabImage charfont(charloop,coloop), coloop*8,0
+;		Next
+	Next
+
+	SeekFile(fil,177770)
+	For loop =3D 0 To 93
+		charwidth(loop)=3DReadByte(fil)
+	Next
+
+	CloseFile(fil)
+=09
+	SetBuffer FrontBuffer()
+	SaveImage gpfont,"gfx/gpfont.bmp"
+End Function
+
+
+Function DoBigTextLined(x,y,txt$,colour)
+	buf =3D GraphicsBuffer()
+	tmpimage =3D CreateImage(Len(txt)*8,8)
+	SetBuffer ImageBuffer(tmpimage)
+
+	DoText(0,0,txt,colour)
+	SetBuffer buf
+	ScaleImage tmpimage,1,2
+	SetBuffer ImageBuffer(tmpimage)
+	For loop =3D 1 To 15 Step 2
+		Color 0,0,0
+		Line 0,loop,Len(txt)*8,loop
+	Next
+	=09
+	SetBuffer buf
+	DrawImage tmpimage,x,y
+	FreeImage tmpimage
+End Function
+
+Function DoBigText(x,y,txt$,colour)
+	buf =3D GraphicsBuffer()
+	tmpimage =3D CreateImage(Len(txt)*8,8)
+	SetBuffer ImageBuffer(tmpimage)
+
+	DoText(0,0,txt,colour)
+	SetBuffer buf
+	ScaleImage tmpimage,1,2
+	DrawImage tmpimage,x,y
+	FreeImage tmpimage
+
+End Function
+=09
+Function DoText(x,y,txt$,colour)
+	lstchar$ =3D ""
+	For loop =3D 0 To Len(txt)-1
+		ind$ =3D Mid$(txt$,loop+1,1)
+
+		a =3D Asc(ind)-32
+		If lstchar$=3D"L" And ind$=3D"T" Then x =3D x - 2
+
+		DrawImageRect gpfont, x, y, a*8, colour*8, charwidth(a), 8
+		x =3D x + charwidth(a)+1
+
+		lstchar$=3Dind$
+	Next
+End Function
+
+
+;.menus
+;tmtext:	dc.b	'=B9y',25,'=B9d=B9z=B9f4TOURNAMENT MENU=B9n=B9b',65,50
+;dc.b	'=B9f2Play Next Match',10,10,'=B9f5Start New Tournament=B9j'
+;	even
+;ttres:	dc.l	ttgon
+;ttgon:	dc.b	'=B9b',15,225,'=B9f7Main Menu',0
+
+.menu_main
+Data	"=B9y",25,"=B9d=B9z=B9f4GRAVITY POWER=B9n=B9c"
+Data	"=B9c=B9y",75,"=B9d=B9z=B9f1&lt;  MAIN MENU  &gt;=B9n=B9b",40,95
+Data	"=B9fFUse Joysticks To Select:=B9b",65,113,"=B9f2Play"
+Data	"=B9x",110,"Level Info","=B9x",65
+Data	10,10,"=B9f3Tournament"
+Data	10,10,"=B9f4Load New Level",10,10,"=B9f5Preferences",10,10
+Data	"f7Help And Texts",10,1
+Data	"=B9f1Exit",0
+
+;t_sinit:	dc.b	'=B9y',40,'=B9z=B9f7',0
+
+;	odd
+;anders_txt:
+;dc.b	'=B9b',62,25,'=B9d=B9z=B9f4 GRAVITY POWER =B9n=B9c=B9y',50
+;dc.b	'=B9z=B9f5GP v1.20 (C) 1995 Bits Productions=B9x',10,10,10
+;dc.b	'=B9z=B9f4 CPU: 680'
+;proc_type:	dc.b	'00 / Level Handler v'
+;spec_ver:	dc.b	'x.xx / AGA Chipset: '
+;aga_t:	dc.b	'No ',10,'=B9c',10,10
+
+;	incbin	"dh1:code/gp/gf-gfx/anders.txt"
+;jb_txt:
+
+;nttxt:	dc.b	'=B9y',25,'=B9D=B9z=B9f4NEW =
+TOURNAMENT=B9c=B9n=B9y',50,'=B9z=B9f5How Many Players?',0
+;nttxt2:	dc.b	'=B9y',50,'=B9D=B9z=B9f2Input Your Name Player '
+;ntt2b:	dc.b	'X=B9p:=B9c=B9n',0
+
+;winnertxt:
+;	dc.b	'=B9y',25,'=B9D=B9z=B9f1- BATTLE REPORT =
+-',10,10,'=B9n=B9x',40,'=B9fFTotal Shots'
+;	dc.b	' Fired:=B9g'
+;	even
+;	dc.l	b_sh+1
+;	dc.b	10,'=B9x',40,'Battle took:=B9g'
+;	even
+;	dc.l	b_ti
+;	dc.b	' sec.=B9c'
+;	dc.b	'=B9y',110,'=B9D=B9z=B9f6And the WINNER is:=B9c=B9j'
+
+;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&a=
+mp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;=
+&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&am=
+p;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&=
+amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp=
+;
+;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&a=
+mp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;--Scripted Weapon =
+Stuff--&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&=
+amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;
+;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&a=
+mp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;=
+&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&am=
+p;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&=
+amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp;&amp=
+;
+
+.DoIncludes
+Include "includes/debug.bb"
+Include "includes/vport.bb"
+Include "includes/stdlib.bb"
+Include "includes/soundchan.bb"
+Include "includes/quotes.bb"
+Include "includes/weapons.bb"
+Return</PRE>
+<HR noShade>
+
+<TABLE cellSpacing=3D0 cellPadding=3D0 width=3D"100%" border=3D0>
+  <TBODY>
+  <TR>
+    <TD align=3Dleft>
+      <ADDRESS><A href=3D"http://sourceforge.net/">Back to=20
+      SourceForge</A></ADDRESS></TD>
+    <TD align=3Dright>Powered by<BR><A=20
+      href=3D"http://viewcvs.sourceforge.net/">ViewCVS 0.8</A>=20
+</TD></TR></TBODY></TABLE></BODY></HTML>
+
+------=_NextPart_000_0000_01C2D04F.DF228350
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://cvs.sourceforge.net/viewcvs/back.gif
+
+R0lGODlhEAAQAKL/ACEhITExMVpaWoSEhIyMjMDAwAAAAAAAACH5BAEAAAUALAAAAAAQABAAAANG
+WLrcDcBJYEyUi1aLi9AVIHTEZhBdUW4oabbDoMjKWo1ELAitEpiegDAwWghMg6HQYSIqHSDRsLew
+nYRFx3EzyEoIYHAjAQA7
+
+------=_NextPart_000_0000_01C2D04F.DF228350
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://cvs.sourceforge.net/viewcvs/text.gif
+
+R0lGODlhEAAQAKL/AP///zk5OWtra4yMjMDAwM7Ozufn5wAAACH5BAEAAAQALAAAAAAQABAAAANF
+SLrcvuMVQGsxsc1KJ9ZcVxREpkxBmgJqwHhGbFCK8LJtZdgLLMcU3gnXWgkJvt/siCoab0oZgEks
+Tm8hzrEk6Hq9rkUCADs=
+
+------=_NextPart_000_0000_01C2D04F.DF228350
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://cvs.sourceforge.net/viewcvs/dir.gif
+
+R0lGODlhEAAQAKL/AP/erf/crsDAwLigfVdLOyslHQAAAAAAACH5BAEAAAIALAAAAAAQABAAAANJ
+KGKm/s6UMZiy0IAyqxkBdgEkR1FBFZGseTYj23bwIt9frd1kRei8nuG3Cvp0hAHv+GAkZczMUAk4
+FiCXqfWKXQy/nG6EERYkAAA7
+
+------=_NextPart_000_0000_01C2D04F.DF228350--
