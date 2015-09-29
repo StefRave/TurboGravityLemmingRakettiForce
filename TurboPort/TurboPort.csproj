@@ -1,0 +1,309 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{B429EBF2-047C-47C9-922A-2966AA713572}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>TurboPort</RootNamespace>
+    <AssemblyName>TurboPort</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MonoGame.Framework, Version=3.4.0.459, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.WindowsGL.3.4.0.459\lib\net40\MonoGame.Framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.WindowsGL.3.4.0.459\lib\net40\OpenTK.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Game1.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="GlobalData.cs" />
+    <Compile Include="Gravitiforce.cs" />
+    <Compile Include="InputHandler.cs" />
+    <Compile Include="ObjectBackground.cs" />
+    <Compile Include="Objects.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="SoundHandler.cs" />
+    <Compile Include="World.cs" />
+    <Compile Include="Bullet.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Gf2Level\Gfx\Alien.Bmap" />
+    <EmbeddedResource Include="Gf2Level\Gfx\Arctic.bmap" />
+    <EmbeddedResource Include="Gf2Level\Gfx\Boring.bmap" />
+    <EmbeddedResource Include="Gf2Level\Gfx\Grass.bmap" />
+    <EmbeddedResource Include="Gf2Level\Gfx\Lego.bmap" />
+    <EmbeddedResource Include="Gf2Level\Gfx\Metallic.bmap" />
+    <EmbeddedResource Include="Gf2Level\Levels\ALBoring~3f.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\ALBoring~3f.GFB.decr" />
+    <EmbeddedResource Include="Gf2Level\Levels\ALJoyride.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\ALJoyride.GFB.decr" />
+    <EmbeddedResource Include="Gf2Level\Levels\ALMaze on Mars.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\ALMaze on Mars.GFB.decr" />
+    <EmbeddedResource Include="Gf2Level\Levels\ALMystic %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\ALMystic %28Race%29.GFB.decr" />
+    <EmbeddedResource Include="Gf2Level\Levels\ALRocky Cave %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\ALRocky Cave %28Race%29.GFB.decr" />
+    <EmbeddedResource Include="Gf2Level\Levels\ALSpace Invaders.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\ALSpace Invaders.GFB.decr" />
+    <EmbeddedResource Include="Gf2Level\Levels\ALThe Skull.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\ALThe Skull.GFB.decr" />
+    <EmbeddedResource Include="Gf2Level\Levels\ALThe Tour %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\ALThe Tour %28Race%29.GFB.decr" />
+    <EmbeddedResource Include="Gf2Level\Levels\ARCold War.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\ARCold War.GFB.decr" />
+    <EmbeddedResource Include="Gf2Level\Levels\ARIce Cold.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\ARIce-T %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\ARIcy Cave.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\AROver the Top %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\ARThe Circle.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\ARThe Snow Castle.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\ARZig Zag %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\BOFlummMarabou!.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\BOIslands in Space.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\BOLabyrinth.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\BOLife in a Box.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\BOMerry Go Round %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\BOOh No more slime.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\BOOne Shooter Each.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\BOQuickrace %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\BOSymmetry.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\BOU-Turn %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\BOUnderWater.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRArena.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRBeat The Rabbit.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRBomber%27s Delight.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRBomber%27s Delight.GFB.decr" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRBomber%27s Delight.GFB.decr.hex" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRDiving.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRGr8 %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRHate Me! %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRIQ-Arena.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRLarge Arena.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRLong distance War.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRLying Eight %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRMagnetoWorld.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRRace 0 %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRShortcut~3f %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRSightseeing %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRSlalom %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRSuper-8 %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRT-Time.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRThe Jungle %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRThe Tower.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRTrapped.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRTunnels in Earth.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRTwisted %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRTwo Lanes.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\GRUp%27n%27Down %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\LEBomb Shield.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\LEChaos Cavern.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\LECheck it out.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\LEDead Calm.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\LELying S %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\LEOval %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\LEPeanuts.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\LERace On %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\LESexy~3f %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\LET-Bone %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\LEThe Corridor %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\LEThe Rainy Day.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\LEWork Out.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\MEFence %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\MEJerk Around.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\MELittle Pipe %28Race%29.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\MEModern Art.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\METhe Portal.GFB" />
+    <EmbeddedResource Include="Gf2Level\Levels\ZIClassic Dogfight.GFB" />
+    <EmbeddedResource Include="Gf2Level\Types\AL" />
+    <EmbeddedResource Include="Gf2Level\Types\AR" />
+    <EmbeddedResource Include="Gf2Level\Types\BO" />
+    <EmbeddedResource Include="Gf2Level\Types\DE" />
+    <EmbeddedResource Include="Gf2Level\Types\GR" />
+    <EmbeddedResource Include="Gf2Level\Types\LE" />
+    <EmbeddedResource Include="Gf2Level\Types\ME" />
+    <EmbeddedResource Include="Gf2Level\Types\SL" />
+    <EmbeddedResource Include="Gf2Level\Types\ZI" />
+    <None Include="Icon.png" />
+    <None Include="media\level\gf2\Gfx\Alien.Bmap" />
+    <None Include="media\level\gf2\Gfx\Arctic.bmap" />
+    <None Include="media\level\gf2\Gfx\boring.bmap" />
+    <None Include="media\level\gf2\Gfx\grass.bmap" />
+    <None Include="media\level\gf2\Gfx\lego.bmap" />
+    <None Include="media\level\gf2\Gfx\metallic.bmap" />
+    <None Include="media\level\gf2\gp2-GP2-gp2.bb.mht" />
+    <None Include="media\level\gf2\gp2.bb" />
+    <None Include="media\level\gf2\levels\ALBoring~3f.GFB" />
+    <None Include="media\level\gf2\levels\ALBoring~3f.GFB.decr" />
+    <None Include="media\level\gf2\levels\ALJoyride.GFB" />
+    <None Include="media\level\gf2\levels\ALJoyride.GFB.decr" />
+    <None Include="media\level\gf2\levels\ALMaze on Mars.GFB" />
+    <None Include="media\level\gf2\levels\ALMaze on Mars.GFB.decr" />
+    <None Include="media\level\gf2\levels\ALMystic %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\ALMystic %28Race%29.GFB.decr" />
+    <None Include="media\level\gf2\levels\ALRocky Cave %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\ALRocky Cave %28Race%29.GFB.decr" />
+    <None Include="media\level\gf2\levels\ALSpace Invaders.GFB" />
+    <None Include="media\level\gf2\levels\ALSpace Invaders.GFB.decr" />
+    <None Include="media\level\gf2\levels\ALThe Skull.GFB" />
+    <None Include="media\level\gf2\levels\ALThe Skull.GFB.decr" />
+    <None Include="media\level\gf2\levels\ALThe Tour %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\ALThe Tour %28Race%29.GFB.decr" />
+    <None Include="media\level\gf2\levels\ARCold War.GFB" />
+    <None Include="media\level\gf2\levels\ARCold War.GFB.decr" />
+    <None Include="media\level\gf2\levels\ARIce Cold.GFB" />
+    <None Include="media\level\gf2\levels\ARIce-T %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\ARIcy Cave.GFB" />
+    <None Include="media\level\gf2\levels\AROver the Top %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\ARThe Circle.GFB" />
+    <None Include="media\level\gf2\levels\ARThe Snow Castle.GFB" />
+    <None Include="media\level\gf2\levels\ARZig Zag %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\BOFlummMarabou!.GFB" />
+    <None Include="media\level\gf2\levels\BOIslands in Space.GFB" />
+    <None Include="media\level\gf2\levels\BOLabyrinth.GFB" />
+    <None Include="media\level\gf2\levels\BOLife in a Box.GFB" />
+    <None Include="media\level\gf2\levels\BOMerry Go Round %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\BOOh No, more slime!!!.GFB" />
+    <None Include="media\level\gf2\levels\BOOne Shooter Each.GFB" />
+    <None Include="media\level\gf2\levels\BOQuickrace %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\BOSymmetry.GFB" />
+    <None Include="media\level\gf2\levels\BOU-Turn %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\BOUnderWater.GFB" />
+    <None Include="media\level\gf2\levels\GRArena.GFB" />
+    <None Include="media\level\gf2\levels\GRBeat The Rabbit.GFB" />
+    <None Include="media\level\gf2\levels\GRBomber%27s Delight.GFB" />
+    <None Include="media\level\gf2\levels\GRBomber%27s Delight.GFB.decr" />
+    <None Include="media\level\gf2\levels\GRBomber%27s Delight.GFB.decr.hex" />
+    <None Include="media\level\gf2\levels\GRDiving.GFB" />
+    <None Include="media\level\gf2\levels\GRGr8 %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\GRHate Me! %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\GRIQ-Arena.GFB" />
+    <None Include="media\level\gf2\levels\GRLarge Arena.GFB" />
+    <None Include="media\level\gf2\levels\GRLong distance War.GFB" />
+    <None Include="media\level\gf2\levels\GRLying Eight %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\GRMagnetoWorld.GFB" />
+    <None Include="media\level\gf2\levels\GRRace 0 %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\GRShortcut~3f %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\GRSightseeing %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\GRSlalom %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\GRSuper-8 %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\GRT-Time.GFB" />
+    <None Include="media\level\gf2\levels\GRThe Jungle %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\GRThe Tower.GFB" />
+    <None Include="media\level\gf2\levels\GRTrapped.GFB" />
+    <None Include="media\level\gf2\levels\GRTunnels in Earth.GFB" />
+    <None Include="media\level\gf2\levels\GRTwisted %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\GRTwo Lanes.GFB" />
+    <None Include="media\level\gf2\levels\GRUp%27n%27Down %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\LEBomb Shield.GFB" />
+    <None Include="media\level\gf2\levels\LEChaos Cavern.GFB" />
+    <None Include="media\level\gf2\levels\LECheck it out.GFB" />
+    <None Include="media\level\gf2\levels\LEDead Calm.GFB" />
+    <None Include="media\level\gf2\levels\LELying S %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\LEOval %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\LEPeanuts.GFB" />
+    <None Include="media\level\gf2\levels\LERace On %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\LESexy~3f %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\LET-Bone %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\LEThe Corridor %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\LEThe Rainy Day.GFB" />
+    <None Include="media\level\gf2\levels\LEWork Out.GFB" />
+    <None Include="media\level\gf2\levels\MEFence %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\MEJerk Around.GFB" />
+    <None Include="media\level\gf2\levels\MELittle Pipe %28Race%29.GFB" />
+    <None Include="media\level\gf2\levels\MEModern Art.GFB" />
+    <None Include="media\level\gf2\levels\METhe Portal.GFB" />
+    <None Include="media\level\gf2\levels\ZIClassic Dogfight.GFB" />
+    <None Include="media\level\gf2\levels\_UAEFSDB.___" />
+    <None Include="media\level\gf2\Types\AL" />
+    <None Include="media\level\gf2\Types\AR" />
+    <None Include="media\level\gf2\Types\BO" />
+    <None Include="media\level\gf2\Types\DE" />
+    <None Include="media\level\gf2\Types\GR" />
+    <None Include="media\level\gf2\Types\LE" />
+    <None Include="media\level\gf2\Types\ME" />
+    <None Include="media\level\gf2\Types\SL" />
+    <None Include="media\level\gf2\Types\ZI" />
+    <None Include="media\object\pop_simple_lemming3.x" />
+    <None Include="media\soundfx\lem_wavs.zip" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Gf2Level\Gfx\Alien.bmap.bmp" />
+    <EmbeddedResource Include="Gf2Level\Gfx\test.bmp" />
+    <Content Include="media\gfx\particle.png" />
+    <Content Include="media\gfx\smoke.png" />
+    <Content Include="media\gfx\tx108.jpg" />
+    <Content Include="media\gfx\_particle.png" />
+    <Content Include="media\level\gf2\Gfx\Alien.bmap.bmp" />
+    <Content Include="media\level\gf2\Gfx\Alien.bmap.png" />
+    <Content Include="media\level\gf2\Gfx\test.bmp" />
+    <Content Include="media\soundfx\bigexp.wav" />
+    <Content Include="media\soundfx\bingo.wav" />
+    <Content Include="media\soundfx\bullethit.wav" />
+    <Content Include="media\soundfx\checkpoint.wav" />
+    <Content Include="media\soundfx\Explosion2.wav" />
+    <Content Include="media\soundfx\fire.wav" />
+    <Content Include="media\soundfx\firemissle.wav" />
+    <Content Include="media\soundfx\gpsounds.wav" />
+    <Content Include="media\soundfx\lem_wavs\BANG.WAV" />
+    <Content Include="media\soundfx\lem_wavs\CHAIN.WAV" />
+    <Content Include="media\soundfx\lem_wavs\CHANGEOP.WAV" />
+    <Content Include="media\soundfx\lem_wavs\CHINK.WAV" />
+    <Content Include="media\soundfx\lem_wavs\DIE.WAV" />
+    <Content Include="media\soundfx\lem_wavs\DOOR.WAV" />
+    <Content Include="media\soundfx\lem_wavs\ELECTRIC.WAV" />
+    <Content Include="media\soundfx\lem_wavs\EXPLODE.WAV" />
+    <Content Include="media\soundfx\lem_wavs\FIRE.WAV" />
+    <Content Include="media\soundfx\lem_wavs\GLUG.WAV" />
+    <Content Include="media\soundfx\lem_wavs\LETSGO.WAV" />
+    <Content Include="media\soundfx\lem_wavs\MANTRAP.WAV" />
+    <Content Include="media\soundfx\lem_wavs\MOUSEPRE.WAV" />
+    <Content Include="media\soundfx\lem_wavs\OHNO.WAV" />
+    <Content Include="media\soundfx\lem_wavs\OING.WAV" />
+    <Content Include="media\soundfx\lem_wavs\SCRAPE.WAV" />
+    <Content Include="media\soundfx\lem_wavs\SLICER.WAV" />
+    <Content Include="media\soundfx\lem_wavs\SPLASH.WAV" />
+    <Content Include="media\soundfx\lem_wavs\SPLAT.WAV" />
+    <Content Include="media\soundfx\lem_wavs\TENTON.WAV" />
+    <Content Include="media\soundfx\lem_wavs\THUD.WAV" />
+    <Content Include="media\soundfx\lem_wavs\THUNK.WAV" />
+    <Content Include="media\soundfx\lem_wavs\TING.WAV" />
+    <Content Include="media\soundfx\lem_wavs\YIPPEE.WAV" />
+    <Content Include="media\soundfx\shipcollide.wav" />
+    <Content Include="media\soundfx\shipcollide2.wav" />
+    <Content Include="media\soundfx\splash.wav" />
+    <Content Include="media\soundfx\tingaling.wav" />
+    <Content Include="media\soundfx\touchdown.wav" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>
