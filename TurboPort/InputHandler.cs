@@ -148,7 +148,7 @@ namespace tglrf
                 get
                 {
                     KeyConfig c = new KeyConfig();
-                    c.FireSpecial = Keys.Space;
+					c.FireSpecial = Keys.LeftControl;
                     c.Fire = Keys.LeftShift;
                     c.RotateRight = Keys.D;
                     c.RotateLeft = Keys.A;
@@ -162,11 +162,11 @@ namespace tglrf
                 get
                 {
                     KeyConfig c = new KeyConfig();
-                    c.FireSpecial = Keys.Enter;
-                    c.Fire = Keys.NumPad0;
-                    c.RotateRight = Keys.NumPad6;
-                    c.RotateLeft = Keys.NumPad4;
-                    c.ThrustKey = Keys.NumPad5;
+					c.FireSpecial = Keys.N;
+                    c.Fire = Keys.M;
+					c.RotateRight = Keys.Right;
+                    c.RotateLeft = Keys.Left;
+					c.ThrustKey = Keys.Up;
                     return c;
                 }
             }
@@ -227,29 +227,10 @@ namespace tglrf
 
             playerInput = new IInputControl[nrOfPlayers];
         
+			List<IInputControl> inputHandlers = new List<IInputControl>();
+			// TODO (san): First try to get controllers.. 
 
-	     GamePadState state = GamePad.GetState(PlayerIndex.Two);
-
-            List<IInputControl> inputHandlers = new List<IInputControl>();
-            //int count = Joystick.GetJoystickCount();
-            //if(count > 0)
-            //    inputHandlers.Add(new InputControlJoystick(0));
-
-/** san
-            DirectX8Class directx = new DirectX8Class();
-            DirectInput8 input = directx.DirectInputCreate();
-            DirectInputEnumDevices8 gameControllers = input.GetDIDevices(CONST_DI8DEVICETYPE.DI8DEVCLASS_GAMECTRL, CONST_DIENUMDEVICESFLAGS.DIEDFL_ATTACHEDONLY);
-            for(int i = 0; i < gameControllers.GetCount(); i++)
-            {
-                if(inputHandlers.Count >= nrOfPlayers)
-                    break;
-
-                DirectInputDeviceInstance8 gameController = gameControllers.GetItem(i + 1);
-                inputHandlers.Add(new InputControlJoystick(input, gameController));
-            }
-
-*/
-
+			// Default back to keyboard controls
             if(inputHandlers.Count < nrOfPlayers)
                 inputHandlers.Add(new InputControlKeyboard(InputControlKeyboard.KeyConfig.Player1));
             if(inputHandlers.Count < nrOfPlayers)

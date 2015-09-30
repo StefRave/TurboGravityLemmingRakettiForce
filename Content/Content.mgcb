@@ -13,12 +13,6 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Courier.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:TextureFormat=Compressed
-/build:Courier.spritefont
-
 #begin objects/pop_simple_lemming3.x
 /importer:XImporter
 /processor:ModelProcessor
@@ -139,4 +133,21 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:sound/touchdown.wav
+
+#begin DejaVuSans.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:DejaVuSans.spritefont
+
+#begin gfx/Alien.bmap.bmp
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:TextureFormat=Color
+/build:gfx/Alien.bmap.bmp
 

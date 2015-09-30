@@ -73,6 +73,14 @@ namespace tglrf.xna
 			// TODO: Add your initialization logic here
 			base.Initialize ();
 				
+			InputHandler.Initialize();
+			//SoundHandler.Initialize();
+
+			base.Initialize();
+
+			//renderTarget2D = new RenderTarget2D(GraphicsDevice, 20, 20, 1, SurfaceFormat.Bgr32);
+			//renderTarget2D = new RenderTarget2D(GraphicsDevice, 20, 20, true, SurfaceFormat.Bgr32, DepthFormat.Depth24);
+			renderTarget2D = new RenderTarget2D(GraphicsDevice, 20, 20);
 		}
 
 		/// <summary>
@@ -86,7 +94,7 @@ namespace tglrf.xna
 
 			//TODO: use this.Content to load your game content here 
 
-			//spriteFont = Content.Load<SpriteFont>("DejaVuSans");
+			spriteFont = Content.Load<SpriteFont>("DejaVuSans");
 			//spriteFont = Content.Load<SpriteFont>("Contnt/bin/Windows/gfx/DejaVuSans");
 			gfl = null;
 
@@ -140,6 +148,8 @@ namespace tglrf.xna
 				for(int i = 0; i < InputHandler.Player.Length; i++)
 				{
 					playerShips[i].HandleController(InputHandler.Player[i], timeElapsed);
+					//san
+					//Console.WriteLine("[" + i + "] = " + playerShips[i].Position.ToString());
 				}
 			}
 			for(int i = 0; i < shipBase.Length; i++)
@@ -232,8 +242,8 @@ namespace tglrf.xna
 			DrawToRenderTarget(gd);
 
 
-			//Clear the backbuffer to a blue color 
-			GraphicsDevice.Clear(ClearOptions.DepthBuffer | ClearOptions.Target, Color.Blue, 1.0f, 0);
+			//Clear the backbuffer to the cornflower blue 
+			GraphicsDevice.Clear(ClearOptions.DepthBuffer | ClearOptions.Target, Color.CornflowerBlue, 1.0f, 0);
 			try
 			{
 

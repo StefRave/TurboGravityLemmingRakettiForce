@@ -3,7 +3,6 @@ using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-//using Color=Microsoft.Xna.Framework.Graphics.Color;
 using Rectangle=Microsoft.Xna.Framework.Rectangle;
 
 
@@ -18,7 +17,7 @@ namespace tglrf
 
     public class LevelBackgroundGF : ILevelBackground
     { 
-        private Texture2D texture;
+        private static Texture2D texture;
         private VertexPositionTexture[] vertexes;
         public Rectangle bounds;
         private GravitiForceLevel gfl;
@@ -44,12 +43,16 @@ namespace tglrf
             {
                 return true;
             }
-            return gfl.BitmapData[((int)point.X) + (levelWidth * ((int)point.Y))] != 0;
+            //return gfl.BitmapData[((int)point.X) + (levelWidth * ((int)point.Y))] != 0;
+
+			//san 
+			return false;
         }
 
 
         public void Render(GraphicsDevice device, BasicEffect be)
-        {
+		{
+//san
 #if false
             be.World = Matrix.Identity;
             
@@ -100,6 +103,8 @@ namespace tglrf
             LevelBackgroundGF result = new LevelBackgroundGF();
             result.gfl = gfl;
   
+			texture = content.Load<Texture2D>(@"gfx/Alien.bmap");
+
 /*
             result.declaration = new VertexDeclaration(device, VertexPositionTexture.VertexElements);
 
@@ -167,6 +172,10 @@ namespace tglrf
         {
             be.World = Matrix.Identity;
 
+			be.LightingEnabled = false;                     //dx: device.RenderState.Lighting = false;
+			be.Texture = texture;
+			device.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertexes, 0, 2);
+
 /** san
             device.RenderState.DepthBufferEnable = false;   // dx: device.RenderState.ZBufferEnable = false;
             be.LightingEnabled = false;                     //dx: device.RenderState.Lighting = false;
@@ -199,7 +208,7 @@ namespace tglrf
 
             //result.texture = Texture2D.FromFile(device, Path.Combine(DirectorySettings.MediaDir, @"gfx\tx108.jpg"));
 
-			string path = Path.Combine(DirectorySettings.MediaDir, @"gfx\tx108.jpg");
+			string path = Path.Combine(DirectorySettings.MediaDir, @"gfx/tx108.jpg");
 			FileStream fs = File.Create(path);
 
 			result.texture = Texture2D.FromStream (device, fs);

@@ -74,6 +74,9 @@ namespace tglrf
         private Model model;
         public Vector3 bodyColor;
 
+		// NOTE (san): temp solution until we have a proper renderer again
+		public Texture2D texture;
+
         public Model Model
         {
             get { return model; }
@@ -170,8 +173,9 @@ namespace tglrf
         public static ObjectShip CreateShip(GraphicsDevice device, ContentManager content)
         {
             ObjectShip result = new ObjectShip();
-            result.model = content.Load<Model>(@"objects\pop_simple_lemming3");
-
+            result.model = content.Load<Model>(@"objects/pop_simple_lemming3");
+			// NOTE (san): temp solution until we have a proper renderer again
+			result.texture = content.Load<Texture2D>(@"gfx/particle");
 
             Vector3 originalColor = ((BasicEffect)result.model.Meshes[0].Effects[0]).DiffuseColor;
             result.bodyColor = colorSwitchHack ? new Vector3(originalColor.X, originalColor.Z, originalColor.Y) : originalColor;
@@ -233,6 +237,7 @@ namespace tglrf
 
         public void Render(GraphicsDevice device, BasicEffect be, int p1, int p2)
         {
+/** san
             renderMatrix =
                 Matrix.CreateTranslation(new Vector3(centerOffset.X, centerOffset.Y, centerOffset.Z))*
                 Matrix.CreateRotationY(Rotation.Y)*
@@ -258,6 +263,12 @@ namespace tglrf
                 }
                 mesh.Draw();
             }
+*/
+
+			SpriteBatch sb = new SpriteBatch(device);
+			sb.Begin();
+			sb.Draw(texture, new Vector2(Position.X, Position.Y), null, null, null , Rotation.Z, null, Color.White, 0, 0);
+			sb.End();
         }
 
         bool prevFire = false;

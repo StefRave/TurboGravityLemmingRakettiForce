@@ -18,15 +18,16 @@ namespace tglrf
 
 		static private void Play(string name)
         {
-            soundBank.PlayCue(name);
+			// NOTE (san): Sound engine not working so disabling sound playback for now
+            //soundBank.PlayCue(name);
         }
 
         static public void Initialize()
         {
             // Initialize audio objects.
-            engine = new AudioEngine(@"Content\sound\tglrf.xgs");
-            soundBank = new SoundBank(engine, @"Content\sound\Sound Bank.xsb");
-            waveBank = new WaveBank(engine, @"Content\sound\Wave Bank.xwb");
+            engine = new AudioEngine(@"Content/sound/tglrf.xgs");
+            soundBank = new SoundBank(engine, @"Content/sound/Sound Bank.xsb");
+            waveBank = new WaveBank(engine, @"Content/sound/Wave Bank.xwb");
         }
 
         static public void Bigexp()         { Play("bigexp"); }

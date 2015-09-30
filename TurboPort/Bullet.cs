@@ -27,7 +27,7 @@ namespace tglrf
         {
             vertices = new VertexPositionColor[1024];
 
-            texture = content.Load<Texture2D>(@"gfx\particle");
+            texture = content.Load<Texture2D>(@"gfx/particle");
             //,
             //    D3DX.Default, D3DX.Default, 0, (Usage)0, Format.Unknown, Pool.Managed,
             //    Filter.None, (Filter)0, 0);
@@ -58,7 +58,7 @@ namespace tglrf
             basicEffect.Texture = texture;
             basicEffect.TextureEnabled = true;
 
-*/
+
             int count = 0;
 
             bool hackColliding = false;
@@ -94,7 +94,7 @@ namespace tglrf
             }
             ship.hackColliding = hackColliding;
 
-/** san
+/// ** san
             device.VertexDeclaration = new VertexDeclaration(device, VertexPositionColor.VertexElements);
         
             //// Unlock the vertex buffer
@@ -104,7 +104,7 @@ namespace tglrf
             {
                 basicEffect.Begin();
                 foreach(EffectPass pass in basicEffect.CurrentTechnique.Passes)
-                {
+	                {
                     pass.Begin();
 
                     device.DrawUserPrimitives(PrimitiveType.PointList, vertices, 0, count);
@@ -127,6 +127,13 @@ namespace tglrf
             device.RenderState.SourceBlend = Blend.SourceAlpha;
             device.RenderState.DestinationBlend = Blend.InverseSourceAlpha;
 */
+
+
+			// NOTE (san): Simple spritebatch render
+//			SpriteBatch sb = new SpriteBatch(device);
+//			sb.Begin();
+//			sb.Draw(texture, new Vector2(Position.X, Position.Y), null, null, null , Rotation.Z, null, Color.White, 0, 0);
+//			sb.End();
         }
 
     }
