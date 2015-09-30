@@ -74,7 +74,7 @@ namespace tglrf.xna
 			base.Initialize ();
 				
 			InputHandler.Initialize();
-			//SoundHandler.Initialize();
+			SoundHandler.Initialize(Content);
 
 			base.Initialize();
 
