@@ -177,7 +177,7 @@ Material phong2SG {
 	0.550000;0.420000;0.130000;;
 	0.000000;0.000000;0.000000;;
 	TextureFilename {
-		"wedge_p1_diff_v1.tga";
+		"wedge_p1_diff_v1.png";
 	}
 }
 Mesh single_mesh_object {
