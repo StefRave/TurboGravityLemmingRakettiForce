@@ -20,7 +20,7 @@ namespace TurboPort
 		GraphicsDeviceManager graphics;
 		SpriteBatch spriteBatch;
 
-		public static LevelBackgroundGF levelBackground;
+		public static ILevelBackground levelBackground;
 		private ObjectShip[] playerShips;
 		private BulletBuffer bullerBuffer;
 		private ShipBase[] shipBase;
@@ -102,7 +102,7 @@ namespace TurboPort
             playerShips = new ObjectShip[Settings.Current.Players.Length];
 			gfl = GravitiForceLevel.ReadGravitiForceLevelFile("GRBomber's Delight.GFB");
 
-			levelBackground = LevelBackgroundGF.CreateLevelBackground(GraphicsDevice, gfl, Content);
+			levelBackground = LevelBackgroundGF.CreateLevelBackground(GraphicsDevice, gfl);
 
 			shipBase = new ShipBase[playerShips.Length];
 			shipBase[0] =
@@ -234,8 +234,6 @@ namespace TurboPort
 			be.LightingEnabled = true;
 		}
 
-	    private int frameCounter;
-
 	    /// <summary>
 		/// This is called when the game should draw itself.
 		/// </summary>
@@ -286,10 +284,9 @@ namespace TurboPort
                     }
 
 
-                    DrawInfo("{0:00.00}x {1:00.00}y\n{2} {3} {4}",
+                    DrawInfo("{0:00.00}x {1:00.00}y",
                         playerShips[player].Position.X,
-					    playerShips[player].Position.Y,
-                        frameCounter++, newView.AspectRatio, newView.MaxDepth);
+					    playerShips[player].Position.Y);
 
 
                     for (int i = 0; i < InputHandler.Player.Length; i++)

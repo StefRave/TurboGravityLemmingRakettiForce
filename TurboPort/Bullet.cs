@@ -30,7 +30,7 @@ namespace TurboPort
             //    Filter.None, (Filter)0, 0);
         }
 
-        public void Render(GraphicsDevice device, BasicEffect basicEffect, ObjectShip ship, LevelBackgroundGF levelBackground)
+        public void Render(GraphicsDevice device, BasicEffect basicEffect, ObjectShip ship, ILevelBackground levelBackground)
         {
 /** san 			
             basicEffect.World = Matrix.Identity;
