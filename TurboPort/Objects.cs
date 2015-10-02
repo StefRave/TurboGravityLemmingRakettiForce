@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
-namespace tglrf
+namespace TurboPort
 {
     public interface IHandleController
     {
@@ -174,8 +172,9 @@ namespace tglrf
         {
             ObjectShip result = new ObjectShip();
             result.model = content.Load<Model>(@"objects/pop_simple_lemming3");
-			// NOTE (san): temp solution until we have a proper renderer again
-			result.texture = content.Load<Texture2D>(@"gfx/particle");
+            CorrectModel(result.model);
+            // NOTE (san): temp solution until we have a proper renderer again
+            result.texture = content.Load<Texture2D>(@"gfx/particle");
 
             Vector3 originalColor = ((BasicEffect)result.model.Meshes[0].Effects[0]).DiffuseColor;
             result.bodyColor = colorSwitchHack ? new Vector3(originalColor.X, originalColor.Z, originalColor.Y) : originalColor;
@@ -193,6 +192,12 @@ namespace tglrf
             return result;
         }
 
+        private static void CorrectModel(Model model)
+        {
+            foreach (var mesh in model.Meshes)
+                foreach (BasicEffect leffect in mesh.Effects)
+                    leffect.Alpha = 1;
+        }
 
         private static void GetBoundingFromMeshes(IList<ModelMesh> meshes, out BoundingBox boundingBox, out BoundingSphere boundingSphere)
         {
@@ -237,19 +242,23 @@ namespace tglrf
 
         public void Render(GraphicsDevice device, BasicEffect be, int p1, int p2)
         {
-/** san
+            //Matrix world = Matrix.CreateTranslation(new Vector3(0, 0, 0));
+            //Matrix view = Matrix.CreateLookAt(new Vector3(0, 0, 10), new Vector3(0, 0, 0), Vector3.UnitY);
+            //Matrix projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800 / 480f, 0.1f, 100f);
+            //world = Matrix.CreateRotationY((float)0);
+            //    model.Draw(world, view, projection);
             renderMatrix =
-                Matrix.CreateTranslation(new Vector3(centerOffset.X, centerOffset.Y, centerOffset.Z))*
-                Matrix.CreateRotationY(Rotation.Y)*
-                Matrix.CreateRotationZ(Rotation.Z)*
+                Matrix.CreateTranslation(new Vector3(centerOffset.X, centerOffset.Y, centerOffset.Z)) *
+                Matrix.CreateRotationY(Rotation.Y) *
+                Matrix.CreateRotationZ(Rotation.Z) *
                 Matrix.CreateScale(10) *
                 Matrix.CreateTranslation(Position);
 
             ((BasicEffect)model.Meshes[0].Effects[0]).DiffuseColor = bodyColor;
-
-            foreach(ModelMesh mesh in model.Meshes)
+            //model.Draw(renderMatrix, be.View, be.Projection);
+            foreach (ModelMesh mesh in model.Meshes)
             {
-                foreach(BasicEffect effect in mesh.Effects)
+                foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.LightingEnabled = be.LightingEnabled;
                     effect.AmbientLightColor = be.AmbientLightColor;
@@ -263,12 +272,12 @@ namespace tglrf
                 }
                 mesh.Draw();
             }
-*/
 
-			SpriteBatch sb = new SpriteBatch(device);
-			sb.Begin();
-			sb.Draw(texture, new Vector2(Position.X, Position.Y), null, null, null , Rotation.Z, null, Color.White, 0, 0);
-			sb.End();
+
+            //SpriteBatch sb = new SpriteBatch(device);
+            //sb.Begin();
+            //sb.Draw(texture, new Vector2(Position.X, Position.Y), null, null, null , Rotation.Z, null, Color.White, 0, 0);
+            //sb.End();
         }
 
         bool prevFire = false;

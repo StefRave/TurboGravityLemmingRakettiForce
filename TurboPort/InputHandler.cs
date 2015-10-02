@@ -1,11 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.Reflection;
-//using DxVBLibA;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+//using DxVBLibA;
 
-namespace tglrf
+namespace TurboPort
 {
 
 	public class PlayerControl

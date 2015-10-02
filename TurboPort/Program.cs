@@ -1,7 +1,6 @@
 ﻿#region Using Statements
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 #if MONOMAC
 using MonoMac.AppKit;
@@ -13,7 +12,7 @@ using MonoTouch.UIKit;
 #endif
 #endregion
 
-namespace tglrf
+namespace TurboPort
 {
 	#if __IOS__
 	[Register("AppDelegate")]
@@ -23,11 +22,11 @@ namespace tglrf
 	static class Program
 	#endif
     {
-		private static xna.Game1 game;
+		private static Game1 game;
 
 		internal static void RunGame ()
 		{
-			game = new xna.Game1 ();
+			game = new Game1 ();
 			game.Run ();
 		}
 

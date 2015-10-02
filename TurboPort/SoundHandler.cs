@@ -1,8 +1,7 @@
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 
-
-namespace tglrf
+namespace TurboPort
 {
 
     public class SoundHandler
@@ -21,12 +20,6 @@ namespace tglrf
         private static SoundEffect touchdown;
 
         // Audio objects
-
-		static private void Play(string name)
-        {
-			// NOTE (san): Sound engine not working so disabling sound playback for now
-            //soundBank.PlayCue(name);
-        }
 
         static public void Initialize(ContentManager content)
         {

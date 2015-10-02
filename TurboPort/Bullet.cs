@@ -1,12 +1,9 @@
-using System;
 using System.Collections;
-using System.IO;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
-
-namespace tglrf
+namespace TurboPort
 {
     public struct PointVertex
     {

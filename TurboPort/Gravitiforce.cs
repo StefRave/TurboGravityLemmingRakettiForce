@@ -1,14 +1,12 @@
 using System;
 using System.Collections;
-using System.IO;
 using System.Diagnostics;
-using System.Drawing;
-using System.Text;
+using System.IO;
 using System.Reflection;
+using System.Text;
 using Microsoft.Xna.Framework;
 
-
-namespace tglrf
+namespace TurboPort
 {
 
 	/// <summary>

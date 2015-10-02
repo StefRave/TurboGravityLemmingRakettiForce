@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 
-namespace tglrf.xna
+namespace TurboPort
 {
     public class GlobalData
     {

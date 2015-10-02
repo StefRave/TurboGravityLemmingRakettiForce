@@ -1,14 +1,15 @@
 ﻿#region Using Statements
+
 using System;
 using System.IO;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.Input;
 
 #endregion
 
-namespace tglrf.xna
+namespace TurboPort
 //namespace tglrf
 {
 	/// <summary>
@@ -80,8 +81,8 @@ namespace tglrf.xna
 
 			//renderTarget2D = new RenderTarget2D(GraphicsDevice, 20, 20, 1, SurfaceFormat.Bgr32);
 			//renderTarget2D = new RenderTarget2D(GraphicsDevice, 20, 20, true, SurfaceFormat.Bgr32, DepthFormat.Depth24);
-			renderTarget2D = new RenderTarget2D(GraphicsDevice, 20, 20);
-		}
+			//renderTarget2D = new RenderTarget2D(GraphicsDevice, 20, 20);
+        }
 
 		/// <summary>
 		/// LoadContent will be called once per game and is the place to load
@@ -89,16 +90,16 @@ namespace tglrf.xna
 		/// </summary>
 		protected override void LoadContent ()
 		{
-			// Create a new SpriteBatch, which can be used to draw textures.
-			spriteBatch = new SpriteBatch (GraphicsDevice);
+            // Create a new SpriteBatch, which can be used to draw textures.
+            //         spriteBatch = new SpriteBatch (GraphicsDevice);
 
-			//TODO: use this.Content to load your game content here 
+            ////TODO: use this.Content to load your game content here 
 
-			spriteFont = Content.Load<SpriteFont>("DejaVuSans");
-			//spriteFont = Content.Load<SpriteFont>("Contnt/bin/Windows/gfx/DejaVuSans");
-			gfl = null;
+            spriteFont = Content.Load<SpriteFont>("DejaVuSans");
+            //spriteFont = Content.Load<SpriteFont>("Contnt/bin/Windows/gfx/DejaVuSans");
+            gfl = null;
 
-			playerShips = new ObjectShip[Settings.Current.Players.Length];
+            playerShips = new ObjectShip[Settings.Current.Players.Length];
 			gfl = GravitiForceLevel.ReadGravitiForceLevelFile("GRBomber's Delight.GFB");
 
 			levelBackground = LevelBackgroundGF.CreateLevelBackground(GraphicsDevice, gfl, Content);
@@ -113,17 +114,31 @@ namespace tglrf.xna
 			{
 				playerShips[i] = ObjectShip.CreateShip(GraphicsDevice, Content);
 
-				playerShips[i].Position = shipBase[i].Position;
+                playerShips[i].Position = shipBase[i].Position;
 			}
 			bullerBuffer = new BulletBuffer(GraphicsDevice, Content);
 		}
 
-		/// <summary>
-		/// Allows the game to run logic such as updating the world,
-		/// checking for collisions, gathering input, and playing audio.
-		/// </summary>
-		/// <param name="gameTime">Provides a snapshot of timing values.</param>
-		protected override void Update (GameTime gameTime)
+        private void DrawModel(Model model, Matrix world, Matrix view, Matrix projection)
+        {
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.World = world;
+                    effect.View = view;
+                    effect.Projection = projection;
+                }
+
+                mesh.Draw();
+            }
+        }
+        /// <summary>
+        /// Allows the game to run logic such as updating the world,
+        /// checking for collisions, gathering input, and playing audio.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        protected override void Update (GameTime gameTime)
 		{
 			// For Mobile devices, this logic will close the Game when the Back button is pressed
 			// Exit() is obsolete on iOS
@@ -219,17 +234,21 @@ namespace tglrf.xna
 			be.LightingEnabled = true;
 		}
 
+	    private int frameCounter;
+	    private Viewport defaultViewport;
 
-		/// <summary>
+	    /// <summary>
 		/// This is called when the game should draw itself.
 		/// </summary>
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Draw (GameTime gameTime)
 		{
-			graphics.GraphicsDevice.Clear (Color.CornflowerBlue);
-		
+            graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+
+	
 			//TODO: Add your drawing code here
-			Viewport defaultViewport = GraphicsDevice.Viewport;
+            if(defaultViewport.Width == 0)
+			    defaultViewport = GraphicsDevice.Viewport;
 
 
 			Viewport newView = defaultViewport;
@@ -238,83 +257,89 @@ namespace tglrf.xna
 			GlobalData gd = new GlobalData();
 			SetupMatrices(gd, new Vector2(newView.Width, newView.Height));
 
+            //DrawToRenderTarget(gd);
 
-			DrawToRenderTarget(gd);
 
-
-			//Clear the backbuffer to the cornflower blue 
-			GraphicsDevice.Clear(ClearOptions.DepthBuffer | ClearOptions.Target, Color.CornflowerBlue, 1.0f, 0);
-			try
+            //Clear the backbuffer to the cornflower blue 
+            //GraphicsDevice.Clear(ClearOptions.DepthBuffer | ClearOptions.Target | ClearOptions.Stencil, Color.CornflowerBlue, 1.0f, 0);
+            GraphicsDevice.Clear(Color.AntiqueWhite);
+            try
 			{
+                GraphicsDevice.Viewport = newView;
 
-				for(int player = 0; player < InputHandler.Player.Length; player++)
+
+                for (int player = 0; player < InputHandler.Player.Length - 1; player++)
 				{
 					GraphicsDevice.Viewport = newView;
 
-//san
-					//BasicEffect basicEffect = new BasicEffect(GraphicsDevice, null);
-					BasicEffect basicEffect = new BasicEffect(GraphicsDevice);
+                    //san
+                    //BasicEffect basicEffect = new BasicEffect(GraphicsDevice, null);
+                    BasicEffect basicEffect = new BasicEffect(GraphicsDevice);
 					basicEffect.Projection = gd.Projection;
 					basicEffect.View = CalculateView(gd, playerShips[player].Position);
-//san
-//					GraphicsDevice.RenderState.DepthBufferEnable = false;
-					levelBackground.Render(GraphicsDevice, basicEffect);
-//san
-//					GraphicsDevice.RenderState.DepthBufferEnable = true;
+                    //san
+                    //					GraphicsDevice.RenderState.DepthBufferEnable = false;
+                    levelBackground.Render(GraphicsDevice, basicEffect);
+                    //san
+                    //					GraphicsDevice.RenderState.DepthBufferEnable = true;
 
-					SetUpLights(basicEffect);
+                    SetUpLights(basicEffect);
 					for(int i = 0; i < InputHandler.Player.Length; i++)
 					{
-						//playerShips[i].Render(device, vScrollBar1.Value, vScrollBar2.Value);
-						playerShips[i].Render(GraphicsDevice, basicEffect, 0, 0);
-					}
-
-					SpriteBatch sb = new SpriteBatch(GraphicsDevice);
-					sb.Begin();
-					sb.DrawString(spriteFont,
-						string.Format("{0:00.00}x {1:00.00}y", playerShips[player].Position.X, playerShips[player].Position.Y),
-						new Vector2(50, newView.Height - 30), Color.Blue,
-						-0.025f, Vector2.Zero, 1, SpriteEffects.None, 0);
-					sb.End();
-					//Direct3D.Font font = new Direct3D.Font(GraphicsDevice, new System.Drawing.Font("Arial", 10));
-					//font.DrawString(null,
-					//                string.Format("{0:00.00} {1:00.00}", playerShips[player].Position.X,
-					//                              playerShips[player].Position.Y),
-					//                new Rectangle(newView.X + 20, 20, 200, 30), DrawStringFormat.None, Color.Yellow);
-					//font.Dispose();
+                        playerShips[i].Render(GraphicsDevice, basicEffect, 0, 0);
+                    }
 
 
+                    DrawInfo("{0:00.00}x {1:00.00}y\n{2} {3} {4}",
+                        playerShips[player].Position.X,
+					    playerShips[player].Position.Y,
+                        frameCounter++, newView.AspectRatio, newView.MaxDepth);
 
-					for(int i = 0; i < InputHandler.Player.Length; i++)
-					{
-						bullerBuffer.Render(GraphicsDevice, basicEffect, playerShips[i], levelBackground);
-					}
-					//End the scene
 
-					newView.X += newView.Width + 0;
+                    for (int i = 0; i < InputHandler.Player.Length; i++)
+                    {
+                        bullerBuffer.Render(GraphicsDevice, basicEffect, playerShips[i], levelBackground);
+                    }
+                    //End the scene
+
+                    newView.X += newView.Width + 0;
 				}
 			}
 			finally
 			{
-				GraphicsDevice.Viewport = defaultViewport;
+				//GraphicsDevice.Viewport = defaultViewport;
 			}
 
 			//san
 			Texture2D texture = renderTarget2D;// .GetTexture();
 			{
-				SpriteBatch sb = new SpriteBatch(GraphicsDevice);
-				sb.Begin();
-				sb.Draw(texture, new Vector2(220, 220), null, Color.Azure, 0, Vector2.Zero,
-					gd.ViewportResolution.X/(gd.PixelsToCenter.X*2), SpriteEffects.None, 0);
-				sb.End();
+				//SpriteBatch sb = new SpriteBatch(GraphicsDevice);
+				//sb.Begin();
+				//sb.Draw(texture, new Vector2(220, 220), null, Color.Azure, 0, Vector2.Zero,
+				//	gd.ViewportResolution.X/(gd.PixelsToCenter.X*2), SpriteEffects.None, 0);
+				//sb.End();
 			}
 
 
 			base.Draw (gameTime);
 		}
 
+	    private void DrawInfo(string format, params object[] args)
+	    {
+            var text = string.Format(format, args);
+	        int lines = text.Count(c => c == '\n') + 1;
 
-		private void DrawToRenderTarget(GlobalData gd)
+            SpriteBatch sb = new SpriteBatch(GraphicsDevice);
+            sb.Begin();
+	        sb.DrawString(spriteFont,
+	            text,
+	            new Vector2(50, GraphicsDevice.Viewport.Height - (30 * lines)), Color.Blue,
+	            -0.025f, Vector2.Zero, 1, SpriteEffects.None, 0);
+	        sb.End();
+	    }
+
+
+	    private void DrawToRenderTarget(GlobalData gd)
 		{
 			//GraphicsDevice.Viewport.Width GraphicsDevice.Viewport.Height
 

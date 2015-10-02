@@ -1,4 +1,3 @@
-using System.Drawing;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -6,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Rectangle=Microsoft.Xna.Framework.Rectangle;
 
 
-namespace tglrf
+namespace TurboPort
 {
     public interface ILevelBackground
     {
