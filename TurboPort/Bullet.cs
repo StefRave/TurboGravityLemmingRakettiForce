@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -32,25 +33,24 @@ namespace TurboPort
 
         public void Render(GraphicsDevice device, BasicEffect basicEffect, ObjectShip ship, ILevelBackground levelBackground)
         {
-/** san 			
             basicEffect.World = Matrix.Identity;
 
             basicEffect.LightingEnabled = false;
-            device.RenderState.DepthBufferEnable = false;
-            device.RenderState.CullMode = CullMode.None;
+            //device.RenderState.DepthBufferEnable = false;
+            //device.RenderState.CullMode = CullMode.None;
 
-            device.RenderState.PointSpriteEnable = true;
-            //device.RenderState.PointScaleEnable = true ;
-            device.RenderState.PointSize = 10.0f;
-            device.RenderState.PointSizeMin = 0.00f;
-            device.RenderState.PointSizeMax = 100.00f;
-            //device.RenderState.PointScaleA = 0.00f;
-            //device.RenderState.PointScaleB = 0.00f;
-            //device.RenderState.PointScaleC = 1.00f;
+            //device.RenderState.PointSpriteEnable = true;
+            ////device.RenderState.PointScaleEnable = true ;
+            //device.RenderState.PointSize = 10.0f;
+            //device.RenderState.PointSizeMin = 0.00f;
+            //device.RenderState.PointSizeMax = 100.00f;
+            ////device.RenderState.PointScaleA = 0.00f;
+            ////device.RenderState.PointScaleB = 0.00f;
+            ////device.RenderState.PointScaleC = 1.00f;
 
-            device.RenderState.AlphaBlendEnable = true;
-            device.RenderState.SourceBlend = Blend.One;
-            device.RenderState.DestinationBlend = Blend.One;
+            //device.RenderState.AlphaBlendEnable = true;
+            //device.RenderState.SourceBlend = Blend.One;
+            //device.RenderState.DestinationBlend = Blend.One;
 
             basicEffect.Texture = texture;
             basicEffect.TextureEnabled = true;
@@ -91,25 +91,29 @@ namespace TurboPort
             }
             ship.hackColliding = hackColliding;
 
-/// ** san
-            device.VertexDeclaration = new VertexDeclaration(device, VertexPositionColor.VertexElements);
+            //device.VertexDeclaration = new VertexDeclaration(device, VertexPositionColor.VertexElements);
         
             //// Unlock the vertex buffer
             //vertexBuffer.Unlock();
             //// Render any remaining particles
             if (count > 0)
             {
-                basicEffect.Begin();
                 foreach(EffectPass pass in basicEffect.CurrentTechnique.Passes)
-	                {
-                    pass.Begin();
+                {
+                    pass.Apply();
 
-                    device.DrawUserPrimitives(PrimitiveType.PointList, vertices, 0, count);
-
-                    pass.End();
+                    SpriteBatch sb = new SpriteBatch(device);
+                    sb.Begin(0, null, null, DepthStencilState.DepthRead, RasterizerState.CullNone, basicEffect);
+                    for (int i = 0; i < count; i++)
+                    {
+                        sb.Draw(texture, new Vector2(vertices[i].Position.X, vertices[i].Position.Y), Color.White);
+                    }
+                    sb.End();
                 }
-                basicEffect.End();
             }
+
+
+
 
             //// Reset render states
             //device.RenderState.PointSpriteEnable = false;
@@ -119,18 +123,11 @@ namespace TurboPort
             //device.RenderState.PointScaleEnable = true ;
             //device.RenderState.AlphaBlendEnable = false;
 
-            device.RenderState.PointSpriteEnable = false;
-            device.RenderState.DepthBufferWriteEnable = true;
-            device.RenderState.SourceBlend = Blend.SourceAlpha;
-            device.RenderState.DestinationBlend = Blend.InverseSourceAlpha;
-*/
+            //device.RenderState.PointSpriteEnable = false;
+            //device.RenderState.DepthBufferWriteEnable = true;
+            //device.RenderState.SourceBlend = Blend.SourceAlpha;
+            //device.RenderState.DestinationBlend = Blend.InverseSourceAlpha;
 
-
-			// NOTE (san): Simple spritebatch render
-//			SpriteBatch sb = new SpriteBatch(device);
-//			sb.Begin();
-//			sb.Draw(texture, new Vector2(Position.X, Position.Y), null, null, null , Rotation.Z, null, Color.White, 0, 0);
-//			sb.End();
         }
 
     }

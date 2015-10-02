@@ -110,50 +110,50 @@ namespace TurboPort
             Vector3[] collisionPoints = new Vector3[6];
             int[] numberAdded = new int[6];
 
-/** san
             foreach(ModelMesh modelMesh in mesh)
             {
-                foreach(ModelMeshPart modelMeshPart in modelMesh.MeshParts)
+                foreach(ModelMeshPart meshPart in modelMesh.MeshParts)
                 {
-                    VertexPositionColor[] verts = new VertexPositionColor[modelMeshPart.NumVertices];
-                    modelMesh.VertexBuffer.GetData(verts);
-                    foreach(VertexPositionColor vertexElement in verts)
+                    int vertexStride = meshPart.VertexBuffer.VertexDeclaration.VertexStride;
+
+                    Vector3[] vertices = new Vector3[meshPart.NumVertices];
+                    meshPart.VertexBuffer.GetData(0, vertices, 0, meshPart.NumVertices, vertexStride);
+
+                    foreach(Vector3 vertex in vertices)
                     {
-                        if(vertexElement.Position.X < boundingBox.Min.X)
+                        if(vertex.X < boundingBox.Min.X)
                         {
-                            collisionPoints[0] += vertexElement.Position;
+                            collisionPoints[0] += vertex;
                             numberAdded[0]++;
                         }
-                        else if(vertexElement.Position.X > boundingBox.Max.X)
+                        else if(vertex.X > boundingBox.Max.X)
                         {
-                            collisionPoints[1] += vertexElement.Position;
+                            collisionPoints[1] += vertex;
                             numberAdded[1]++;
                         }
-                        if(vertexElement.Position.Y < boundingBox.Min.Y)
+                        if(vertex.Y < boundingBox.Min.Y)
                         {
-                            collisionPoints[2] += vertexElement.Position;
+                            collisionPoints[2] += vertex;
                             numberAdded[2]++;
                         }
-                        else if(vertexElement.Position.Y > boundingBox.Max.Y)
+                        else if(vertex.Y > boundingBox.Max.Y)
                         {
-                            collisionPoints[3] += vertexElement.Position;
+                            collisionPoints[3] += vertex;
                             numberAdded[3]++;
                         }
-                        if(vertexElement.Position.Z < boundingBox.Min.Z)
+                        if(vertex.Z < boundingBox.Min.Z)
                         {
-                            collisionPoints[4] += vertexElement.Position;
+                            collisionPoints[4] += vertex;
                             numberAdded[4]++;
                         }
-                        else if(vertexElement.Position.Z > boundingBox.Max.Z)
+                        else if(vertex.Z > boundingBox.Max.Z)
                         {
-                            collisionPoints[5] += vertexElement.Position;
+                            collisionPoints[5] += vertex;
                             numberAdded[5]++;
                         }
                     }
                 }
             }
-*/
-
             for(int i = 0; i < collisionPoints.Length; i++)
             {
                 collisionPoints[i] *= 1f / numberAdded[i];
@@ -201,52 +201,44 @@ namespace TurboPort
 
         private static void GetBoundingFromMeshes(IList<ModelMesh> meshes, out BoundingBox boundingBox, out BoundingSphere boundingSphere)
         {
+            boundingBox = CreateBoundingBox(meshes);
+
             boundingSphere = meshes[0].BoundingSphere;
-            boundingBox = CreateBoundingBox(meshes[0]);
-
-            bool first = true;
-
-            foreach(ModelMesh modelMesh in meshes)
-            {
-                if(first)
-                {
-                    first = false;
-                    continue;
-                }
-                boundingBox = BoundingBox.CreateMerged(boundingBox, CreateBoundingBox(modelMesh));
-                boundingSphere = BoundingSphere.CreateMerged(boundingSphere, modelMesh.BoundingSphere);
-            }
+            for (int i = 1; i < meshes.Count; i++)
+                boundingSphere = BoundingSphere.CreateMerged(boundingSphere, meshes[i].BoundingSphere);
         }
 
-        private static BoundingBox CreateBoundingBox(ModelMesh modelMesh)
+        public static BoundingBox CreateBoundingBox(IList<ModelMesh> meshes)
         {
-/** san			
-            byte[] data = new byte[modelMesh.VertexBuffer.SizeInBytes];
-            modelMesh.VertexBuffer.GetData(data);
-            
-            VertexElement[] elements = modelMesh.MeshParts[0].VertexDeclaration.GetVertexElements();
-            int vertexSize = modelMesh.MeshParts[0].VertexDeclaration.GetVertexStrideSize(0);
-            Vector3[] positions = new Vector3[data.Length / vertexSize];
-            int vector3Size = Marshal.SizeOf(typeof(Vector3));
-            for(int i = 0; i < positions.Length; i++)
+            // Initialize minimum and maximum corners of the bounding box to max and min values
+            Vector3 min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            Vector3 max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+
+            // For each mesh of the model
+            foreach (ModelMesh mesh in meshes)
             {
-                Marshal.Copy(data, i * vertexSize, Marshal.UnsafeAddrOfPinnedArrayElement(positions, i), vector3Size);
+                foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                {
+                    int vertexStride = meshPart.VertexBuffer.VertexDeclaration.VertexStride;
+
+                    Vector3[] vertexData = new Vector3[meshPart.NumVertices];
+                    meshPart.VertexBuffer.GetData(0, vertexData, 0, meshPart.NumVertices, vertexStride);
+
+                    for (int i = 0; i < meshPart.NumVertices; i++)
+                    {
+                        Vector3 transformedPosition = vertexData[i];
+
+                        min = Vector3.Min(min, transformedPosition);
+                        max = Vector3.Max(max, transformedPosition);
+                    }
+                }
             }
-			return BoundingBox.CreateFromPoints(Vector3[]);
-*/
-
-			return new BoundingBox();
+            return new BoundingBox(min, max);
         }
-
 
 
         public void Render(GraphicsDevice device, BasicEffect be, int p1, int p2)
         {
-            //Matrix world = Matrix.CreateTranslation(new Vector3(0, 0, 0));
-            //Matrix view = Matrix.CreateLookAt(new Vector3(0, 0, 10), new Vector3(0, 0, 0), Vector3.UnitY);
-            //Matrix projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800 / 480f, 0.1f, 100f);
-            //world = Matrix.CreateRotationY((float)0);
-            //    model.Draw(world, view, projection);
             renderMatrix =
                 Matrix.CreateTranslation(new Vector3(centerOffset.X, centerOffset.Y, centerOffset.Z)) *
                 Matrix.CreateRotationY(Rotation.Y) *
@@ -255,8 +247,8 @@ namespace TurboPort
                 Matrix.CreateTranslation(Position);
 
             ((BasicEffect)model.Meshes[0].Effects[0]).DiffuseColor = bodyColor;
-            //model.Draw(renderMatrix, be.View, be.Projection);
-            foreach (ModelMesh mesh in model.Meshes)
+
+            foreach(ModelMesh mesh in model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
@@ -272,12 +264,6 @@ namespace TurboPort
                 }
                 mesh.Draw();
             }
-
-
-            //SpriteBatch sb = new SpriteBatch(device);
-            //sb.Begin();
-            //sb.Draw(texture, new Vector2(Position.X, Position.Y), null, null, null , Rotation.Z, null, Color.White, 0, 0);
-            //sb.End();
         }
 
         bool prevFire = false;
@@ -301,9 +287,8 @@ namespace TurboPort
 
             Rotation.Z += (float)(-control.Rotation * dt * 7);
             Rotation.Y = control.Rotation * 3.14f /2f;
-            double  gc, vzg;
-            gc = t * Math.Sin(-Rotation.Z) * control.Thrust;
-            vzg = Speed.X*z-gc;
+            var gc = t * Math.Sin(-Rotation.Z) * control.Thrust;
+            var vzg = Speed.X*z-gc;
             Position.X += (float)((gc*dt+(vzg-vzg*Math.Exp(-z*dt))/z)/z);
             Speed.X = (float)(gc/z+Math.Exp(-z*dt)*vzg/z);
             

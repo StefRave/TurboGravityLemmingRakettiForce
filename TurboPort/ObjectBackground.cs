@@ -11,6 +11,7 @@ namespace TurboPort
         Rectangle Bounds { get; }
 
         void Render(GraphicsDevice device, BasicEffect be);
+        bool CheckCollision(Vector3 vector3);
     }
 
     public class LevelBackgroundGF : ILevelBackground
