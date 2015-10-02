@@ -140,8 +140,7 @@ namespace TurboPort
             return gfl;
         }
 
-        /*
-        public Bitmap GetBitmap()
+        public Stream GetBitmapStream()
         {
             byte[] inBuffer;
             Assembly assembly = typeof(GravitiForceLevel).Assembly;
@@ -289,12 +288,8 @@ namespace TurboPort
             ms.Write(colorMap, 0, colorMap.Length);
             ms.Write(levelBitmap, 0, levelBitmap.Length);
             ms.Seek(0, SeekOrigin.Begin);
-            System.Drawing.Bitmap bm = new System.Drawing.Bitmap(ms);
-            //bm.Save(fullPath + ".png", System.Drawing.Imaging.ImageFormat.Png);
-            ms.Close();
 
-            return bm;
+            return ms;
         }
-        */
     }
 }

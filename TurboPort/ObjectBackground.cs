@@ -16,11 +16,9 @@ namespace TurboPort
 
     public class LevelBackgroundGF : ILevelBackground
     { 
-        private static Texture2D texture;
-        private VertexPositionTexture[] vertexes;
+        private Texture2D texture;
         public Rectangle bounds;
         private GravitiForceLevel gfl;
-        private int levelWidth; // optimization
         private VertexDeclaration declaration;
 
         private LevelBackgroundGF()
@@ -102,37 +100,18 @@ namespace TurboPort
             LevelBackgroundGF result = new LevelBackgroundGF();
             result.gfl = gfl;
   
-			texture = content.Load<Texture2D>(@"gfx/Alien.bmap");
 
-/*
-            result.declaration = new VertexDeclaration(device, VertexPositionTexture.VertexElements);
-
-//                 result.texture =  TextureLoader.FromFile(
-//                device,
-//                Path.Combine(DirectorySettings.MediaDir, textureFilename),
-//                D3DX.Default, D3DX.Default, D3DX.Default, 0, Format.Unknown, 
-//                Pool.Managed, Filter.Triangle, 
-//                Filter.Triangle, 0);
-
-        
-            Bitmap levelBitmap = gfl.GetBitmap();
-            MemoryStream ms = new MemoryStream();
-            levelBitmap = new Bitmap(levelBitmap);
-            levelBitmap.Save(ms,System.Drawing.Imaging.ImageFormat.Bmp);;
-            //levelBitmap.Save(@"c:\test.bmp",System.Drawing.Imaging.ImageFormat.Bmp);;
-            ms.Position = 0;
-            result.texture = Texture2D.FromFile(device, ms);
+            result.texture = Texture2D.FromStream(device, gfl.GetBitmapStream());
 
             //result.texture = content.Load<Texture2D>(@"test");
             //result.vertexes = VertexBuffer.CreateGeneric<Direct3D.CustomVertex.PositionTextured>(device,
             //    4, Usage.WriteOnly, Direct3D.CustomVertex.PositionTextured.Format, Pool.Managed, null);
 
-            result.bounds = new Rectangle(0, 0, levelBitmap.Width, levelBitmap.Height);
+            result.bounds = new Rectangle(0, 0, result.texture.Width, result.texture.Height);
 
             //result.vertexes.
 
             VertexPositionTexture[] pt = new VertexPositionTexture[4];
-            result.vertexes = pt;
             pt[0].Position = new Vector3(result.bounds.Left, result.bounds.Top, 0);
             pt[1].Position = new Vector3(result.bounds.Right, result.bounds.Top, 0);
             pt[2].Position = new Vector3(result.bounds.Right, result.bounds.Bottom, 0);
@@ -143,12 +122,10 @@ namespace TurboPort
             pt[2].TextureCoordinate = new Vector2(1, 0);
             pt[3].TextureCoordinate = new Vector2(0, 0);
 
-            result.levelWidth = levelBitmap.Width;
-*/
+
 
             return result;
         }
-
     }
 
     public class LevelBackgroundTest : ILevelBackground

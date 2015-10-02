@@ -235,7 +235,6 @@ namespace TurboPort
 		}
 
 	    private int frameCounter;
-	    private Viewport defaultViewport;
 
 	    /// <summary>
 		/// This is called when the game should draw itself.
@@ -247,8 +246,7 @@ namespace TurboPort
 
 	
 			//TODO: Add your drawing code here
-            if(defaultViewport.Width == 0)
-			    defaultViewport = GraphicsDevice.Viewport;
+            var defaultViewport = GraphicsDevice.Viewport;
 
 
 			Viewport newView = defaultViewport;
@@ -268,20 +266,18 @@ namespace TurboPort
                 GraphicsDevice.Viewport = newView;
 
 
-                for (int player = 0; player < InputHandler.Player.Length - 1; player++)
+                for (int player = 0; player < InputHandler.Player.Length; player++)
 				{
 					GraphicsDevice.Viewport = newView;
 
-                    //san
-                    //BasicEffect basicEffect = new BasicEffect(GraphicsDevice, null);
                     BasicEffect basicEffect = new BasicEffect(GraphicsDevice);
 					basicEffect.Projection = gd.Projection;
 					basicEffect.View = CalculateView(gd, playerShips[player].Position);
-                    //san
-                    //					GraphicsDevice.RenderState.DepthBufferEnable = false;
+
+                    //GraphicsDevice.RenderState.DepthBufferEnable = false;
                     levelBackground.Render(GraphicsDevice, basicEffect);
                     //san
-                    //					GraphicsDevice.RenderState.DepthBufferEnable = true;
+                    //GraphicsDevice.RenderState.DepthBufferEnable = true;
 
                     SetUpLights(basicEffect);
 					for(int i = 0; i < InputHandler.Player.Length; i++)
@@ -304,11 +300,6 @@ namespace TurboPort
 
                     newView.X += newView.Width + 0;
 				}
-			}
-			finally
-			{
-				//GraphicsDevice.Viewport = defaultViewport;
-			}
 
 			//san
 			Texture2D texture = renderTarget2D;// .GetTexture();
@@ -322,9 +313,15 @@ namespace TurboPort
 
 
 			base.Draw (gameTime);
-		}
 
-	    private void DrawInfo(string format, params object[] args)
+            }
+            finally
+            {
+                GraphicsDevice.Viewport = defaultViewport;
+            }
+        }
+
+        private void DrawInfo(string format, params object[] args)
 	    {
             var text = string.Format(format, args);
 	        int lines = text.Count(c => c == '\n') + 1;
