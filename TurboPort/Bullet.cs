@@ -33,7 +33,7 @@ namespace TurboPort
 
         public void Render(GraphicsDevice device, BasicEffect basicEffect, ObjectShip ship, ILevelBackground levelBackground)
         {
-            basicEffect.World = Matrix.Identity;
+            //basicEffect.World = Matrix.Identity;
 
             basicEffect.LightingEnabled = false;
             //device.RenderState.DepthBufferEnable = false;
@@ -54,7 +54,6 @@ namespace TurboPort
 
             basicEffect.Texture = texture;
             basicEffect.TextureEnabled = true;
-
 
             int count = 0;
 
@@ -106,7 +105,12 @@ namespace TurboPort
                     sb.Begin(0, null, null, DepthStencilState.DepthRead, RasterizerState.CullNone, basicEffect);
                     for (int i = 0; i < count; i++)
                     {
-                        sb.Draw(texture, new Vector2(vertices[i].Position.X, vertices[i].Position.Y), Color.White);
+                        var scaleFactor = 0.02f;
+                        var position = new Vector2(
+                            (float) (vertices[i].Position.X - (texture.Width*scaleFactor/2)),
+                            (float) (vertices[i].Position.Y - (texture.Height*scaleFactor/2)));
+                        sb.Draw(texture, position, null, Color.White, 0,
+                            Vector2.Zero, new Vector2(scaleFactor, scaleFactor), SpriteEffects.None, 100);
                     }
                     sb.End();
                 }

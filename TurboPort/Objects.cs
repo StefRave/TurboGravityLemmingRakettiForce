@@ -54,6 +54,7 @@ namespace TurboPort
 
     public class ObjectShip : IHandleController
     {
+        private readonly IMissleProjectileFactory missleProjectileFactory;
         public Vector3  centerOffset;
         public float    scale;
 
@@ -61,6 +62,8 @@ namespace TurboPort
         public Vector3  Position;
         public Vector3  Speed;
 
+        public Vector3 GunPosition;
+        public Vector3 ShootingVelocity;
         public Vector3  OldPosition;
 
 		public BoundingBox    boundingBox;
@@ -168,9 +171,9 @@ namespace TurboPort
             return collisionPoints;
         }
 
-        public static ObjectShip CreateShip(GraphicsDevice device, ContentManager content)
+        public static ObjectShip CreateShip(GraphicsDevice device, ContentManager content, IMissleProjectileFactory missleProjectileFactory)
         {
-            ObjectShip result = new ObjectShip();
+            ObjectShip result = new ObjectShip(missleProjectileFactory);
             result.model = content.Load<Model>(@"objects/pop_simple_lemming3");
             CorrectModel(result.model);
             // NOTE (san): temp solution until we have a proper renderer again
@@ -268,13 +271,18 @@ namespace TurboPort
 
         bool prevFire = false;
 
+        private ObjectShip(IMissleProjectileFactory missleProjectileFactory)
+        {
+            this.missleProjectileFactory = missleProjectileFactory;
+        }
+
         public void HandleController(PlayerControl control, double dt)
         {
             OldPosition = Position;
 
             if(!prevFire && control.Fire)
             {
-                SoundHandler.Fire();
+                missleProjectileFactory.Fire(GunPosition, ShootingVelocity);
             }
             prevFire = control.Fire;
 
@@ -296,9 +304,15 @@ namespace TurboPort
             vzg = Speed.Y*z-gc;
             Position.Y += (float)((gc*dt+(vzg-vzg*Math.Exp(-z*dt))/z)/z);
             Speed.Y = (float)(gc/z+Math.Exp(-z*dt)*vzg/z);
+
+            Matrix matrix =
+                Matrix.CreateTranslation(new Vector3(centerOffset.X, centerOffset.Y, centerOffset.Z))*
+                Matrix.CreateRotationY(Rotation.Y)*
+                Matrix.CreateRotationZ(Rotation.Z)*
+                Matrix.CreateScale(10);
+            var gunLocation = Vector3.Transform(new Vector3(0, boundingSphere.Radius, 0), matrix);
+            ShootingVelocity = Vector3.Normalize(gunLocation) + (Speed * 0.02f);
+            GunPosition = Position + gunLocation;
         }
-
     }
-
-
 }
