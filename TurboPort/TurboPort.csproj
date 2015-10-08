@@ -47,7 +47,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Game1.cs" />
+    <Compile Include="I3dCollistionObject.cs" />
     <Compile Include="IMissleProjectileFactory.cs" />
+    <Compile Include="MeshUtil.cs" />
     <Compile Include="MissleParticleEmitter.cs" />
     <Compile Include="MissleProjectileFactory.cs" />
     <Compile Include="ParticleSystems\ContentManagerExtensions.cs" />

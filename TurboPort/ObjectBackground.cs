@@ -19,7 +19,6 @@ namespace TurboPort
         private Texture2D texture;
         public Rectangle bounds;
         private GravitiForceLevel gfl;
-        private VertexDeclaration declaration;
         private VertexPositionTexture[] pt;
 
         private LevelBackgroundGF()
