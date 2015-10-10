@@ -6,7 +6,7 @@ namespace TurboPort
     public class GlobalData
     {
         public Vector2 LevelDimensions;
-        public float CameraDistance;
+        public float CameraDistance = 250f;
 
         public Matrix Projection;
 
@@ -17,7 +17,6 @@ namespace TurboPort
         {
             GlobalData gd = new GlobalData();
             gd.LevelDimensions = new Vector2(21 * 16, 63 * 16);
-            gd.CameraDistance = 250f;
             gd.ViewportResolution = new Vector2(width, height);
 
             gd.Projection = Matrix.CreatePerspectiveFieldOfView(

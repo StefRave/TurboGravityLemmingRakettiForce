@@ -79,7 +79,7 @@
     <Compile Include="Bullet.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Gf2Level\Gfx\Alien.Bmap" />
+    <EmbeddedResource Include="Gf2Level\Gfx\Alien.bmap" />
     <EmbeddedResource Include="Gf2Level\Gfx\Arctic.bmap" />
     <EmbeddedResource Include="Gf2Level\Gfx\Boring.bmap" />
     <EmbeddedResource Include="Gf2Level\Gfx\Grass.bmap" />
@@ -282,8 +282,6 @@
     <None Include="Tao.Sdl.dll.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Gf2Level\Gfx\Alien.bmap.bmp" />
-    <EmbeddedResource Include="Gf2Level\Gfx\test.bmp" />
     <Content Include="media\gfx\particle.png" />
     <Content Include="media\gfx\smoke.png" />
     <Content Include="media\gfx\tx108.jpg" />

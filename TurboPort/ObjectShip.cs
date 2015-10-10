@@ -22,8 +22,14 @@ namespace TurboPort
 
         private BoundingBox    boundingBox;
         private BoundingSphere boundingSphere;
-        public Vector3[] colisionPoints; 
-        public Vector3 bodyColor;
+        public Vector3[] colisionPoints;
+        bool prevFire;
+        private Matrix renderMatrix;
+        private bool shipColliding;
+        private Vector3 bodyColor;
+        private Vector3 screenColor;
+        private BasicEffect bodyEffect;
+        private BasicEffect screenEffect;
 
         public Model Model { get; private set; }
 
@@ -42,8 +48,10 @@ namespace TurboPort
             Model = content.Load<Model>(@"objects/pop_simple_lemming3");
             CorrectModel(Model);
 
-            Vector3 originalColor = ((BasicEffect)Model.Meshes[0].Effects[0]).DiffuseColor;
-            bodyColor = colorSwitchHack ? new Vector3(originalColor.X, originalColor.Z, originalColor.Y) : originalColor;
+            bodyEffect = (BasicEffect)Model.Meshes["Body"].Effects[0];
+            screenEffect = (BasicEffect)Model.Meshes["Screen"].Effects[0];
+            bodyColor = colorSwitchHack ? screenEffect.DiffuseColor : bodyEffect.DiffuseColor;
+            screenColor = colorSwitchHack ? bodyEffect.DiffuseColor : screenEffect.DiffuseColor;
             colorSwitchHack = !colorSwitchHack;
 
             centerOffset = new Vector3(0f, 0f, 0f);
@@ -125,8 +133,9 @@ namespace TurboPort
             var world = renderMatrix *
                 Matrix.CreateTranslation(Position);
 
-            ((BasicEffect)Model.Meshes[0].Effects[0]).DiffuseColor = bodyColor;
             graphicsDevice.DepthStencilState = DepthStencilState.Default;
+            bodyEffect.DiffuseColor = bodyColor;
+            screenEffect.DiffuseColor = screenColor;
 
             foreach (ModelMesh mesh in Model.Meshes)
             {
@@ -167,10 +176,6 @@ namespace TurboPort
                 mesh.Draw();
             }
         }
-
-        bool prevFire = false;
-        private Matrix renderMatrix;
-        private bool shipColliding;
 
         public void HandleController(PlayerControl control, double elapsedTime)
         {

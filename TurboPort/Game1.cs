@@ -55,6 +55,7 @@ namespace TurboPort
             Window.Position = Point.Zero;
             Window.IsBorderless = true;
 #else
+            Window.AllowUserResizing = true;
 			graphics.IsFullScreen = false;
 #endif
 
@@ -108,13 +109,10 @@ namespace TurboPort
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
             base.Initialize();
 
             InputHandler.Initialize();
             SoundHandler.Initialize(Content);
-
-            base.Initialize();
 
             //renderTarget2D = new RenderTarget2D(GraphicsDevice, 20, 20, 1, SurfaceFormat.Bgr32);
             //renderTarget2D = new RenderTarget2D(GraphicsDevice, 20, 20, true, SurfaceFormat.Bgr32, DepthFormat.Depth24);
@@ -139,6 +137,8 @@ namespace TurboPort
 
             playerShips = new ObjectShip[Settings.Current.Players.Length];
             gfl = GravitiForceLevel.ReadGravitiForceLevelFile("GRBomber's Delight.GFB");
+            //gfl = GravitiForceLevel.ReadGravitiForceLevelFile("GRUp'n'Down (Race).GFB");
+            //gfl = GravitiForceLevel.ReadGravitiForceLevelFile("MEModern Art.GFB");
 
             levelBackground = LevelBackgroundGF.CreateLevelBackground(GraphicsDevice, gfl);
 
@@ -366,8 +366,8 @@ namespace TurboPort
             Texture2D texture = collisionRenderTarget;
             {
                 var sb = new SpriteBatch(GraphicsDevice);
-                sb.Begin();
-                sb.Draw(texture, new Vector2(220, 220), null, Color.Azure, 0, Vector2.Zero,
+                sb.Begin(0, BlendState.Additive);
+                sb.Draw(texture, new Vector2(20, 20), null, Color.Azure, 0, Vector2.Zero,
                     gd.ViewportResolution.X/(gd.PixelsToCenter.X*2), SpriteEffects.None, 0);
                 sb.End();
             }
