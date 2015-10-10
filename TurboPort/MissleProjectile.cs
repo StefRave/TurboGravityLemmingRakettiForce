@@ -33,6 +33,7 @@ namespace TurboPort
         const int numExplosionSmokeParticles = 50;
         const float projectileLifespan = 1.5f;
         const float gravity = 4;
+        private static readonly VelocityPosistionCalculator velocityPosistionCalculator = new VelocityPosistionCalculator { Mass = 5 };
 
         #endregion
 
@@ -45,6 +46,7 @@ namespace TurboPort
         Vector3 position;
         Vector3 velocity;
         float age;
+        private float shootingAngleInDegrees;
 
         #endregion
 
@@ -52,15 +54,16 @@ namespace TurboPort
         /// <summary>
         /// Constructs a new projectile.
         /// </summary>
-        public MissleProjectile(ParticleSystem explosionParticles, ParticleSystem explosionSmokeParticles, ParticleSystem projectileTrailParticles, Vector3 position, Vector3 shootingDirection)
+        public MissleProjectile(ParticleSystem explosionParticles, ParticleSystem explosionSmokeParticles, ParticleSystem projectileTrailParticles, Vector3 position, float shootingAngleInDegrees, Vector3 velocity)
         {
             this.explosionParticles = explosionParticles;
             this.explosionSmokeParticles = explosionSmokeParticles;
 
             // Start at the origin, firing in a random (but roughly upward) direction.
             this.position = position;
+            this.shootingAngleInDegrees = shootingAngleInDegrees;
 
-            velocity = shootingDirection*60;
+            this.velocity = velocity;
             // Use the particle emitter helper to output our trail particles.
             trailEmitter = new MissleParticleEmitter(projectileTrailParticles,
                                                trailParticlesPerSecond, this.position);
@@ -74,9 +77,9 @@ namespace TurboPort
         {
             float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            float thrust = age == 0 ? 400 : 3;
             // Simple projectile physics.
-            position += velocity * elapsedTime;
-            velocity.Y -= elapsedTime * gravity;
+            velocityPosistionCalculator.CalcVelocityAndPosition(ref position, ref velocity, elapsedTime, shootingAngleInDegrees, thrust);
             age += elapsedTime;
 
             // Update the particle emitter, which will create our particle trail.

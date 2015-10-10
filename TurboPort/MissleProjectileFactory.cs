@@ -19,14 +19,14 @@ namespace TurboPort
             this.projectileTrailParticles = projectileTrailParticles;
         }
 
-        public void Fire(Vector3 position, Vector3 direction)
+        public void Fire(Vector3 position, float angleInDegrees, Vector3 velocity)
         {
             SoundHandler.Fire();
 
             projectiles.Add(new MissleProjectile(explosionParticles,
                                explosionSmokeParticles,
                                projectileTrailParticles,
-                               position, direction));
+                               position, angleInDegrees, velocity));
 
         }
     }

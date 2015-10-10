@@ -13,8 +13,8 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin objects/pop_simple_lemming3.x
-/importer:XImporter
+#begin objects/pop_simple_lemming3.fbx
+/importer:FbxImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
 /processorParam:ColorKeyEnabled=True
@@ -25,13 +25,12 @@
 /processorParam:PremultiplyVertexColors=True
 /processorParam:ResizeTexturesToPowerOfTwo=False
 /processorParam:RotationX=0
-/processorParam:RotationY=0
+/processorParam:RotationY=180
 /processorParam:RotationZ=0
-/processorParam:Scale=1
+/processorParam:Scale=10
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=DxtCompressed
-/build:objects/pop_simple_lemming3.x
-
+/build:objects/pop_simple_lemming3.fbx
 #begin gfx/particle.png
 /importer:TextureImporter
 /processor:TextureProcessor

@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Game1.cs" />
     <Compile Include="I3dCollistionObject.cs" />
+    <Compile Include="IHandleController.cs" />
     <Compile Include="IMissleProjectileFactory.cs" />
     <Compile Include="MeshUtil.cs" />
     <Compile Include="MissleParticleEmitter.cs" />
@@ -69,9 +70,11 @@
     <Compile Include="Gravitiforce.cs" />
     <Compile Include="InputHandler.cs" />
     <Compile Include="ObjectBackground.cs" />
-    <Compile Include="Objects.cs" />
+    <Compile Include="ObjectShip.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="ShipBase.cs" />
     <Compile Include="SoundHandler.cs" />
+    <Compile Include="VelocityPosistionCalculator.cs" />
     <Compile Include="World.cs" />
     <Compile Include="Bullet.cs" />
   </ItemGroup>

@@ -22,7 +22,6 @@ namespace TurboPort
         public static ILevelBackground levelBackground;
 
 
-        private static readonly Random random = new Random();
         private readonly ExplosionParticleSystem explosionParticles;
         private readonly ExplosionSmokeParticleSystem explosionSmokeParticles;
         private readonly FireParticleSystem fireParticles;
@@ -198,21 +197,15 @@ namespace TurboPort
 
             var inputOk = InputHandler.HandleInput();
 
-
-            //TestSettings.Value1 = 0; (double)numericUpDown1.Value;
-            //TestSettings.Value2 = 0; (double)numericUpDown2.Value;
-            //TestSettings.Value3 = 0; (double)numericUpDown3.Value;
-
-            var timeElapsed = gameTime.ElapsedGameTime.TotalSeconds;
+            var elapsedTime = gameTime.ElapsedGameTime.TotalSeconds;
             if (inputOk)
             {
                 for (var i = 0; i < InputHandler.Player.Length; i++)
                 {
-                    playerShips[i].HandleController(InputHandler.Player[i], timeElapsed);
-                    //san
-                    //Console.WriteLine("[" + i + "] = " + playerShips[i].Position.ToString());
+                    playerShips[i].HandleController(InputHandler.Player[i], elapsedTime);
                 }
             }
+
             foreach (var playerShip in playerShips)
             {
                 playerShip.Update(gameTime);
@@ -233,38 +226,9 @@ namespace TurboPort
                 }
             }
 
-
-            //UpdateExplosions(gameTime);
             UpdateProjectiles(gameTime);
 
             base.Update(gameTime);
-        }
-
-        /// <summary>
-        ///     Helper for updating the explosions effect.
-        /// </summary>
-        private void UpdateExplosions(GameTime gameTime)
-        {
-            timeToNextProjectile -= gameTime.ElapsedGameTime;
-
-            if (timeToNextProjectile <= TimeSpan.Zero)
-            {
-                Vector3 velocity;
-                const float sidewaysVelocityRange = 60;
-                const float verticalVelocityRange = 40;
-                velocity.X = (float) (random.NextDouble() - 0.5)*sidewaysVelocityRange;
-                velocity.Y = (float) (random.NextDouble() + 0.5)*verticalVelocityRange;
-                velocity.Z = (float) (random.NextDouble() - 0.5)*sidewaysVelocityRange;
-
-                // Create a new projectile once per second. The real work of moving
-                // and creating particles is handled inside the Projectile class.
-                projectiles.Add(new MissleProjectile(explosionParticles,
-                    explosionSmokeParticles,
-                    projectileTrailParticles,
-                    playerShips[0].GunPosition, playerShips[0].ShootingVelocity));
-
-                timeToNextProjectile += TimeSpan.FromSeconds(1);
-            }
         }
 
         /// <summary>
@@ -305,16 +269,19 @@ namespace TurboPort
 
         private static void SetUpLights(BasicEffect be)
         {
-            be.DiffuseColor = new Vector3(0.3f, 0.3f, 0.3f);
-            be.AmbientLightColor = new Vector3(0.3f, 0.3f, 0.3f);
+            //be.DiffuseColor = new Vector3(0.3f, 0.3f, 0.3f);
+            be.AmbientLightColor = new Vector3(1f, 1f, 1f);
 
-            be.DirectionalLight0.DiffuseColor = new Vector3(0.3f, 0.3f, 0.3f);
-            be.DirectionalLight0.Direction = new Vector3(
-                (float) (Math.Cos(Environment.TickCount/350.0)),
-                -1.0f,
-                (float) (Math.Sin(Environment.TickCount/350.0)));
+            be.DirectionalLight0.DiffuseColor = new Vector3(1f, 1f, 1f);
+            var direction = new Vector3(
+                (float)(Math.Cos(Environment.TickCount / 350.0)),
+                (float)(Math.Sin(Environment.TickCount / 350.0)),
+                -2.0f);
+            direction.Normalize();
+            be.DirectionalLight0.Direction = direction;
+            //be.DirectionalLight0.Direction = new Vector3(0,-1f,0);
             be.DirectionalLight0.Enabled = true;
-            be.DirectionalLight0.SpecularColor = Vector3.Zero;
+            be.DirectionalLight0.SpecularColor = new Vector3(0f,0f,0f);
             be.LightingEnabled = true;
         }
 
@@ -330,6 +297,7 @@ namespace TurboPort
 
             var defaultViewport = GraphicsDevice.Viewport;
 
+
             GraphicsDevice.BlendState = BlendState.NonPremultiplied;
 
             var newView = defaultViewport;
@@ -341,7 +309,6 @@ namespace TurboPort
             {
                 DrawToColisionDetectionTexture(gd);
 
-
                 GraphicsDevice.Clear(Color.Black);
                 GraphicsDevice.Viewport = newView;
 
@@ -349,7 +316,6 @@ namespace TurboPort
                 for (var player = 0; player < InputHandler.Player.Length; player++)
                 {
                     GraphicsDevice.Viewport = newView;
-
 
                     var projection = gd.Projection;
                     var view = CalculateView(gd, playerShips[player].Position);
@@ -368,15 +334,13 @@ namespace TurboPort
                     SetUpLights(basicEffect);
                     for (var i = 0; i < InputHandler.Player.Length; i++)
                     {
-                        playerShips[i].Render(basicEffect);
+                        playerShips[i].Render(GraphicsDevice, basicEffect);
                     }
-
 
                     DrawInfo("{0:00.00}x {1:00.00}y\nSpeed {2}",
                         playerShips[player].Position.X,
                         playerShips[player].Position.Y,
-                        playerShips[player].Speed.Length());
-
+                        playerShips[player].Velocity.Length());
 
 
                     bulletBuffer.Render(GraphicsDevice, (BasicEffect) basicEffect.Clone());

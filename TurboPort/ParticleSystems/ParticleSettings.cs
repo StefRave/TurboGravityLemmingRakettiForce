@@ -28,7 +28,7 @@ namespace TurboPort.ParticleSystems
 
 
         // Maximum number of particles that can be displayed at one time.
-        public int MaxParticles = 100;
+        public int MaxParticles = 1000;
 
 
         // How long these particles will last.
