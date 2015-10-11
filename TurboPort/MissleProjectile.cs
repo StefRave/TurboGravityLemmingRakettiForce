@@ -9,7 +9,6 @@
 
 #region Using Statements
 
-using System;
 using Microsoft.Xna.Framework;
 using TurboPort.ParticleSystems;
 
@@ -29,10 +28,7 @@ namespace TurboPort
         #region Constants
 
         const float trailParticlesPerSecond = 200;
-        const int numExplosionParticles = 30;
-        const int numExplosionSmokeParticles = 50;
         const float projectileLifespan = 1.5f;
-        const float gravity = 4;
         private static readonly VelocityPosistionCalculator velocityPosistionCalculator = new VelocityPosistionCalculator { Mass = 5 };
 
         #endregion
@@ -50,6 +46,7 @@ namespace TurboPort
 
         #endregion
 
+        public Vector3 Position => position;
 
         /// <summary>
         /// Constructs a new projectile.
@@ -69,7 +66,6 @@ namespace TurboPort
                                                trailParticlesPerSecond, this.position);
         }
 
-
         /// <summary>
         /// Updates the projectile.
         /// </summary>
@@ -77,7 +73,7 @@ namespace TurboPort
         {
             float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            float thrust = age == 0 ? 400 : 3;
+            float thrust = age == 0 ? 430 : 1;
             // Simple projectile physics.
             velocityPosistionCalculator.CalcVelocityAndPosition(ref position, ref velocity, elapsedTime, shootingAngleInDegrees, thrust);
             age += elapsedTime;
@@ -90,16 +86,22 @@ namespace TurboPort
             // by the speed and direction of the projectile which created it.
             if (age > projectileLifespan)
             {
-                for (int i = 0; i < numExplosionParticles; i++)
-                    explosionParticles.AddParticle(position, velocity);
-
-                for (int i = 0; i < numExplosionSmokeParticles; i++)
-                    explosionSmokeParticles.AddParticle(position, velocity);
-
                 return false;
             }
                 
             return true;
+        }
+
+        public void Explode()
+        {
+            const int numExplosionParticles = 30;
+            const int numExplosionSmokeParticles = 50;
+
+            for (int i = 0; i < numExplosionParticles; i++)
+                explosionParticles.AddParticle(position, Vector3.Zero);
+
+            for (int i = 0; i < numExplosionSmokeParticles; i++)
+                explosionSmokeParticles.AddParticle(position, Vector3.Zero);
         }
     }
 }

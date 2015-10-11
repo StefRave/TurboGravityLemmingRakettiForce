@@ -102,7 +102,7 @@ namespace TurboPort
                     Vector3 position = Vector3.Lerp(previousPosition, newPosition, mu);
 
                     // Create the particle.
-                    particleSystem.AddParticle(position, velocity);
+                    particleSystem.AddParticle(position, Vector3.Zero);
                 }
 
                 // Store any time we didn't use, so it can be part of the next update.

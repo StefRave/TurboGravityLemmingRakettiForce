@@ -5,6 +5,6 @@ namespace TurboPort
     public interface I3DCollistionObject
     {
         float CollisionRadius();
-        void DrawCollistion(Matrix view, Matrix projection, Vector3 position);
+        void DrawToCollistionTexture(Matrix view, Matrix projection, Vector3 position);
     }
 }

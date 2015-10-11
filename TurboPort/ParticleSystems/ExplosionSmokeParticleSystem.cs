@@ -28,19 +28,19 @@ namespace TurboPort.ParticleSystems
 
         protected override void InitializeSettings(ParticleSettings settings)
         {
+            const float relativeSize = 0.1f;
+
             settings.TextureName = "smoke";
 
-            settings.MaxParticles = 200;
+            settings.MaxParticles = 100;
 
             settings.Duration = TimeSpan.FromSeconds(4);
 
-            settings.MinHorizontalVelocity = 0;
-            settings.MaxHorizontalVelocity = 50;
+            settings.MinHorizontalVelocity = 0 * relativeSize;
+            settings.MaxHorizontalVelocity = 50 * relativeSize;
 
-            settings.MinVerticalVelocity = -10;
-            settings.MaxVerticalVelocity = 50;
-
-            settings.Gravity = new Vector3(0, -20, 0);
+            settings.MinVerticalVelocity = -10 * relativeSize;
+            settings.MaxVerticalVelocity = 50 * relativeSize;
 
             settings.EndVelocity = 0;
 
@@ -53,8 +53,8 @@ namespace TurboPort.ParticleSystems
             settings.MinStartSize = 7;
             settings.MaxStartSize = 7;
 
-            settings.MinEndSize = 70;
-            settings.MaxEndSize = 140;
+            settings.MinEndSize = 70 * relativeSize;
+            settings.MaxEndSize = 140 * relativeSize;
         }
     }
 }

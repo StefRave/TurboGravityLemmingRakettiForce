@@ -7,34 +7,30 @@ namespace TurboPort
     {
         public Vector3 Position;
         
-        public void Interact(ObjectShip other)
+        public void Interact(ObjectShip ship)
         {
-            if(other.Velocity.Y <= 0)
+            if (ship.HasLanded)
+                return;
+
+            if (ship.Velocity.Y > 0)
+                return;
+
+            if (Math.Abs(ship.Position.X - Position.X) >= 16)
+                return;
+
+            if (ship.Position.Y > (Position.Y + 1))
+                return;
+            if (ship.Position.Y < (Position.Y - 1))
+                return;
+
+            double pop = Math.Cos(ship.Rotation.Z);
+            if (pop >= 0.90)
             {
-                if(Math.Abs(other.Position.X - Position.X) < 16)
-                {
-                    if(other.Position.Y <= Position.Y)
-                    {
-                        if(other.OldPosition.Y >= Position.Y)
-                        {
-                            double pop = Math.Cos(other.Rotation.Z);
-                            if(pop >= 0.93)
-                            {
-                                if(other.OldPosition.Y != Position.Y)
-                                {
-                                    SoundHandler.TochDown();
-                                }
-                                other.Velocity = Vector3.Zero;
-                                other.Position.Y = Position.Y;
-                                other.Rotation.Z = 0;
-                            }
-                            else
-                            {
-                                SoundHandler.Bigexp();
-                            }
-                        }
-                    }
-                }
+                SoundHandler.TochDown();
+                ship.HasLanded = true;
+                ship.Velocity = Vector3.Zero;
+                ship.Position.Y = Position.Y;
+                ship.Rotation.Z = 0;
             }
         }
 

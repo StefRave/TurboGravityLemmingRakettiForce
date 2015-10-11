@@ -31,7 +31,7 @@ namespace TurboPort.ParticleSystems
         {
             settings.TextureName = "smokewhite";
 
-            settings.MaxParticles = 600;
+            settings.MaxParticles = 100;
 
             settings.Duration = TimeSpan.FromSeconds(10);
 

@@ -29,6 +29,8 @@ namespace TurboPort.ParticleSystems
 
         protected override void InitializeSettings(ParticleSettings settings)
         {
+            const float relativeSize = 0.1f;
+
             settings.TextureName = "explosion";
 
             settings.MaxParticles = 100;
@@ -36,11 +38,11 @@ namespace TurboPort.ParticleSystems
             settings.Duration = TimeSpan.FromSeconds(2);
             settings.DurationRandomness = 1;
 
-            settings.MinHorizontalVelocity = 20;
-            settings.MaxHorizontalVelocity = 30;
+            settings.MinHorizontalVelocity = 20 * relativeSize;
+            settings.MaxHorizontalVelocity = 30 * relativeSize;
 
-            settings.MinVerticalVelocity = -20;
-            settings.MaxVerticalVelocity = 20;
+            settings.MinVerticalVelocity = -20 * relativeSize;
+            settings.MaxVerticalVelocity = 20 * relativeSize;
 
             settings.EndVelocity = 0;
 
@@ -53,8 +55,8 @@ namespace TurboPort.ParticleSystems
             settings.MinStartSize = 7;
             settings.MaxStartSize = 7;
 
-            settings.MinEndSize = 70;
-            settings.MaxEndSize = 140;
+            settings.MinEndSize = 70 * relativeSize;
+            settings.MaxEndSize = 140 * relativeSize;
 
             // Use additive blending.
             settings.BlendState = BlendState.Additive;

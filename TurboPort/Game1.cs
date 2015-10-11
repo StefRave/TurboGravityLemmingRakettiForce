@@ -1,45 +1,25 @@
 ﻿#region Using Statements
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using TurboPort.ParticleSystems;
 
 #endregion
 
 namespace TurboPort
-//namespace tglrf
 {
-    /// <summary>
-    ///     This is the main type for your game.
-    /// </summary>
     public class Game1 : Game
     {
-        public static ILevelBackground levelBackground;
-
-
-        private readonly ExplosionParticleSystem explosionParticles;
-        private readonly ExplosionSmokeParticleSystem explosionSmokeParticles;
-        private readonly FireParticleSystem fireParticles;
-        private readonly ProjectileTrailParticleSystem projectileTrailParticles;
-        private readonly SmokePlumeParticleSystem smokePlumeParticles;
+        private readonly GameWorld gameWorld;
         private BulletBuffer bulletBuffer;
-        private RenderTarget2D collisionRenderTarget;
-        private GravitiForceLevel gfl;
         private readonly GraphicsDeviceManager graphics;
-        private ObjectShip[] playerShips;
-        // The explosions effect works by firing projectiles up into the
-        // air, so we need to keep track of all the active projectiles.
-        private readonly List<MissleProjectile> projectiles = new List<MissleProjectile>();
-        private ShipBase[] shipBase;
         private SpriteFont spriteFont;
 
-        private TimeSpan timeToNextProjectile = TimeSpan.Zero;
-
+        private readonly GameInteraction gameInteraction;
+        private MissleProjectileFactory missleProjectileFactory;
 
         public Game1()
         {
@@ -56,30 +36,12 @@ namespace TurboPort
             Window.IsBorderless = true;
 #else
             Window.AllowUserResizing = true;
-			graphics.IsFullScreen = false;
+            graphics.IsFullScreen = false;
 #endif
 
-            var contentLoader = Content.FromPath("particle3d");
-            explosionParticles = new ExplosionParticleSystem(this, contentLoader);
-            explosionSmokeParticles = new ExplosionSmokeParticleSystem(this, contentLoader);
-            projectileTrailParticles = new ProjectileTrailParticleSystem(this, contentLoader);
-            smokePlumeParticles = new SmokePlumeParticleSystem(this, contentLoader);
-            fireParticles = new FireParticleSystem(this, contentLoader);
-
-            // Set the draw order so the explosions and fire
-            // will appear over the top of the smoke.
-            smokePlumeParticles.DrawOrder = 100;
-            explosionSmokeParticles.DrawOrder = 200;
-            projectileTrailParticles.DrawOrder = 300;
-            explosionParticles.DrawOrder = 400;
-            fireParticles.DrawOrder = 500;
-
-            // Register the particle system components.
-            Components.Add(explosionParticles);
-            Components.Add(explosionSmokeParticles);
-            Components.Add(projectileTrailParticles);
-            Components.Add(smokePlumeParticles);
-            Components.Add(fireParticles);
+            missleProjectileFactory = new MissleProjectileFactory(this);
+            gameWorld = new GameWorld(missleProjectileFactory);
+            gameInteraction = new GameInteraction(gameWorld);
         }
 
         private string FindContent()
@@ -109,15 +71,11 @@ namespace TurboPort
         /// </summary>
         protected override void Initialize()
         {
-            base.Initialize();
-
+            gameInteraction.Initialize(GraphicsDevice);
             InputHandler.Initialize();
             SoundHandler.Initialize(Content);
 
-            //renderTarget2D = new RenderTarget2D(GraphicsDevice, 20, 20, 1, SurfaceFormat.Bgr32);
-            //renderTarget2D = new RenderTarget2D(GraphicsDevice, 20, 20, true, SurfaceFormat.Bgr32, DepthFormat.Depth24);
-            collisionRenderTarget = new RenderTarget2D(GraphicsDevice, 40, 40, false, SurfaceFormat.Alpha8,
-                DepthFormat.None);
+            base.Initialize();
         }
 
         /// <summary>
@@ -126,55 +84,28 @@ namespace TurboPort
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            //         spriteBatch = new SpriteBatch (GraphicsDevice);
-
-            ////TODO: use this.Content to load your game content here 
-
             spriteFont = Content.Load<SpriteFont>("DejaVuSans");
-            //spriteFont = Content.Load<SpriteFont>("Contnt/bin/Windows/gfx/DejaVuSans");
-            gfl = null;
-
-            playerShips = new ObjectShip[Settings.Current.Players.Length];
-            gfl = GravitiForceLevel.ReadGravitiForceLevelFile("GRBomber's Delight.GFB");
+            
+            var gfl = GravitiForceLevel.ReadGravitiForceLevelFile("GRBomber's Delight.GFB");
             //gfl = GravitiForceLevel.ReadGravitiForceLevelFile("GRUp'n'Down (Race).GFB");
             //gfl = GravitiForceLevel.ReadGravitiForceLevelFile("MEModern Art.GFB");
 
-            levelBackground = LevelBackgroundGF.CreateLevelBackground(GraphicsDevice, gfl);
+            gameWorld.LevelBackground = LevelBackgroundGF.CreateLevelBackground(GraphicsDevice, gfl);
 
-            shipBase = new ShipBase[playerShips.Length];
-            shipBase[0] =
-                new ShipBase(new Vector3(gfl.playerBase[0].X - 104, 999 - gfl.playerBase[0].Y, 0f));
-            shipBase[1] =
-                new ShipBase(new Vector3(gfl.playerBase[1].X - 104, 999 - gfl.playerBase[1].Y, 0f));
-
-
-            var missleProjectileFactory = new MissleProjectileFactory(projectiles, explosionParticles,
-                explosionSmokeParticles, projectileTrailParticles);
+            gameWorld.AddShipBase(
+                new ShipBase(new Vector3(gfl.playerBase[0].X - 104, 999 - gfl.playerBase[0].Y, 0f)));
+            gameWorld.AddShipBase(
+                new ShipBase(new Vector3(gfl.playerBase[1].X - 104, 999 - gfl.playerBase[1].Y, 0f)));
 
             bulletBuffer = new BulletBuffer(Content);
-            for (var i = 0; i < playerShips.Length; i++)
+            for (var i = 0; i < 2; i++)
             {
-                playerShips[i] = new ObjectShip(missleProjectileFactory, bulletBuffer, levelBackground);
-                playerShips[i].Initialize(Content);
-
-                playerShips[i].Position = shipBase[i].Position;
+                var ship = new ObjectShip(missleProjectileFactory, bulletBuffer, gameWorld.LevelBackground);
+                ship.Initialize(Content);
+                ship.Position = gameWorld.PlayerShipBases[i].Position;
+                gameWorld.AddPlayerShip(ship);
             }
-        }
-
-        private void DrawModel(Model model, Matrix world, Matrix view, Matrix projection)
-        {
-            foreach (var mesh in model.Meshes)
-            {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.World = world;
-                    effect.View = view;
-                    effect.Projection = projection;
-                }
-
-                mesh.Draw();
-            }
+            base.LoadContent();
         }
 
         /// <summary>
@@ -202,57 +133,21 @@ namespace TurboPort
             {
                 for (var i = 0; i < InputHandler.Player.Length; i++)
                 {
-                    playerShips[i].HandleController(InputHandler.Player[i], elapsedTime);
+                    gameWorld.PlayerShips[i].HandleController(InputHandler.Player[i], elapsedTime);
                 }
             }
 
-            foreach (var playerShip in playerShips)
+            foreach (var playerShip in gameWorld.PlayerShips)
             {
                 playerShip.Update(gameTime);
             }
 
-            for (var i = 0; i < shipBase.Length; i++)
-            {
-                for (var j = 0; j < playerShips.Length; j++)
-                {
-                    shipBase[i].Interact(playerShips[j]);
-                }
-            }
-            for (var i = 0; i < playerShips.Length - 1; i++)
-            {
-                for (var j = 1; j < playerShips.Length; j++)
-                {
-                    playerShips[i].Bots(playerShips[j]);
-                }
-            }
-
-            UpdateProjectiles(gameTime);
+            missleProjectileFactory.UpdateProjectiles(gameTime);
 
             base.Update(gameTime);
+
+            gameInteraction.DoInteraction();
         }
-
-        /// <summary>
-        ///     Helper for updating the list of active projectiles.
-        /// </summary>
-        private void UpdateProjectiles(GameTime gameTime)
-        {
-            var i = 0;
-
-            while (i < projectiles.Count)
-            {
-                if (!projectiles[i].Update(gameTime))
-                {
-                    // Remove projectiles at the end of their life.
-                    projectiles.RemoveAt(i);
-                }
-                else
-                {
-                    // Advance to the next projectile.
-                    i++;
-                }
-            }
-        }
-
 
         private static Matrix CalculateView(GlobalData gd, Vector3 target)
         {
@@ -307,8 +202,6 @@ namespace TurboPort
 
             try
             {
-                DrawToColisionDetectionTexture(gd);
-
                 GraphicsDevice.Clear(Color.Black);
                 GraphicsDevice.Viewport = newView;
 
@@ -318,7 +211,7 @@ namespace TurboPort
                     GraphicsDevice.Viewport = newView;
 
                     var projection = gd.Projection;
-                    var view = CalculateView(gd, playerShips[player].Position);
+                    var view = CalculateView(gd, gameWorld.PlayerShips[player].Position);
 
                     var basicEffect = new BasicEffect(GraphicsDevice)
                                       {
@@ -327,31 +220,26 @@ namespace TurboPort
                                       };
 
                     //GraphicsDevice.RenderState.DepthBufferEnable = false;
-                    levelBackground.Render(GraphicsDevice, basicEffect);
+                    gameWorld.LevelBackground.Render(GraphicsDevice, basicEffect);
                     //san
                     //GraphicsDevice.RenderState.DepthBufferEnable = true;
 
                     SetUpLights(basicEffect);
                     for (var i = 0; i < InputHandler.Player.Length; i++)
                     {
-                        playerShips[i].Render(GraphicsDevice, basicEffect);
+                        gameWorld.PlayerShips[i].Render(GraphicsDevice, basicEffect);
                     }
 
                     DrawInfo("{0:00.00}x {1:00.00}y\nSpeed {2}",
-                        playerShips[player].Position.X,
-                        playerShips[player].Position.Y,
-                        playerShips[player].Velocity.Length());
+                        gameWorld.PlayerShips[player].Position.X,
+                        gameWorld.PlayerShips[player].Position.Y,
+                        gameWorld.PlayerShips[player].Velocity.Length());
 
 
                     bulletBuffer.Render(GraphicsDevice, (BasicEffect) basicEffect.Clone());
                     //End the scene
 
-
-                    explosionParticles.SetCamera(view, projection);
-                    explosionSmokeParticles.SetCamera(view, projection);
-                    projectileTrailParticles.SetCamera(view, projection);
-                    smokePlumeParticles.SetCamera(view, projection);
-                    fireParticles.SetCamera(view, projection);
+                    missleProjectileFactory.Draw(view, projection);
 
                     base.Draw(gameTime);
                     GraphicsDevice.BlendState = BlendState.NonPremultiplied;
@@ -363,51 +251,7 @@ namespace TurboPort
             {
                 GraphicsDevice.Viewport = defaultViewport;
             }
-            Texture2D texture = collisionRenderTarget;
-            {
-                var sb = new SpriteBatch(GraphicsDevice);
-                sb.Begin(0, BlendState.Additive);
-                sb.Draw(texture, new Vector2(20, 20), null, Color.Azure, 0, Vector2.Zero,
-                    gd.ViewportResolution.X/(gd.PixelsToCenter.X*2), SpriteEffects.None, 0);
-                sb.End();
-            }
-        }
-
-        private void DrawToColisionDetectionTexture(GlobalData gd)
-        {
-            GraphicsDevice.SetRenderTarget(collisionRenderTarget);
-            GraphicsDevice.Viewport = new Viewport
-                                      {
-                                          Width = collisionRenderTarget.Width,
-                                          Height = collisionRenderTarget.Height
-                                      };
-
-            var view = Matrix.CreateLookAt(
-                new Vector3(0f, 0f, gd.CameraDistance),
-                Vector3.Zero,
-                new Vector3(0f, 1f, 0f));
-
-            var t = collisionRenderTarget.Width/2f;
-            var projection = Matrix.CreateOrthographicOffCenter(
-                -t, t, -t, t,
-                1.0f, 10000.0f);
-
-            var maxRadius = playerShips.Max(obj => obj.CollisionRadius());
-
-            var position = new Vector3(
-                -(collisionRenderTarget.Width/2),
-                -(collisionRenderTarget.Height/2),
-                0);
-            position.Y += maxRadius;
-
-            foreach (I3DCollistionObject collistionObject in playerShips)
-            {
-                position.X += maxRadius;
-                collistionObject.DrawCollistion(view, projection, position);
-                position.X += maxRadius;
-            }
-
-            GraphicsDevice.SetRenderTarget(null);
+            gameInteraction.DrawCollisionTexture(gd);
         }
 
         private void DrawInfo(string format, params object[] args)

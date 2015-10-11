@@ -46,6 +46,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameInteraction.cs" />
+    <Compile Include="CollisionDetection2d.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="I3dCollistionObject.cs" />
     <Compile Include="IHandleController.cs" />

@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,12 +17,12 @@ namespace TurboPort
         public Vector3  Position;
         public Vector3  Velocity;
 
-        public Vector3  OldPosition;
+        private Vector3  oldPosition;
 
         private BoundingBox    boundingBox;
         private BoundingSphere boundingSphere;
-        public Vector3[] colisionPoints;
-        bool prevFire;
+        private Vector3[] colisionPoints;
+        private bool prevFire;
         private Matrix renderMatrix;
         private bool shipColliding;
         private Vector3 bodyColor;
@@ -31,25 +30,28 @@ namespace TurboPort
         private BasicEffect bodyEffect;
         private BasicEffect screenEffect;
 
-        public Model Model { get; private set; }
+        private Model model;
+        public bool HasLanded { get; set; }
 
 
         static  bool colorSwitchHack;
+        public bool hit;
 
         public ObjectShip(IMissleProjectileFactory missleProjectileFactory, BulletBuffer bulletBuffer, ILevelBackground levelBackground)
         {
             this.missleProjectileFactory = missleProjectileFactory;
             this.bulletBuffer = bulletBuffer;
             this.levelBackground = levelBackground;
+            HasLanded = true;
         }
 
         public void Initialize(ContentManager content)
         {
-            Model = content.Load<Model>(@"objects/pop_simple_lemming3");
-            CorrectModel(Model);
+            model = content.Load<Model>(@"objects/pop_simple_lemming3");
+            CorrectModel(model);
 
-            bodyEffect = (BasicEffect)Model.Meshes["Body"].Effects[0];
-            screenEffect = (BasicEffect)Model.Meshes["Screen"].Effects[0];
+            bodyEffect = (BasicEffect)model.Meshes["Body"].Effects[0];
+            screenEffect = (BasicEffect)model.Meshes["Screen"].Effects[0];
             bodyColor = colorSwitchHack ? screenEffect.DiffuseColor : bodyEffect.DiffuseColor;
             screenColor = colorSwitchHack ? bodyEffect.DiffuseColor : screenEffect.DiffuseColor;
             colorSwitchHack = !colorSwitchHack;
@@ -60,12 +62,12 @@ namespace TurboPort
             Velocity = new Vector3(0f, 0f, 0f);
             Rotation = Vector3.Zero;
 
-            MeshUtil.GetBoundingFromMeshes(Model.Meshes, scale, out boundingBox, out boundingSphere);
+            MeshUtil.GetBoundingFromMeshes(model.Meshes, scale, out boundingBox, out boundingSphere);
 
             var originalBox = boundingBox;
             originalBox.Min /= scale;
             originalBox.Max /= scale;
-            colisionPoints = MeshUtil.FindCollisionPoints(Model.Meshes, originalBox);
+            colisionPoints = MeshUtil.FindCollisionPoints(model.Meshes, originalBox);
         }
 
         public void Bots(ObjectShip other)
@@ -73,8 +75,8 @@ namespace TurboPort
             Vector3 distance = other.Position - Position;
             if(distance.Length() < (boundingSphere.Radius * scale))
             {
-                Position = OldPosition;
-                other.Position = other.OldPosition;
+                Position = oldPosition;
+                other.Position = other.oldPosition;
 
                 Vector3 tmp = other.Velocity;
                 other.Velocity = Velocity;
@@ -97,6 +99,14 @@ namespace TurboPort
                 Matrix.CreateRotationY(Rotation.Y)*
                 Matrix.CreateRotationZ(Rotation.Z);
 
+            if (HasLanded && Velocity.Y == 0)
+                return;
+
+            //DoOldCollsionWithBackground();
+        }
+
+        private void DoOldCollsionWithBackground()
+        {
             var pointLocationMatrix = renderMatrix*
                                       Matrix.CreateTranslation(Position);
 
@@ -121,11 +131,32 @@ namespace TurboPort
             }
             if (!shipColliding && isColliding)
             {
-                Position = OldPosition;
-                Velocity = -Velocity * 0.3f;
+                Position = oldPosition;
+                Velocity = -Velocity*0.3f;
                 SoundHandler.Checkpoint();
             }
             shipColliding = isColliding;
+        }
+
+        public bool CheckCollision(Vector3 projectilePosition, CollisionPositionInTexture collisionPositionInTexture)
+        {
+            var projectileRelativeToCenter = Position - projectilePosition;
+            var containmentType = boundingSphere.Contains(projectileRelativeToCenter);
+            if (containmentType != ContainmentType.Disjoint)
+            {
+                int offsetX = collisionPositionInTexture.Rect.X + (0) +
+                              (int) projectileRelativeToCenter.X;
+                int offsetY = collisionPositionInTexture.Rect.Y + (0) +
+                              (int) projectileRelativeToCenter.Y;
+                byte textureDataAtLocation = collisionPositionInTexture.ByteData[offsetX + offsetY * collisionPositionInTexture.Size.X];
+                if (textureDataAtLocation == 0)
+                    return false;
+
+                SoundHandler.Bigexp();
+                return true;
+            }
+
+            return false;
         }
 
         public void Render(GraphicsDevice graphicsDevice, BasicEffect be)
@@ -134,10 +165,10 @@ namespace TurboPort
                 Matrix.CreateTranslation(Position);
 
             graphicsDevice.DepthStencilState = DepthStencilState.Default;
-            bodyEffect.DiffuseColor = bodyColor;
+            bodyEffect.DiffuseColor = hit ? new Vector3(1, 0,0) : bodyColor;
             screenEffect.DiffuseColor = screenColor;
 
-            foreach (ModelMesh mesh in Model.Meshes)
+            foreach (ModelMesh mesh in model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
@@ -158,13 +189,13 @@ namespace TurboPort
             return boundingSphere.Radius;
         }
 
-        public void DrawCollistion(Matrix view, Matrix projection, Vector3 position)
+        public void DrawToCollistionTexture(Matrix view, Matrix projection, Vector3 position)
         {
             Matrix world =
                 renderMatrix *
                 Matrix.CreateTranslation(position);
 
-            foreach (ModelMesh mesh in Model.Meshes)
+            foreach (ModelMesh mesh in model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
@@ -179,14 +210,19 @@ namespace TurboPort
 
         public void HandleController(PlayerControl control, double elapsedTime)
         {
-            OldPosition = Position;
+            oldPosition = Position;
 
             float rotation = control.Rotation;
             float thrust = control.Thrust;
+            if (thrust != 0)
+                HasLanded = false;
 
-            Rotation.Z += (float)(-rotation * elapsedTime * 7);
             Rotation.Y = rotation * 3.14f / 2f;
-            velocityPosistionCalculator.CalcVelocityAndPosition(ref Position, ref Velocity, elapsedTime, Rotation.Z, thrust * 100);
+            if (!HasLanded)
+            {
+                Rotation.Z += (float)(-rotation * elapsedTime * 7);
+                velocityPosistionCalculator.CalcVelocityAndPosition(ref Position, ref Velocity,
+                    elapsedTime, Rotation.Z, thrust*100);}
 
             if (!prevFire && control.Fire)
             {

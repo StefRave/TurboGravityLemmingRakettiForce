@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 
@@ -19,10 +20,11 @@ namespace TurboPort
         private static SoundEffect tingaling;
         private static SoundEffect touchdown;
 
-        // Audio objects
-
         static public void Initialize(ContentManager content)
         {
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+                return;
+
             explosion2 = content.Load<SoundEffect>(@"sound/Explosion2");
             bigexp = content.Load<SoundEffect>(@"sound/bigexp");
             bingo = content.Load<SoundEffect>(@"sound/bingo");
@@ -37,15 +39,23 @@ namespace TurboPort
             touchdown = content.Load<SoundEffect>(@"sound/touchdown");
         }
 
-        static public void Bigexp(float volume = 1.0f)         { bigexp.Play(volume, 0, 0); }
-        static public void Bingo(float volume = 1.0f)          { bingo.Play(volume, 0, 0); }
-        static public void Bullethit(float volume = 1.0f)      { bullethit.Play(volume, 0, 0); }
-        static public void Checkpoint(float volume = 1.0f)     { checkpoint.Play(volume, 0, 0); }
-        static public void Fire(float volume = 1.0f)           { fire.Play(volume, 0, 0); }
-        static public void Firemissle(float volume = 1.0f)     { firemissle.Play(volume, 0, 0); }
-        static public void Shipcollide(float volume = 1.0f)    { shipcollide.Play(volume, 0, 0); }
-        static public void Splash(float volume = 1.0f)         { splash.Play(volume, 0, 0);  }
-        static public void Tingaling(float volume = 1.0f)      { tingaling.Play(volume, 0, 0); }
-        static public void TochDown(float volume = 1.0f)       { touchdown.Play(volume, 0, 0); }
+        static private void Play(SoundEffect soundEffect, float volume)
+        {
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+                return;
+
+            soundEffect.Play(volume, 0, 0);
+        }
+
+        static public void Bigexp(float volume = 1.0f)         { Play(bigexp, volume); }
+        static public void Bingo(float volume = 1.0f)          { Play(bingo, volume); }
+        static public void Bullethit(float volume = 1.0f)      { Play(bullethit, volume); }
+        static public void Checkpoint(float volume = 1.0f)     { Play(checkpoint, volume); }
+        static public void Fire(float volume = 1.0f)           { Play(fire, volume); }
+        static public void Firemissle(float volume = 1.0f)     { Play(firemissle, volume); }
+        static public void Shipcollide(float volume = 1.0f)    { Play(shipcollide, volume); }
+        static public void Splash(float volume = 1.0f)         { Play(splash, volume);  }
+        static public void Tingaling(float volume = 1.0f)      { Play(tingaling, volume); }
+        static public void TochDown(float volume = 1.0f)       { Play(touchdown, volume); }
     }
 }
