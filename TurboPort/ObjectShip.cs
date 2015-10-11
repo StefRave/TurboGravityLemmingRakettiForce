@@ -144,9 +144,9 @@ namespace TurboPort
             var containmentType = boundingSphere.Contains(projectileRelativeToCenter);
             if (containmentType != ContainmentType.Disjoint)
             {
-                int offsetX = collisionPositionInTexture.Rect.X + (0) +
+                int offsetX = collisionPositionInTexture.Rect.X + (collisionPositionInTexture.Rect.Width / 2) +
                               (int) projectileRelativeToCenter.X;
-                int offsetY = collisionPositionInTexture.Rect.Y + (0) +
+                int offsetY = collisionPositionInTexture.Rect.Y + (collisionPositionInTexture.Rect.Height / 2) +
                               (int) projectileRelativeToCenter.Y;
                 byte textureDataAtLocation = collisionPositionInTexture.ByteData[offsetX + offsetY * collisionPositionInTexture.Size.X];
                 if (textureDataAtLocation == 0)
