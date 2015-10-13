@@ -12,12 +12,13 @@ namespace TurboPort
 
         void Render(GraphicsDevice device, BasicEffect be);
         bool CheckCollision(Vector3 vector3);
-        void Interact(ObjectShip ship, CollisionPositionInTexture collisionPositionInTexture);
+        bool Interact(ObjectShip ship, CollisionPositionInTexture collisionPositionInTexture);
     }
 
     public class LevelBackgroundGF : ILevelBackground
     { 
         private Texture2D texture;
+        private int[] textureData;
         public Rectangle bounds;
         private GravitiForceLevel gfl;
         private VertexPositionTexture[] pt;
@@ -42,10 +43,27 @@ namespace TurboPort
             {
                 return true;
             }
-            return gfl.BitmapData[((int)point.X) + (texture.Width * ((int)point.Y))] != 0;
+            bool hit = gfl.BitmapData[((int)point.X) + (texture.Width * ((int)point.Y))] != 0;
+            if (hit)
+            {
+                gfl.BitmapData[((int) point.X) + (texture.Width*((int) point.Y - 1))] = 0;
+                gfl.BitmapData[((int) point.X) + (texture.Width*((int) point.Y - 0))] = 0;
+                gfl.BitmapData[((int) point.X) + (texture.Width*((int) point.Y + 1))] = 0;
+                gfl.BitmapData[((int) point.X - 1) + (texture.Width*((int) point.Y))] = 0;
+                gfl.BitmapData[((int) point.X + 1) + (texture.Width*((int) point.Y))] = 0;
+                textureData[(int)point.X + texture.Width * (texture.Height - ((int)point.Y) - 2)] = unchecked((int)0x00000000);
+                textureData[(int)point.X + texture.Width * (texture.Height - ((int)point.Y) - 1)] = unchecked((int)0x00000000);
+                textureData[(int)point.X + texture.Width * (texture.Height - ((int)point.Y) - 0)] = unchecked((int)0x00000000);
+                textureData[(int)point.X - 1 + texture.Width * (texture.Height - ((int)point.Y) - 1)] = unchecked((int)0x00000000);
+                textureData[(int)point.X + 1 + texture.Width * (texture.Height - ((int)point.Y) - 1)] = unchecked((int)0x00000000);
+                texture.SetData(textureData);
+            }
+
+
+            return hit;
         }
 
-        public void Interact(ObjectShip ship, CollisionPositionInTexture collisionPositionInTexture)
+        public bool Interact(ObjectShip ship, CollisionPositionInTexture collisionPositionInTexture)
         {
 
             var point = new Point(
@@ -61,27 +79,33 @@ namespace TurboPort
                 bounds.Width);
 
             ship.hit = false;
-            int xStart = (int)ship.Position.X - (collisionPositionInTexture.Rect.Width/2);
-            int yStart = (int)ship.Position.Y - (collisionPositionInTexture.Rect.Height/2) + 3; // <<--- why 3?????????
+            int xStart = (int)ship.Position.X - (collisionPositionInTexture.Rect.Width/2) + 1;
+            int yStart = (int)ship.Position.Y - (collisionPositionInTexture.Rect.Height/2) + 1;
             int xEnd = xStart + collisionPositionInTexture.Rect.Width;
             int yEnd = yStart + collisionPositionInTexture.Rect.Height;
-            int offsetShip = 0;
-            int offsetShipLineDelta = collisionPositionInTexture.Size.Y - collisionPositionInTexture.Rect.Width;
+            int offsetShip = (collisionPositionInTexture.Rect.Height - 1) * collisionPositionInTexture.Size.Y + collisionPositionInTexture.Rect.X + 1;
+            int offsetShipLineDelta = collisionPositionInTexture.Size.Y + collisionPositionInTexture.Rect.Width;
             var byteData = collisionPositionInTexture.ByteData;
             for (int y = yStart; y < yEnd; y++)
             {
                 for (int x = xStart; x < xEnd; x++)
                 {
                     if (byteData[offsetShip++] != 0)
-                        ship.hit |= gfl.BitmapData[x + texture.Width*y] != 0;
+                    {
+                        if (gfl.BitmapData[x + texture.Width*y] != 0)
+                        {
+                            ship.hit = true;
+                            gfl.BitmapData[x + texture.Width*y] = 0;
+                            textureData[x + texture.Width*(texture.Height - y - 1)] = unchecked((int)0);
+                        }
+                    }
                 }
-                offsetShip += offsetShipLineDelta;
+                offsetShip -= offsetShipLineDelta;
             }
+            if (ship.hit)
+            texture.SetData(textureData);
 
-            //ship.hit = CheckCollision(ship.Position);
-            if (!ship.hit)
-                return;
-            1.ToString();
+            return ship.hit;
         }
 
         public void Render(GraphicsDevice device, BasicEffect be)
@@ -102,6 +126,9 @@ namespace TurboPort
             result.gfl = gfl;
   
             result.texture = Texture2D.FromStream(device, gfl.GetBitmapStream());
+            result.textureData = new int[result.texture.Height*result.texture.Width];
+            result.texture.GetData(result.textureData);
+
 
             result.bounds = new Rectangle(0, 0, result.texture.Width, result.texture.Height);
 

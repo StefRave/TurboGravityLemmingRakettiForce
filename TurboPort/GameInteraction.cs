@@ -40,7 +40,12 @@ namespace TurboPort
             {
                 var collisionPositionInTexture = dictje[ship];
                 gameWorld.ProjectileFactory.Interact(ship, collisionPositionInTexture);
-                gameWorld.LevelBackground.Interact(ship, collisionPositionInTexture);
+                if (gameWorld.LevelBackground.Interact(ship, collisionPositionInTexture))
+                {
+                    // code to be moded to ship object:
+                    ship.Position = ship.oldPosition;
+                    ship.Velocity = -ship.Velocity * 0.3f;
+                }
 
                 foreach (ShipBase shipBase in gameWorld.PlayerShipBases)
                     shipBase.Interact(ship);

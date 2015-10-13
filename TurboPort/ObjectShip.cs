@@ -17,7 +17,7 @@ namespace TurboPort
         public Vector3  Position;
         public Vector3  Velocity;
 
-        private Vector3  oldPosition;
+        internal Vector3  oldPosition;
 
         private BoundingBox    boundingBox;
         private BoundingSphere boundingSphere;
