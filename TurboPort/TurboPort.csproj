@@ -53,7 +53,9 @@
     <Compile Include="IHandleController.cs" />
     <Compile Include="IMissleProjectileFactory.cs" />
     <Compile Include="MeshUtil.cs" />
-    <Compile Include="MissleParticleEmitter.cs" />
+    <Compile Include="MissleParticleEmitter.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="MissleProjectileFactory.cs" />
     <Compile Include="ParticleSystems\ContentManagerExtensions.cs" />
     <Compile Include="ParticleSystems\ExplosionParticleSystem.cs" />
@@ -178,7 +180,7 @@
     <EmbeddedResource Include="Gf2Level\Types\SL" />
     <EmbeddedResource Include="Gf2Level\Types\ZI" />
     <None Include="Icon.png" />
-    <None Include="media\level\gf2\Gfx\Alien.Bmap" />
+    <None Include="media\level\gf2\Gfx\Alien.bmap" />
     <None Include="media\level\gf2\Gfx\Arctic.bmap" />
     <None Include="media\level\gf2\Gfx\boring.bmap" />
     <None Include="media\level\gf2\Gfx\grass.bmap" />
@@ -280,7 +282,9 @@
     <None Include="media\object\pop_simple_lemming3.x" />
     <None Include="media\soundfx\lem_wavs.zip" />
     <None Include="packages.config" />
-    <None Include="OpenTK.dll.config" />
+    <None Include="OpenTK.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Tao.Sdl.dll.config" />
   </ItemGroup>
   <ItemGroup>

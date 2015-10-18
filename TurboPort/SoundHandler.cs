@@ -22,9 +22,9 @@ namespace TurboPort
 
         static public void Initialize(ContentManager content)
         {
-            if (Environment.OSVersion.Platform == PlatformID.Unix)
-                return;
-
+#if DONT_KNOW_HOW_TO_INSTALL_SOUND
+            return;
+#endif
             explosion2 = content.Load<SoundEffect>(@"sound/Explosion2");
             bigexp = content.Load<SoundEffect>(@"sound/bigexp");
             bingo = content.Load<SoundEffect>(@"sound/bingo");
@@ -41,9 +41,9 @@ namespace TurboPort
 
         static private void Play(SoundEffect soundEffect, float volume)
         {
-            if (Environment.OSVersion.Platform == PlatformID.Unix)
-                return;
-
+			#if DONT_KNOW_HOW_TO_INSTALL_SOUND
+			return;
+			#endif
             soundEffect.Play(volume, 0, 0);
         }
 
