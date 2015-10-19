@@ -81,6 +81,7 @@ namespace TurboPort
                 {
                     projectiles[i].Explode();
                     projectiles.RemoveAt(i);
+                    SoundHandler.Bullethit();
                     continue;
                 }
                 i++;
