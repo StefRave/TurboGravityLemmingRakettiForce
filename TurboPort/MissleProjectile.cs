@@ -46,7 +46,7 @@ namespace TurboPort
 
         #endregion
 
-        public Vector3 Position => position;
+        public Vector3 Position { get { return position; } }
 
         /// <summary>
         /// Constructs a new projectile.

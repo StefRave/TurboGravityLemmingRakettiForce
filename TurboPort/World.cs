@@ -4,14 +4,14 @@ namespace TurboPort
 {
     public class GameWorld
     {
-        public MissleProjectileFactory ProjectileFactory { get; }
+        public MissleProjectileFactory ProjectileFactory { get; private set; }
         private readonly List<ShipBase> playerShipBases = new List<ShipBase>();
         private readonly List<ObjectShip> playerShips = new List<ObjectShip>();
         public ILevelBackground LevelBackground { get; set; }
         
 
-        public IReadOnlyList<ShipBase> PlayerShipBases => playerShipBases;
-        public IReadOnlyList<ObjectShip> PlayerShips => playerShips;
+        public IReadOnlyList<ShipBase> PlayerShipBases { get { return playerShipBases; } }
+        public IReadOnlyList<ObjectShip> PlayerShips { get { return playerShips; } }
 
         public GameWorld(MissleProjectileFactory missleProjectileFactory)
         {
