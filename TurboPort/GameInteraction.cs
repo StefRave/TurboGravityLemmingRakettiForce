@@ -11,7 +11,7 @@ namespace TurboPort
         private readonly GameWorld gameWorld;
         private GraphicsDevice graphicsDevice;
         private RenderTarget2D collisionRenderTarget;
-        private byte[] collisionRenderTargetBytes;
+        private int[] collisionRenderTargetBytes;
         private readonly Dictionary<object, CollisionPositionInTexture> dictje = new Dictionary<object, CollisionPositionInTexture>();
 
         public GameInteraction(GameWorld gameWorld)
@@ -25,9 +25,8 @@ namespace TurboPort
 
             const int width = 40;
             const int height = 40;
-            collisionRenderTarget = new RenderTarget2D(graphicsDevice, width, height, false, SurfaceFormat.Alpha8,
-                DepthFormat.None);
-            collisionRenderTargetBytes = new byte[width * height];
+            collisionRenderTarget = new RenderTarget2D(graphicsDevice, width, height);
+            collisionRenderTargetBytes = new int[width * height * 4];
         }
 
         public void DoInteraction()
@@ -127,7 +126,7 @@ namespace TurboPort
     public class CollisionPositionInTexture
     {
         public Rectangle Rect { get; set; }
-        public byte[] ByteData { get; set; }
+        public int[] ByteData { get; set; }
         public Point Size { get; set; }
     }
 }

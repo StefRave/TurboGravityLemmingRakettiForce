@@ -5,7 +5,7 @@ namespace TurboPort
 {
     public class CollisionDetection2D
     {
-        static public bool IntersectPixels(Rectangle rectangleA, byte[] dataA, int widthA,
+        static public bool IntersectPixels(Rectangle rectangleA, int[] dataA, int widthA,
                             Rectangle rectangleB, byte[] dataB, int widthB)
         {
             // Find the bounds of the rectangle intersection
@@ -20,8 +20,8 @@ namespace TurboPort
                 for (int x = left; x < right; x++)
                 {
                     // Get the color of both pixels at this point
-                    byte colorA = dataA[(x - rectangleA.Left) +
-                                         (y - rectangleA.Top) * widthA];
+                    int colorA = (dataA[(x - rectangleA.Left) +
+                                         (y - rectangleA.Top) * widthA]) & 0xffffff;
                     byte colorB = dataB[(x - rectangleB.Left) +
                                          (rectangleB.Height - (y - rectangleB.Top)) * widthB];
 

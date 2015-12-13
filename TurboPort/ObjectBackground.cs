@@ -90,7 +90,7 @@ namespace TurboPort
             {
                 for (int x = xStart; x < xEnd; x++)
                 {
-                    if (byteData[offsetShip++] != 0)
+                    if ((byteData[offsetShip++] & 0xffffff) != 0)
                     {
                         if (gfl.BitmapData[x + texture.Width*y] != 0)
                         {

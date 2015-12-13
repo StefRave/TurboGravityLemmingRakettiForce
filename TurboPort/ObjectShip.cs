@@ -148,7 +148,7 @@ namespace TurboPort
                               (int) projectileRelativeToCenter.X;
                 int offsetY = collisionPositionInTexture.Rect.Y + (collisionPositionInTexture.Rect.Height / 2) +
                               (int) projectileRelativeToCenter.Y;
-                byte textureDataAtLocation = collisionPositionInTexture.ByteData[offsetX + offsetY * collisionPositionInTexture.Size.X];
+                int textureDataAtLocation = collisionPositionInTexture.ByteData[offsetX + offsetY * collisionPositionInTexture.Size.X];
                 if (textureDataAtLocation == 0)
                     return false;
 
