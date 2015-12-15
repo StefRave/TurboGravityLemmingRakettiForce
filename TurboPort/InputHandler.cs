@@ -1,6 +1,7 @@
+using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-//using DxVBLibA;
 
 namespace TurboPort
 {
@@ -18,99 +19,42 @@ namespace TurboPort
         void HandleInput(PlayerControl playerControl);
     }
 
-	/*
-
-#if JoyLib
-    public class InputControlJoystick : IInputControl
+    public class GamePadController : IInputControl 
     {
-        private readonly int controlerIndex;
-        static public readonly float DeadZone = 0.15f;
+        private readonly PlayerIndex playerIndex;
 
-        public InputControlJoystick(int controlerIndex)
+        public GamePadController(PlayerIndex playerIndex)
         {
-            this.controlerIndex = controlerIndex;
+            this.playerIndex = playerIndex;
         }
 
-        private static float GetAnalogValue(int intValue)
+        /// <param name="playerIndex">0 - 4</param>
+        /// <returns></returns>
+        static public GamePadController CreateIfConnected(int playerIndex)
         {
-            float value = (intValue - 32768)/32768f;
-            if(value > DeadZone)
-                return (value - DeadZone) / (1 - DeadZone);
-            else if(value < -DeadZone)
-                return (value + DeadZone) / (1 - DeadZone);
+            PlayerIndex index;
+            switch (playerIndex)
+            {
+                case 0: index = PlayerIndex.One; break;
+                case 1: index = PlayerIndex.One; break;
+                case 2: index = PlayerIndex.One; break;
+                case 3: index = PlayerIndex.One; break;
+                default:
+                    return null;
+            }
 
-            return 0;
+            GamePadState padState = GamePad.GetState(index);
+            if (!padState.IsConnected) // Stef: returns true even after controller is disconnected
+                return null;
+
+            return new GamePadController(index);
         }
 
-        public void HandleInput(PlayerControl playerControl)
-        {
-            JoystickState state = Joystick.GetState(controlerIndex);
-
-            playerControl.Thrust = Math.Max(0, -GetAnalogValue(state.GetAxis(JoystickState.Axis.R)));
-            playerControl.Rotation = GetAnalogValue(state.GetAxis(JoystickState.Axis.X));
-            playerControl.Fire = state.GetButton(3);
-            playerControl.FireSpecial = state.GetButton(4);
-        }
-    }
-#else
-    public class InputControlJoystick : IInputControl
-    {
-        private readonly DirectInputDeviceInstance8 inputDevice;
-        private readonly DirectInputDevice8 device;
-
-        static public readonly float DeadZone = 0.15f;
-
-        public InputControlJoystick(DirectInput8 input, DirectInputDeviceInstance8 inputDevice)
-        {
-            this.inputDevice = inputDevice;
-            //Console.Out.WriteLine("gameController.GetProductName() = {0}", gameController.GetProductName());
-            //Console.Out.WriteLine("gameController.GetInstanceName() = {0}", gameController.GetInstanceName());
-            device = input.CreateDevice(inputDevice.GetGuidInstance());
-            device.SetCommonDataFormat(CONST_DICOMMONDATAFORMATS.DIFORMAT_JOYSTICK);
-            device.SetCooperativeLevel(0, CONST_DISCLFLAGS.DISCL_BACKGROUND | CONST_DISCLFLAGS.DISCL_NONEXCLUSIVE);
-            DIDEVCAPS caps = new DIDEVCAPS();
-            device.GetCapabilities(ref caps);
-            device.Acquire();
-        }
-
-        private static float GetAnalogValue(int intValue)
-        {
-            float value = (intValue - 32768) / 32768f;
-            if(value > DeadZone)
-                return (value - DeadZone) / (1 - DeadZone);
-            else if(value < -DeadZone)
-                return (value + DeadZone) / (1 - DeadZone);
-
-            return 0;
-        }
-
-        public void HandleInput(PlayerControl playerControl)
-        {
-            DIJOYSTATE joyState = new DIJOYSTATE();
-            device.GetDeviceStateJoystick(ref joyState);
-
-            playerControl.Thrust = Math.Max(0, -GetAnalogValue(joyState.rz));
-            playerControl.Rotation = GetAnalogValue(joyState.x);
-            playerControl.Fire = joyState.Buttons[3] > 0;
-            playerControl.FireSpecial = joyState.Buttons[4] > 0;
-        }
-    }
-
-#endif
-    public class InputControlXboxController : IInputControl 
-    {
-        public PropertyInfo Thrust;
-        public PropertyInfo RotateLeftRight;
-        public int ThrustKey;
-        public int RotateLeft;
-        public int RotateRight;
-        public int Fire;
-        public int FireSpecial;
 
 
         public void HandleInput(PlayerControl playerControl)
         {
-            GamePadState padState = GamePad.GetState(PlayerIndex.One);
+            GamePadState padState = GamePad.GetState(playerIndex);
             if(!padState.IsConnected)
                 return;
 
@@ -121,15 +65,15 @@ namespace TurboPort
                 playerControl.Rotation = -1;
             if(padState.Buttons.RightShoulder == ButtonState.Pressed)
                 playerControl.Rotation = 1;
-            if(padState.Buttons.Back == ButtonState.Pressed)
+            if(padState.Buttons.X == ButtonState.Pressed)
                 playerControl.Thrust = 1;
 
             playerControl.Fire        = padState.Buttons.A == ButtonState.Pressed;
-			playerControl.FireSpecial = padState.Buttons.B == ButtonState.Pressed;
+            playerControl.FireSpecial = padState.Buttons.B == ButtonState.Pressed;
 
         }
     }
-*/
+
     public class InputControlKeyboard : IInputControl 
     {
         public class KeyConfig
@@ -159,11 +103,11 @@ namespace TurboPort
                 get
                 {
                     KeyConfig c = new KeyConfig();
-					c.FireSpecial = Keys.N;
+                    c.FireSpecial = Keys.N;
                     c.Fire = Keys.M;
-					c.RotateRight = Keys.Right;
+                    c.RotateRight = Keys.Right;
                     c.RotateLeft = Keys.Left;
-					c.ThrustKey = Keys.Up;
+                    c.ThrustKey = Keys.Up;
                     return c;
                 }
             }
@@ -181,36 +125,35 @@ namespace TurboPort
         {
             KeyboardState state = Keyboard.GetState();
 
-            playerControl.Thrust = state.IsKeyDown(keyConfig.ThrustKey) ? 1 : 0;
-            playerControl.Rotation = state.IsKeyDown(keyConfig.RotateLeft) ? -1 : 0;
-            playerControl.Rotation += state.IsKeyDown(keyConfig.RotateRight) ? 1 : 0;
+            if(state.IsKeyDown(keyConfig.ThrustKey))
+                playerControl.Thrust = 1;
+            if(state.IsKeyDown(keyConfig.RotateLeft))
+            playerControl.Rotation = -1;
+            if(state.IsKeyDown(keyConfig.RotateRight))
+                playerControl.Rotation = 1;
 
-            playerControl.Fire = state.IsKeyDown(keyConfig.Fire);
-            playerControl.FireSpecial = state.IsKeyDown(keyConfig.FireSpecial);
+            if(state.IsKeyDown(keyConfig.Fire))
+                playerControl.Fire = true;
+            if(state.IsKeyDown(keyConfig.FireSpecial))
+                playerControl.FireSpecial = true;
         }
-
-
     }
 
-	/// <summary>
-	/// Summary description for InputHandler.
-	/// </summary>
     public class InputHandler
     {
-        static private IInputControl[] playerInput;
+        private static List<IInputControl>[] playerInput;
 
-        static private PlayerControl[] player;
-
-        static public PlayerControl[] Player      { get { return player; } }
-        static public bool           KeyAction;
-
-        
+        public static PlayerControl[] Player { get; private set; }
 
         static public bool HandleInput()
         {
             for(int j = 0; j < playerInput.Length; j++)
             {
-                playerInput[j].HandleInput(player[j]);
+                var playerControl = new PlayerControl();
+                foreach (var inputControl in playerInput[j])
+                    inputControl.HandleInput(playerControl);
+
+                Player[j] = playerControl;
             }
             return true;
         }
@@ -218,22 +161,27 @@ namespace TurboPort
         static public void Initialize()
         {
             int nrOfPlayers = Settings.Current.Players.Length;
-            player = new PlayerControl[nrOfPlayers];
-            for(int i = 0; i < player.Length; i++)
-                player[i] = new PlayerControl();
+            Player = new PlayerControl[nrOfPlayers];
 
-            playerInput = new IInputControl[nrOfPlayers];
+            playerInput = new List<IInputControl>[nrOfPlayers];
+            for (int i = 0; i < playerInput.Length; i++)
+                playerInput[i] = new List<IInputControl>();
+
         
-			List<IInputControl> inputHandlers = new List<IInputControl>();
-			// TODO (san): First try to get controllers.. 
+            int playerIndex = 0;
+            for (int controllerIndex = 0; controllerIndex < 4; controllerIndex++)
+            {
+                if (playerIndex >= nrOfPlayers)
+                    break;
 
-			// Default back to keyboard controls
-            if(inputHandlers.Count < nrOfPlayers)
-                inputHandlers.Add(new InputControlKeyboard(InputControlKeyboard.KeyConfig.Player1));
-            if(inputHandlers.Count < nrOfPlayers)
-                inputHandlers.Add(new InputControlKeyboard(InputControlKeyboard.KeyConfig.Player2));
+                var gamePadController = GamePadController.CreateIfConnected(controllerIndex);
+                if(gamePadController != null)
+                    playerInput[playerIndex].Add(gamePadController);
+            }
 
-            playerInput = inputHandlers.ToArray();
+            // Default back to keyboard controls
+            playerInput[0].Add(new InputControlKeyboard(InputControlKeyboard.KeyConfig.Player1));
+            playerInput[1].Add(new InputControlKeyboard(InputControlKeyboard.KeyConfig.Player2));
         }
 	}
 }
