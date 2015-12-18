@@ -19,9 +19,7 @@ namespace TurboPort
 
         internal Vector3  oldPosition;
 
-        private BoundingBox    boundingBox;
         private BoundingSphere boundingSphere;
-        private Vector3[] colisionPoints;
         private bool prevFire;
         private Matrix renderMatrix;
         private bool shipColliding;
@@ -62,12 +60,7 @@ namespace TurboPort
             Velocity = new Vector3(0f, 0f, 0f);
             Rotation = Vector3.Zero;
 
-            MeshUtil.GetBoundingFromMeshes(model.Meshes, scale, out boundingBox, out boundingSphere);
-
-            var originalBox = boundingBox;
-            originalBox.Min /= scale;
-            originalBox.Max /= scale;
-            colisionPoints = MeshUtil.FindCollisionPoints(model.Meshes, originalBox);
+            MeshUtil.GetBoundingFromMeshes(model.Meshes, scale, out boundingSphere);
         }
 
         public void Bots(ObjectShip other)
@@ -103,39 +96,6 @@ namespace TurboPort
                 return;
 
             //DoOldCollsionWithBackground();
-        }
-
-        private void DoOldCollsionWithBackground()
-        {
-            var pointLocationMatrix = renderMatrix*
-                                      Matrix.CreateTranslation(Position);
-
-            bool isColliding = false;
-            for (int i = 0; i < 6; i++)
-            {
-                Vector3 v = colisionPoints[i];
-                v = Vector3.Transform(v, pointLocationMatrix);
-
-                bool pointColliding = levelBackground.CheckCollision(v);
-
-                VertexPositionColor pv;
-                pv.Position = v;
-                pv.Color = pointColliding ? Color.Yellow : Color.White;
-
-                if (pointColliding)
-                {
-                    bulletBuffer.AddBulletToRender(pv);
-                }
-
-                isColliding |= pointColliding;
-            }
-            if (!shipColliding && isColliding)
-            {
-                Position = oldPosition;
-                Velocity = -Velocity*0.3f;
-                SoundHandler.Checkpoint();
-            }
-            shipColliding = isColliding;
         }
 
         public bool CheckCollision(Vector3 projectilePosition, CollisionPositionInTexture collisionPositionInTexture)

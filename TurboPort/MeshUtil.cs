@@ -74,19 +74,15 @@ namespace TurboPort
             return collisionPoints;
         }
 
-        public static void GetBoundingFromMeshes(IList<ModelMesh> meshes, float scale, out BoundingBox boundingBox,
+        public static void GetBoundingFromMeshes(IList<ModelMesh> meshes, float scale,
             out BoundingSphere boundingSphere)
         {
-            boundingBox = CreateBoundingBox(meshes);
-
             boundingSphere = meshes[0].BoundingSphere;
             for (int i = 1; i < meshes.Count; i++)
                 boundingSphere = BoundingSphere.CreateMerged(boundingSphere, meshes[i].BoundingSphere);
 
 
             boundingSphere = boundingSphere.Transform(Matrix.CreateScale(scale));
-            boundingBox.Min *= scale;
-            boundingBox.Max *= scale;
         }
 
         public static BoundingBox CreateBoundingBox(IList<ModelMesh> meshes)

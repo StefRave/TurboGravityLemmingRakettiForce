@@ -28,4 +28,9 @@ using Android.App;
 
 //[assembly: AssemblyDelaySign(false)]
 //[assembly: AssemblyKeyFile("")]
+// Add some common permissions, these can be removed if not needed
 
+#if __ANDROID__
+[assembly: UsesPermission(Android.Manifest.Permission.Internet)]
+[assembly: UsesPermission(Android.Manifest.Permission.WriteExternalStorage)]
+#endif

@@ -25,8 +25,7 @@ namespace TurboPort
         {
             graphics = new GraphicsDeviceManager(this);
 
-            Content.RootDirectory = FindContent();
-
+            Content.RootDirectory = "Content";
 #if !DEBUG
             graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
@@ -44,24 +43,6 @@ namespace TurboPort
             gameInteraction = new GameInteraction(gameWorld);
         }
 
-        private string FindContent()
-        {
-            var path = Path.GetFullPath(Environment.CurrentDirectory);
-            while (true)
-            {
-                var contentPath = Path.Combine(path, "Content");
-                if (Directory.Exists(contentPath))
-                {
-                    var binPath = Path.Combine(contentPath, "bin");
-                    if (Directory.Exists(binPath)) // in the dev environment the content is stored in Content/bin
-                        return binPath;
-                    return contentPath;
-                }
-                path = Path.GetDirectoryName(path);
-                if (path == null)
-                    throw new Exception("Content path not found");
-            }
-        }
 
         /// <summary>
         ///     Allows the game to perform any initialization it needs to before starting to run.
