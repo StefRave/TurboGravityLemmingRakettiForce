@@ -7,7 +7,7 @@ using Android.Views;
 
 namespace GameAndroid
 {
-    [Activity(Label = "GameAndroid"
+    [Activity(Label = "TurboPort"
         , MainLauncher = true
         , Icon = "@drawable/icon"
         , Theme = "@style/Theme.Splash"
@@ -15,7 +15,7 @@ namespace GameAndroid
         , LaunchMode = Android.Content.PM.LaunchMode.SingleInstance
         , ScreenOrientation = ScreenOrientation.SensorLandscape
         , ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden | ConfigChanges.ScreenSize)]
-    public class Activity1 : Microsoft.Xna.Framework.AndroidGameActivity
+    public class AndroidActivity : Microsoft.Xna.Framework.AndroidGameActivity
     {
         protected override void OnCreate(Bundle bundle)
         {

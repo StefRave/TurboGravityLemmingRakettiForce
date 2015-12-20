@@ -1,10 +1,11 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using TurboPort.Input;
 
 namespace TurboPort
 {
-    public class ObjectShip : IHandleController, I3DCollistionObject
+    public class ObjectShip : IControllerInputProcessor, I3DCollistionObject
     {
         private readonly IMissleProjectileFactory missleProjectileFactory;
         private readonly BulletBuffer bulletBuffer;
@@ -22,7 +23,6 @@ namespace TurboPort
         private BoundingSphere boundingSphere;
         private bool prevFire;
         private Matrix renderMatrix;
-        private bool shipColliding;
         private Vector3 bodyColor;
         private Vector3 screenColor;
         private BasicEffect bodyEffect;
@@ -168,7 +168,7 @@ namespace TurboPort
             }
         }
 
-        public void HandleController(PlayerControl control, double elapsedTime)
+        public void ProcessControllerInput(PlayerControl control, double elapsedTime)
         {
             oldPosition = Position;
 

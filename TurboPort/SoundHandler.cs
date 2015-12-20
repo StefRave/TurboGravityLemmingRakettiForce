@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 
@@ -7,6 +8,10 @@ namespace TurboPort
 
     public class SoundHandler
     {
+        private static GameTime gameTime;
+        private static SoundEffect lastPlayedSoundEffect;
+        private static TimeSpan lastPlayedSoundEffectGameTime;
+
         private static SoundEffect explosion2;
         private static SoundEffect bigexp;
         private static SoundEffect bingo;
@@ -19,6 +24,11 @@ namespace TurboPort
         private static SoundEffect splash;
         private static SoundEffect tingaling;
         private static SoundEffect touchdown;
+
+        static public void SetGameTime(GameTime gameTime)
+        {
+            SoundHandler.gameTime = gameTime;
+        }
 
         static public void Initialize(ContentManager content)
         {
@@ -41,9 +51,18 @@ namespace TurboPort
 
         static private void Play(SoundEffect soundEffect, float volume)
         {
-			#if DONT_KNOW_HOW_TO_INSTALL_SOUND
+#if DONT_KNOW_HOW_TO_INSTALL_SOUND
 			return;
-			#endif
+#endif
+            // too basic protection against too many Play calls which will cause crashes
+            if (soundEffect == lastPlayedSoundEffect)
+            {
+                if (gameTime.TotalGameTime - lastPlayedSoundEffectGameTime < TimeSpan.FromSeconds(0.2))
+                    return;
+            }
+
+            lastPlayedSoundEffect = soundEffect;
+            lastPlayedSoundEffectGameTime = gameTime.TotalGameTime;
             soundEffect.Play(volume, 0, 0);
         }
 

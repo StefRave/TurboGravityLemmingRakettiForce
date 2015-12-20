@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using TurboPort.Input;
 
 #endregion
 
@@ -26,13 +27,16 @@ namespace TurboPort
             graphics = new GraphicsDeviceManager(this);
 
             Content.RootDirectory = "Content";
-#if !DEBUG
-            graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+#if DEBUG
+            if (!Window.GetType().Name.Contains("Android"))
+            {
+                graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
-            graphics.IsFullScreen = true;
-            Window.Position = Point.Zero;
-            Window.IsBorderless = true;
+                graphics.IsFullScreen = true;
+                //Window.Position = Point.Zero;
+                Window.IsBorderless = true;
+            }
 #else
             Window.AllowUserResizing = true;
             graphics.IsFullScreen = false;
@@ -96,6 +100,7 @@ namespace TurboPort
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            SoundHandler.SetGameTime(gameTime);
             // For Mobile devices, this logic will close the Game when the Back button is pressed
             // Exit() is obsolete on iOS
 #if !__IOS__
@@ -114,7 +119,7 @@ namespace TurboPort
             {
                 for (var i = 0; i < InputHandler.Player.Length; i++)
                 {
-                    gameWorld.PlayerShips[i].HandleController(InputHandler.Player[i], elapsedTime);
+                    gameWorld.PlayerShips[i].ProcessControllerInput(InputHandler.Player[i], elapsedTime);
                 }
             }
 
@@ -211,11 +216,11 @@ namespace TurboPort
                         gameWorld.PlayerShips[i].Render(GraphicsDevice, basicEffect);
                     }
 
-                    DrawInfo("{0:00.00}x {1:00.00}y\nSpeed {2}",
-                        gameWorld.PlayerShips[player].Position.X,
-                        gameWorld.PlayerShips[player].Position.Y,
-                        gameWorld.PlayerShips[player].Velocity.Length());
-
+                    //DrawInfo("{0:00.00}x {1:00.00}y\nSpeed {2}",
+                    //    gameWorld.PlayerShips[player].Position.X,
+                    //    gameWorld.PlayerShips[player].Position.Y,
+                    //    gameWorld.PlayerShips[player].Velocity.Length());
+                    DrawInfo(TouchControl.Info);
 
                     bulletBuffer.Render(GraphicsDevice, (BasicEffect) basicEffect.Clone());
                     //End the scene
@@ -237,7 +242,10 @@ namespace TurboPort
 
         private void DrawInfo(string format, params object[] args)
         {
-            var text = string.Format(format, args);
+            var text = format;
+            if(args != null && args.Length > 0)
+                text = string.Format(format, args);
+
             var lines = text.Count(c => c == '\n') + 1;
 
             var sb = new SpriteBatch(GraphicsDevice);
@@ -245,7 +253,7 @@ namespace TurboPort
             sb.DrawString(spriteFont,
                 text,
                 new Vector2(50, GraphicsDevice.Viewport.Height - (30*lines)), Color.Blue,
-                -0.025f, Vector2.Zero, 1, SpriteEffects.None, 0);
+                -0.025f, Vector2.Zero, 0.7f, SpriteEffects.None, 0);
             sb.End();
         }
     }

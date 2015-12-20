@@ -22,7 +22,6 @@ namespace TurboPort
         public Rectangle bounds;
         private GravitiForceLevel gfl;
         private VertexPositionTexture[] pt;
-        private bool hit;
 
         private LevelBackgroundGF()
         {
