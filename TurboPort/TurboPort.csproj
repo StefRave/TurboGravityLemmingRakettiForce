@@ -46,15 +46,15 @@
     <Compile Include="Game1.cs" />
     <Compile Include="I3dCollistionObject.cs" />
     <Compile Include="IControllerInputProcessor.cs" />
-    <Compile Include="IMissleProjectileFactory.cs" />
+    <Compile Include="IMissileProjectileFactory.cs" />
     <Compile Include="Input\GamePadControl.cs" />
     <Compile Include="Input\IInputControl.cs" />
     <Compile Include="Input\KeyboardControl.cs" />
     <Compile Include="Input\PlayerControl.cs" />
     <Compile Include="Input\TouchControl.cs" />
     <Compile Include="MeshUtil.cs" />
-    <Compile Include="MissleParticleEmitter.cs" />
-    <Compile Include="MissleProjectileFactory.cs" />
+    <Compile Include="MissileParticleEmitter.cs" />
+    <Compile Include="MissileProjectileFactory.cs" />
     <Compile Include="ParticleSystems\ContentManagerExtensions.cs" />
     <Compile Include="ParticleSystems\ExplosionParticleSystem.cs" />
     <Compile Include="ParticleSystems\ExplosionSmokeParticleSystem.cs" />
@@ -65,7 +65,7 @@
     <Compile Include="ParticleSystems\ParticleVertex.cs" />
     <Compile Include="ParticleSystems\ProjectileTrailParticleSystem.cs" />
     <Compile Include="ParticleSystems\SmokePlumeParticleSystem.cs" />
-    <Compile Include="MissleProjectile.cs" />
+    <Compile Include="MissileProjectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GlobalData.cs" />
     <Compile Include="Gravitiforce.cs" />

@@ -20,7 +20,7 @@ namespace TurboPort
         private SpriteFont spriteFont;
 
         private readonly GameInteraction gameInteraction;
-        private MissleProjectileFactory missleProjectileFactory;
+        private MissileProjectileFactory missileProjectileFactory;
 
         public Game1()
         {
@@ -42,8 +42,8 @@ namespace TurboPort
             }
 #endif
 
-            missleProjectileFactory = new MissleProjectileFactory(this);
-            gameWorld = new GameWorld(missleProjectileFactory);
+            missileProjectileFactory = new MissileProjectileFactory(this);
+            gameWorld = new GameWorld(missileProjectileFactory);
             gameInteraction = new GameInteraction(gameWorld);
         }
 
@@ -85,7 +85,7 @@ namespace TurboPort
             bulletBuffer = new BulletBuffer(Content);
             for (var i = 0; i < 2; i++)
             {
-                var ship = new ObjectShip(missleProjectileFactory, bulletBuffer, gameWorld.LevelBackground);
+                var ship = new ObjectShip(missileProjectileFactory);
                 ship.Initialize(Content);
                 ship.Position = gameWorld.PlayerShipBases[i].Position;
                 gameWorld.AddPlayerShip(ship);
@@ -128,7 +128,7 @@ namespace TurboPort
                 playerShip.Update(gameTime);
             }
 
-            missleProjectileFactory.UpdateProjectiles(gameTime);
+            missileProjectileFactory.UpdateProjectiles(gameTime);
 
             base.Update(gameTime);
 
@@ -225,7 +225,7 @@ namespace TurboPort
                     bulletBuffer.Render(GraphicsDevice, (BasicEffect) basicEffect.Clone());
                     //End the scene
 
-                    missleProjectileFactory.Draw(view, projection);
+                    missileProjectileFactory.Draw(view, projection);
 
                     base.Draw(gameTime);
                     GraphicsDevice.BlendState = BlendState.NonPremultiplied;

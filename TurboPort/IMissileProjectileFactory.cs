@@ -2,7 +2,7 @@
 
 namespace TurboPort
 {
-    public interface IMissleProjectileFactory
+    public interface IMissileProjectileFactory
     {
         void Fire(Vector3 position, float angleInDegrees, Vector3 velocity);
     }

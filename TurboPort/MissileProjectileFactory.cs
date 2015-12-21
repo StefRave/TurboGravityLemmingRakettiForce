@@ -5,11 +5,11 @@ using TurboPort.ParticleSystems;
 
 namespace TurboPort
 {
-    public class MissleProjectileFactory : GameComponent, IMissleProjectileFactory
+    public class MissileProjectileFactory : GameComponent, IMissileProjectileFactory
     {
         // The explosions effect works by firing projectiles up into the
         // air, so we need to keep track of all the active projectiles.
-        private readonly List<MissleProjectile> projectiles = new List<MissleProjectile>();
+        private readonly List<MissileProjectile> projectiles = new List<MissileProjectile>();
 
         private readonly ExplosionParticleSystem explosionParticles;
         private readonly ExplosionSmokeParticleSystem explosionSmokeParticles;
@@ -17,7 +17,7 @@ namespace TurboPort
         private readonly FireParticleSystem fireParticles;
         private readonly SmokePlumeParticleSystem smokePlumeParticles;
 
-        public MissleProjectileFactory(Game game) : base(game)
+        public MissileProjectileFactory(Game game) : base(game)
         {
             var contentLoader = game.Content.FromPath("particle3d");
             explosionParticles = new ExplosionParticleSystem(game, contentLoader);
@@ -46,7 +46,7 @@ namespace TurboPort
         {
             SoundHandler.Fire();
 
-            projectiles.Add(new MissleProjectile(explosionParticles,
+            projectiles.Add(new MissileProjectile(explosionParticles,
                                explosionSmokeParticles,
                                projectileTrailParticles,
                                position, angleInDegrees, velocity));

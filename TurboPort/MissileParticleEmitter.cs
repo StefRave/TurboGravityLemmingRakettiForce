@@ -38,7 +38,7 @@ namespace TurboPort
     /// you specify, regardless of whether this is faster or slower than the
     /// game update rate.
     /// </summary>
-    public class MissleParticleEmitter
+    public class MissileParticleEmitter
     {
         #region Fields
 
@@ -53,7 +53,7 @@ namespace TurboPort
         /// <summary>
         /// Constructs a new particle emitter object.
         /// </summary>
-        public MissleParticleEmitter(ParticleSystem particleSystem,
+        public MissileParticleEmitter(ParticleSystem particleSystem,
                                float particlesPerSecond, Vector3 initialPosition)
         {
             this.particleSystem = particleSystem;

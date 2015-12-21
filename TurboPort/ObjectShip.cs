@@ -8,9 +8,7 @@ namespace TurboPort
 {
     public class ObjectShip : IControllerInputProcessor, I3DCollistionObject
     {
-        private readonly IMissleProjectileFactory missleProjectileFactory;
-        private readonly BulletBuffer bulletBuffer;
-        private readonly ILevelBackground levelBackground;
+        private readonly IMissileProjectileFactory missileProjectileFactory;
         private Vector3  centerOffset;
         private float    scale;
         private readonly VelocityPositionCalculator velocityPositionCalculator = new VelocityPositionCalculator { Mass = 35 };
@@ -34,11 +32,9 @@ namespace TurboPort
         static  bool colorSwitchHack;
         public bool hit;
 
-        public ObjectShip(IMissleProjectileFactory missleProjectileFactory, BulletBuffer bulletBuffer, ILevelBackground levelBackground)
+        public ObjectShip(IMissileProjectileFactory missileProjectileFactory)
         {
-            this.missleProjectileFactory = missleProjectileFactory;
-            this.bulletBuffer = bulletBuffer;
-            this.levelBackground = levelBackground;
+            this.missileProjectileFactory = missileProjectileFactory;
             HasLanded = true;
         }
 
@@ -228,7 +224,7 @@ namespace TurboPort
             if (!prevFire && control.Fire)
             {
                 var gunLocation = Vector3.Transform(new Vector3(0, boundingSphere.Radius, 0), renderMatrix);
-                missleProjectileFactory.Fire(Position + gunLocation, Rotation.Z, Velocity);
+                missileProjectileFactory.Fire(Position + gunLocation, Rotation.Z, Velocity);
             }
             prevFire = control.Fire;
         }

@@ -18,7 +18,7 @@ namespace TurboPort
         private static SoundEffect bullethit;
         private static SoundEffect checkpoint;
         private static SoundEffect fire;
-        private static SoundEffect firemissle;
+        private static SoundEffect fireMissile;
         private static SoundEffect shipcollide;
         private static SoundEffect shipcollide2;
         private static SoundEffect splash;
@@ -41,7 +41,7 @@ namespace TurboPort
             bullethit = content.Load<SoundEffect>(@"sound/bullethit");
             checkpoint = content.Load<SoundEffect>(@"sound/checkpoint");
             fire = content.Load<SoundEffect>(@"sound/fire");
-            firemissle = content.Load<SoundEffect>(@"sound/firemissle");
+            fireMissile = content.Load<SoundEffect>(@"sound/firemissle");
             shipcollide = content.Load<SoundEffect>(@"sound/shipcollide");
             shipcollide2 = content.Load<SoundEffect>(@"sound/shipcollide2");
             splash = content.Load<SoundEffect>(@"sound/splash");
@@ -71,7 +71,7 @@ namespace TurboPort
         static public void Bullethit(float volume = 1.0f)      { Play(bullethit, volume); }
         static public void Checkpoint(float volume = 1.0f)     { Play(checkpoint, volume); }
         static public void Fire(float volume = 1.0f)           { Play(fire, volume); }
-        static public void Firemissle(float volume = 1.0f)     { Play(firemissle, volume); }
+        static public void FireMissile(float volume = 1.0f)     { Play(fireMissile, volume); }
         static public void Shipcollide(float volume = 1.0f)    { Play(shipcollide, volume); }
         static public void Splash(float volume = 1.0f)         { Play(splash, volume);  }
         static public void Tingaling(float volume = 1.0f)      { Play(tingaling, volume); }

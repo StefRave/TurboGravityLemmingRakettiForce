@@ -23,7 +23,7 @@ namespace TurboPort
     /// steady stream of trail particles behind it. After a while it explodes,
     /// creating a sudden burst of explosion and smoke particles.
     /// </summary>
-    internal class MissleProjectile
+    internal class MissileProjectile
     {
         #region Constants
 
@@ -37,7 +37,7 @@ namespace TurboPort
 
         ParticleSystem explosionParticles;
         ParticleSystem explosionSmokeParticles;
-        MissleParticleEmitter trailEmitter;
+        MissileParticleEmitter trailEmitter;
 
         Vector3 position;
         Vector3 velocity;
@@ -51,7 +51,7 @@ namespace TurboPort
         /// <summary>
         /// Constructs a new projectile.
         /// </summary>
-        public MissleProjectile(ParticleSystem explosionParticles, ParticleSystem explosionSmokeParticles, ParticleSystem projectileTrailParticles, Vector3 position, float shootingAngleInDegrees, Vector3 velocity)
+        public MissileProjectile(ParticleSystem explosionParticles, ParticleSystem explosionSmokeParticles, ParticleSystem projectileTrailParticles, Vector3 position, float shootingAngleInDegrees, Vector3 velocity)
         {
             this.explosionParticles = explosionParticles;
             this.explosionSmokeParticles = explosionSmokeParticles;
@@ -62,7 +62,7 @@ namespace TurboPort
 
             this.velocity = velocity;
             // Use the particle emitter helper to output our trail particles.
-            trailEmitter = new MissleParticleEmitter(projectileTrailParticles,
+            trailEmitter = new MissileParticleEmitter(projectileTrailParticles,
                                                trailParticlesPerSecond, this.position);
         }
 
