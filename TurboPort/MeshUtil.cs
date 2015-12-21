@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -74,43 +73,14 @@ namespace TurboPort
             return collisionPoints;
         }
 
-        public static void GetBoundingFromMeshes(IList<ModelMesh> meshes, float scale,
-            out BoundingSphere boundingSphere)
+        public static BoundingSphere GetBoundingFromMeshes(IList<ModelMesh> meshes, float scale)
         {
-            boundingSphere = meshes[0].BoundingSphere;
+            var boundingSphere = meshes[0].BoundingSphere;
             for (int i = 1; i < meshes.Count; i++)
                 boundingSphere = BoundingSphere.CreateMerged(boundingSphere, meshes[i].BoundingSphere);
 
-
             boundingSphere = boundingSphere.Transform(Matrix.CreateScale(scale));
-        }
-
-        public static BoundingBox CreateBoundingBox(IList<ModelMesh> meshes)
-        {
-            // Initialize minimum and maximum corners of the bounding box to max and min values
-            Vector3 min = new Vector3(Single.MaxValue, Single.MaxValue, Single.MaxValue);
-            Vector3 max = new Vector3(Single.MinValue, Single.MinValue, Single.MinValue);
-
-            // For each mesh of the model
-            foreach (ModelMesh mesh in meshes)
-            {
-                foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                {
-                    int vertexStride = meshPart.VertexBuffer.VertexDeclaration.VertexStride;
-
-                    Vector3[] vertexData = new Vector3[meshPart.NumVertices];
-                    meshPart.VertexBuffer.GetData(0, vertexData, 0, meshPart.NumVertices, vertexStride);
-
-                    for (int i = 0; i < meshPart.NumVertices; i++)
-                    {
-                        Vector3 transformedPosition = vertexData[i];
-
-                        min = Vector3.Min(min, transformedPosition);
-                        max = Vector3.Max(max, transformedPosition);
-                    }
-                }
-            }
-            return new BoundingBox(min, max);
+            return boundingSphere;
         }
     }
 }

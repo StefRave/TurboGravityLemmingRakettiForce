@@ -32,6 +32,10 @@
     <MonoGamePlatform>Linux</MonoGamePlatform>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>..\packages\protobuf-portable-net.2.0.0.668\lib\portable-net45+wp8+win8\protobuf-net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -41,11 +45,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Event\GameEvent.cs" />
+    <Compile Include="Event\GameEventAttribute.cs" />
+    <Compile Include="Event\GameReplay.cs" />
+    <Compile Include="Event\GameSerializer.cs" />
     <Compile Include="GameInteraction.cs" />
     <Compile Include="CollisionDetection2d.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="Event\GameObject.cs" />
+    <Compile Include="Event\GameObjectStore.cs" />
     <Compile Include="I3dCollistionObject.cs" />
     <Compile Include="IControllerInputProcessor.cs" />
+    <Compile Include="Event\IGameObjectCreation.cs" />
     <Compile Include="IMissileProjectileFactory.cs" />
     <Compile Include="Input\GamePadControl.cs" />
     <Compile Include="Input\IInputControl.cs" />
@@ -55,6 +66,7 @@
     <Compile Include="MeshUtil.cs" />
     <Compile Include="MissileParticleEmitter.cs" />
     <Compile Include="MissileProjectileFactory.cs" />
+    <Compile Include="ObjectShipControlChanged.cs" />
     <Compile Include="ParticleSystems\ContentManagerExtensions.cs" />
     <Compile Include="ParticleSystems\ExplosionParticleSystem.cs" />
     <Compile Include="ParticleSystems\ExplosionSmokeParticleSystem.cs" />

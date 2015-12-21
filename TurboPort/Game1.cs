@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using TurboPort.Event;
 using TurboPort.Input;
 
 #endregion
@@ -21,6 +22,7 @@ namespace TurboPort
 
         private readonly GameInteraction gameInteraction;
         private MissileProjectileFactory missileProjectileFactory;
+        private readonly GameReplay replay = new GameReplay();
 
         public Game1()
         {
@@ -45,6 +47,9 @@ namespace TurboPort
             missileProjectileFactory = new MissileProjectileFactory(this);
             gameWorld = new GameWorld(missileProjectileFactory);
             gameInteraction = new GameInteraction(gameWorld);
+
+            replay.Load(new MemoryStream(File.ReadAllBytes("eventstream.turboport")));
+            replay.StartPlay(-0.5);
         }
 
 
@@ -70,7 +75,7 @@ namespace TurboPort
         protected override void LoadContent()
         {
             spriteFont = Content.Load<SpriteFont>("DejaVuSans");
-            
+
             var gfl = GravitiForceLevel.ReadGravitiForceLevelFile("GRBomber's Delight.GFB");
             //gfl = GravitiForceLevel.ReadGravitiForceLevelFile("GRUp'n'Down (Race).GFB");
             //gfl = GravitiForceLevel.ReadGravitiForceLevelFile("MEModern Art.GFB");
@@ -83,12 +88,27 @@ namespace TurboPort
                 new ShipBase(new Vector3(gfl.playerBase[1].X - 104, 999 - gfl.playerBase[1].Y, 0f)));
 
             bulletBuffer = new BulletBuffer(Content);
-            for (var i = 0; i < 2; i++)
+
+            ObjectShip.Initialize(Content);
+            GameObjectStore.RegisterCreation<ObjectShip, ObjectShipCreated>(
+                e =>
+                {
+                    var objectShip = new ObjectShip(missileProjectileFactory);
+                    gameWorld.AddPlayerShip(objectShip);
+                    objectShip.FromEvent(e);
+                    return objectShip;
+                });
+
+            if (replay.PlayStatus == GameReplay.Status.Inactive)
             {
-                var ship = new ObjectShip(missileProjectileFactory);
-                ship.Initialize(Content);
-                ship.Position = gameWorld.PlayerShipBases[i].Position;
-                gameWorld.AddPlayerShip(ship);
+                for (var i = 0; i < 2; i++)
+                {
+                    GameObjectStore.AddCreationEvent(
+                        new ObjectShipCreated
+                        {
+                            Position = gameWorld.PlayerShipBases[i].Position
+                        });
+                }
             }
             base.LoadContent();
         }
@@ -101,31 +121,43 @@ namespace TurboPort
         protected override void Update(GameTime gameTime)
         {
             SoundHandler.SetGameTime(gameTime);
+            GameObjectStore.SetGameTime(gameTime);
+
             // For Mobile devices, this logic will close the Game when the Back button is pressed
             // Exit() is obsolete on iOS
+            var keyboardState = Keyboard.GetState();
 #if !__IOS__
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-                Keyboard.GetState().IsKeyDown(Keys.Escape))
+                keyboardState.IsKeyDown(Keys.Escape))
             {
                 Exit();
+                Dispose(true);
+                return;
             }
 #endif
-            bulletBuffer.Clear();
-
-            var inputOk = InputHandler.HandleInput();
-
-            var elapsedTime = gameTime.ElapsedGameTime.TotalSeconds;
-            if (inputOk)
-            {
-                for (var i = 0; i < InputHandler.Player.Length; i++)
-                {
-                    gameWorld.PlayerShips[i].ProcessControllerInput(InputHandler.Player[i], elapsedTime);
-                }
-            }
 
             foreach (var playerShip in gameWorld.PlayerShips)
             {
                 playerShip.Update(gameTime);
+            }
+
+            if (replay.PlayStatus == GameReplay.Status.Playing)
+            {
+                foreach (var gameEvent in replay.GetEventsUntilTime(gameTime.TotalGameTime.TotalSeconds))
+                {
+                    GameObjectStore.ProcessEvent(gameEvent);
+                }
+            }
+            else
+            {
+                if (keyboardState.IsKeyDown(Keys.F7))
+                    GameObjectStore.Store();
+
+
+                InputHandler.HandleInput();
+
+                for (var i = 0; i < gameWorld.PlayerShips.Count; i++)
+                    gameWorld.PlayerShips[i].ProcessControllerInput(InputHandler.Player[i]);
             }
 
             missileProjectileFactory.UpdateProjectiles(gameTime);
@@ -192,7 +224,7 @@ namespace TurboPort
                 GraphicsDevice.Viewport = newView;
 
 
-                for (var player = 0; player < InputHandler.Player.Length; player++)
+                for (var player = 0; player < gameWorld.PlayerShips.Count; player++)
                 {
                     GraphicsDevice.Viewport = newView;
 

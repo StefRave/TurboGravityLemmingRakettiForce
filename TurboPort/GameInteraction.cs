@@ -39,27 +39,35 @@ namespace TurboPort
             {
                 var collisionPositionInTexture = dictje[ship];
                 gameWorld.ProjectileFactory.Interact(ship, collisionPositionInTexture);
+
                 if (gameWorld.LevelBackground.Interact(ship, collisionPositionInTexture))
                 {
-                    ship.Velocity = -ship.Velocity * 0.3f;
+                    if (ship.IsOwner)
+                        ship.HitWithBackground();
                 }
 
                 foreach (ShipBase shipBase in gameWorld.PlayerShipBases)
-                    shipBase.Interact(ship);
+                {
+                    if(ship.IsOwner)
+                        shipBase.Interact(ship);
+                }
             }
 
             for (var i = 0; i < gameWorld.PlayerShips.Count - 1; i++)
             {
                 for (var j = 1; j < gameWorld.PlayerShips.Count; j++)
                 {
-                    gameWorld.PlayerShips[i].Bots(gameWorld.PlayerShips[j]);
+                    if (gameWorld.PlayerShips[i].IsOwner || gameWorld.PlayerShips[j].IsOwner)
+                        gameWorld.PlayerShips[i].Bots(gameWorld.PlayerShips[j]);
                 }
             }
-
         }
 
         public void DrawToColisionDetectionTexture()
         {
+            if (gameWorld.PlayerShips.Count == 0)
+                return;
+
             graphicsDevice.SetRenderTarget(collisionRenderTarget);
             graphicsDevice.Viewport = new Viewport
                                             {

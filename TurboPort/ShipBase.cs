@@ -12,7 +12,7 @@ namespace TurboPort
             if (ship.HasLanded)
                 return;
 
-            if (ship.Velocity.Y > 0)
+            if (ship.Velocity.Y >= 0)
                 return;
 
             if (Math.Abs(ship.Position.X - Position.X) >= 16)
@@ -26,11 +26,7 @@ namespace TurboPort
             double pop = Math.Cos(ship.Rotation.Z);
             if (pop >= 0.90)
             {
-                SoundHandler.TochDown();
-                ship.HasLanded = true;
-                ship.Velocity = Vector3.Zero;
-                ship.Position.Y = Position.Y;
-                ship.Rotation.Z = 0;
+                ship.LandShip(Position.Y);
             }
         }
 

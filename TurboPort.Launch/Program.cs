@@ -27,8 +27,18 @@ namespace TurboPort
 		internal static void RunGame ()
 		{
 			game = new Game1 ();
-			game.Run ();
-		}
+		    try
+		    {
+                game.Run();
+            }
+            catch (NullReferenceException)
+		    {
+                // This is caused by Dispose(true); 
+                // But is is added as a workaround to 
+                // https://github.com/mono/MonoGame/issues/3749
+                // [3.3] OpenTK crashes if you exit on windows without calling dispose on textures #3749
+            }
+        }
 
 		/// <summary>
 		/// The main entry point for the application.

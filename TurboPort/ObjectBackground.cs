@@ -69,7 +69,7 @@ namespace TurboPort
                 (int)ship.Position.X + (collisionPositionInTexture.Size.X /2),
                 (int)ship.Position.Y + (collisionPositionInTexture.Size.Y / 2));
 
-            ship.hit = CollisionDetection2D.IntersectPixels(
+            ship.Hit = CollisionDetection2D.IntersectPixels(
                 new Rectangle(collisionPositionInTexture.Rect.Location + point, collisionPositionInTexture.Rect.Size),
                 collisionPositionInTexture.ByteData,
                 collisionPositionInTexture.Size.X,
@@ -77,7 +77,7 @@ namespace TurboPort
                 gfl.BitmapData,
                 bounds.Width);
 
-            ship.hit = false;
+            ship.Hit = false;
             int xStart = (int)ship.Position.X - (collisionPositionInTexture.Rect.Width/2) + 1;
             int yStart = (int)ship.Position.Y - (collisionPositionInTexture.Rect.Height/2) + 1;
             int xEnd = xStart + collisionPositionInTexture.Rect.Width;
@@ -93,7 +93,7 @@ namespace TurboPort
                     {
                         if (gfl.BitmapData[x + texture.Width*y] != 0)
                         {
-                            ship.hit = true;
+                            ship.Hit = true;
                             gfl.BitmapData[x + texture.Width*y] = 0;
                             textureData[x + texture.Width*(texture.Height - y - 1)] = unchecked((int)0);
                         }
@@ -101,10 +101,10 @@ namespace TurboPort
                 }
                 offsetShip -= offsetShipLineDelta;
             }
-            if (ship.hit)
-            texture.SetData(textureData);
+            if (ship.Hit)
+                texture.SetData(textureData);
 
-            return ship.hit;
+            return ship.Hit;
         }
 
         public void Render(GraphicsDevice device, BasicEffect be)

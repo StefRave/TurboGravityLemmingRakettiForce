@@ -4,6 +4,6 @@ namespace TurboPort
 {
     public interface IControllerInputProcessor
     {
-        void ProcessControllerInput(PlayerControl control, double elapsedTime);
+        void ProcessControllerInput(PlayerControl control);
     }
 }

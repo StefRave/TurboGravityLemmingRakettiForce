@@ -1,44 +1,51 @@
 using System;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using TurboPort.Event;
 using TurboPort.Input;
 
 namespace TurboPort
 {
-    public class ObjectShip : IControllerInputProcessor, I3DCollistionObject
+    public class ObjectShip : GameObject, IControllerInputProcessor, I3DCollistionObject
     {
         private readonly IMissileProjectileFactory missileProjectileFactory;
-        private Vector3  centerOffset;
-        private float    scale;
+        private static Vector3  centerOffset;
+        private static float    scale;
+        private static BoundingSphere boundingSphere;
+
         private readonly VelocityPositionCalculator velocityPositionCalculator = new VelocityPositionCalculator { Mass = 35 };
+        private Vector3  rotation;
+        private Vector3  position;
+        public Vector3  velocity;
+        private float controlRotation;
+        private float controlThrust;
 
-        public Vector3  Rotation;
-        public Vector3  Position;
-        public Vector3  Velocity;
-
-        private BoundingSphere boundingSphere;
         private bool prevFire;
         private Matrix renderMatrix;
-        private Vector3 bodyColor;
-        private Vector3 screenColor;
-        private BasicEffect bodyEffect;
-        private BasicEffect screenEffect;
+        private static Vector3 bodyColor;
+        private static Vector3 screenColor;
+        private static BasicEffect bodyEffect;
+        private static BasicEffect screenEffect;
 
-        private Model model;
+        private static Model model;
         public bool HasLanded { get; set; }
+        public bool Hit { get; set; }
 
+        public Vector3 Rotation => rotation;
+        public Vector3 Position => position;
+        public Vector3 Velocity => velocity;
 
-        static  bool colorSwitchHack;
-        public bool hit;
+        static bool colorSwitchHack;
+
 
         public ObjectShip(IMissileProjectileFactory missileProjectileFactory)
         {
             this.missileProjectileFactory = missileProjectileFactory;
-            HasLanded = true;
         }
 
-        public void Initialize(ContentManager content)
+        public static void Initialize(ContentManager content)
         {
             model = content.Load<Model>(@"objects/pop_simple_lemming3");
             CorrectModel(model);
@@ -51,16 +58,12 @@ namespace TurboPort
 
             centerOffset = new Vector3(0f, 0f, 0f);
             scale = 1.0f;
-            Position = new Vector3(160f, 160f, 0f);
-            Velocity = new Vector3(0f, 0f, 0f);
-            Rotation = Vector3.Zero;
-
-            MeshUtil.GetBoundingFromMeshes(model.Meshes, scale, out boundingSphere);
+            boundingSphere = MeshUtil.GetBoundingFromMeshes(model.Meshes, scale);
         }
 
         public void Bots(ObjectShip other)
         {
-            Vector3 distance = other.Position - Position;
+            Vector3 distance = other.position - position;
             if(distance.Length() < (boundingSphere.Radius * scale))
             {
                 Collide(this, other);
@@ -74,14 +77,14 @@ namespace TurboPort
         {
             // First, find the normalized vector n from the center of 
             // circle1 to the center of circle2
-            Vector3 n = circle1.Position - circle2.Position;
+            Vector3 n = circle1.position - circle2.position;
             n.Normalize();
             // Find the length of the component of each of the movement
             // vectors along n. 
             // a1 = v1 . n
             // a2 = v2 . n
-            float a1 = Vector3.Dot(circle1.Velocity, n);
-            float a2 = Vector3.Dot(circle2.Velocity, n);
+            float a1 = Vector3.Dot(circle1.velocity, n);
+            float a2 = Vector3.Dot(circle2.velocity, n);
 
             float mass1 = circle1.velocityPositionCalculator.Mass;
             if (circle1.HasLanded)
@@ -102,14 +105,14 @@ namespace TurboPort
 
             // Calculate v1', the new movement vector of circle1
             // v1' = v1 - optimizedP * m2 * n
-            Vector3 v1n = circle1.Velocity - optimizedP * mass2 * n;
+            Vector3 v1n = circle1.velocity - optimizedP * mass2 * n;
 
             // Calculate v1', the new movement vector of circle1
             // v2' = v2 + optimizedP * m1 * n
-            Vector3 v2n = circle2.Velocity + optimizedP * mass1 * n;
+            Vector3 v2n = circle2.velocity + optimizedP * mass1 * n;
 
-            circle1.Velocity = v1n;
-            circle2.Velocity = v2n;
+            circle1.velocity = v1n;
+            circle2.velocity = v2n;
         }
 
         private static void CorrectModel(Model model)
@@ -121,20 +124,27 @@ namespace TurboPort
 
         public void Update(GameTime gameTime)
         {
+            double elapsedTime = gameTime.ElapsedGameTime.TotalSeconds;
+            rotation.Y = controlRotation * 3.14f / 2f;
+            if (!HasLanded)
+            {
+                rotation.Z += (float)(-controlRotation * elapsedTime * 7);
+                velocityPositionCalculator.CalcVelocityAndPosition(ref position, ref velocity,
+                    elapsedTime, rotation.Z, controlThrust * 100);
+            }
+
             renderMatrix =
                 Matrix.CreateTranslation(new Vector3(centerOffset.X, centerOffset.Y, centerOffset.Z))*
-                Matrix.CreateRotationY(Rotation.Y)*
-                Matrix.CreateRotationZ(Rotation.Z);
+                Matrix.CreateRotationY(rotation.Y)*
+                Matrix.CreateRotationZ(rotation.Z);
 
-            if (HasLanded && Velocity.Y == 0)
+            if (HasLanded && velocity.Y == 0)
                 return;
-
-            //DoOldCollsionWithBackground();
         }
 
         public bool CheckCollision(Vector3 projectilePosition, CollisionPositionInTexture collisionPositionInTexture)
         {
-            var projectileRelativeToCenter = Position - projectilePosition;
+            var projectileRelativeToCenter = position - projectilePosition;
             var containmentType = boundingSphere.Contains(projectileRelativeToCenter);
             if (containmentType != ContainmentType.Disjoint)
             {
@@ -156,10 +166,10 @@ namespace TurboPort
         public void Render(GraphicsDevice graphicsDevice, BasicEffect be)
         {
             var world = renderMatrix *
-                Matrix.CreateTranslation(Position);
+                Matrix.CreateTranslation(position);
 
             graphicsDevice.DepthStencilState = DepthStencilState.Default;
-            bodyEffect.DiffuseColor = hit ? new Vector3(1, 0,0) : bodyColor;
+            bodyEffect.DiffuseColor = Hit ? new Vector3(1, 0,0) : bodyColor;
             screenEffect.DiffuseColor = screenColor;
 
             foreach (ModelMesh mesh in model.Meshes)
@@ -202,31 +212,96 @@ namespace TurboPort
             }
         }
 
-        public void ProcessControllerInput(PlayerControl control, double elapsedTime)
+        public void ProcessControllerInput(PlayerControl control)
         {
-            float rotation = control.Rotation;
-            float thrust = control.Thrust;
-            if (thrust != 0)
-                HasLanded = false;
-
-            Rotation.Y = rotation * 3.14f / 2f;
-            if (HasLanded)
+            if ((controlRotation != control.Rotation) ||
+                (controlThrust != control.Thrust))
             {
-                Rotation = Vector3.Zero;
-                Velocity = Vector3.Zero;
+                PublishEvent(new ObjectShipControlChanged
+                             {
+                                 Rotation = control.Rotation,
+                                 Thrust = control.Thrust,
+                                 Position = Position,
+                                 Velocity = Velocity,
+                });
             }
-            else
-            {
-                Rotation.Z += (float)(-rotation * elapsedTime * 7);
-                velocityPositionCalculator.CalcVelocityAndPosition(ref Position, ref Velocity,
-                    elapsedTime, Rotation.Z, thrust*100);}
 
             if (!prevFire && control.Fire)
             {
                 var gunLocation = Vector3.Transform(new Vector3(0, boundingSphere.Radius, 0), renderMatrix);
-                missileProjectileFactory.Fire(Position + gunLocation, Rotation.Z, Velocity);
+                missileProjectileFactory.Fire(position + gunLocation, rotation.Z, velocity);
             }
             prevFire = control.Fire;
+        }
+
+        public void ApplyGameEvent(ObjectShipControlChanged e)
+        {
+            controlRotation = e.Rotation;
+            controlThrust = e.Thrust;
+            
+           
+            Debug.Assert(Math.Abs((Velocity - e.Velocity).Length()) <= 0.1);
+            Debug.Assert(Math.Abs((position - e.Position).Length()) <= 0.1);
+
+            velocity = e.Velocity;
+            position = e.Position;
+
+            if (e.Thrust > 0)
+                HasLanded = false;
+        }
+
+        public void LandShip(float positionY)
+        {
+            Vector3 newPosition = position;
+            newPosition.Y = positionY;
+            PublishEvent(new ObjectShipHasLanded
+            {
+                Position = newPosition
+            });
+        }
+
+        public void ApplyGameEvent(ObjectShipHasLanded e)
+        {
+            HasLanded = true;
+            velocity = Vector3.Zero;
+            position.Y = e.Position.Y;
+            rotation.Z = 0;
+
+            SoundHandler.TochDown();
+        }
+
+        public override void ApplyGameEvent(GameEvent e)
+        {
+            if(e is ObjectShipControlChanged)
+                ApplyGameEvent((ObjectShipControlChanged)e);
+            else if(e is ObjectShipHasLanded)
+                ApplyGameEvent((ObjectShipHasLanded)e);
+            else if(e is ObjectShipHitBackground)
+                ApplyGameEvent((ObjectShipHitBackground)e);
+        }
+
+        public ObjectShip FromEvent(ObjectShipCreated e)
+        {
+            velocity = Vector3.Zero;
+            rotation = Vector3.Zero;
+            position = e.Position;
+            HasLanded = true;
+
+            return this;
+        }
+
+        public void HitWithBackground()
+        {
+            PublishEvent(
+                new ObjectShipHitBackground
+                {
+                    Velocity = Velocity * 0.3f
+                });
+        }
+
+        public void ApplyGameEvent(ObjectShipHitBackground e)
+        {
+            velocity = Vector3.Zero;
         }
     }
 }
