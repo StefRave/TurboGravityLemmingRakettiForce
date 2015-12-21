@@ -41,8 +41,6 @@ namespace TurboPort
                 gameWorld.ProjectileFactory.Interact(ship, collisionPositionInTexture);
                 if (gameWorld.LevelBackground.Interact(ship, collisionPositionInTexture))
                 {
-                    // code to be moded to ship object:
-                    ship.Position = ship.oldPosition;
                     ship.Velocity = -ship.Velocity * 0.3f;
                 }
 

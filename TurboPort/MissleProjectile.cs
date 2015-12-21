@@ -29,7 +29,7 @@ namespace TurboPort
 
         const float trailParticlesPerSecond = 200;
         const float projectileLifespan = 1.5f;
-        private static readonly VelocityPosistionCalculator velocityPosistionCalculator = new VelocityPosistionCalculator { Mass = 5 };
+        private static readonly VelocityPositionCalculator VelocityPositionCalculator = new VelocityPositionCalculator { Mass = 5 };
 
         #endregion
 
@@ -75,7 +75,7 @@ namespace TurboPort
 
             float thrust = age == 0 ? 430 : 1;
             // Simple projectile physics.
-            velocityPosistionCalculator.CalcVelocityAndPosition(ref position, ref velocity, elapsedTime, shootingAngleInDegrees, thrust);
+            VelocityPositionCalculator.CalcVelocityAndPosition(ref position, ref velocity, elapsedTime, shootingAngleInDegrees, thrust);
             age += elapsedTime;
 
             // Update the particle emitter, which will create our particle trail.

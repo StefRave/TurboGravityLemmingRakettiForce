@@ -3,11 +3,11 @@ using Microsoft.Xna.Framework;
 
 namespace TurboPort
 {
-    public class VelocityPosistionCalculator
+    public class VelocityPositionCalculator
     {
-        public double Mass;
-        public double Drag = 0.7;
-        public double Gravity = 80;
+        public float Mass;
+        public float Drag = 0.7f;
+        public float Gravity = 80;
 
         public void CalcVelocityAndPosition(ref Vector3 position, ref Vector3 velocity, double elapsedTime, float thrustAngle, float thrust)
         {

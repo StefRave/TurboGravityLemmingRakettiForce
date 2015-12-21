@@ -28,6 +28,9 @@ namespace TurboPort
 
             Content.RootDirectory = "Content";
 #if DEBUG
+            Window.AllowUserResizing = true;
+            graphics.IsFullScreen = false;
+#else
             if (!Window.GetType().Name.Contains("Android"))
             {
                 graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
@@ -37,9 +40,6 @@ namespace TurboPort
                 //Window.Position = Point.Zero;
                 Window.IsBorderless = true;
             }
-#else
-            Window.AllowUserResizing = true;
-            graphics.IsFullScreen = false;
 #endif
 
             missleProjectileFactory = new MissleProjectileFactory(this);

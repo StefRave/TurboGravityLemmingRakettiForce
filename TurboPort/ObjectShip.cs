@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,13 +13,11 @@ namespace TurboPort
         private readonly ILevelBackground levelBackground;
         private Vector3  centerOffset;
         private float    scale;
-        private static readonly VelocityPosistionCalculator velocityPosistionCalculator = new VelocityPosistionCalculator { Mass = 35 };
+        private readonly VelocityPositionCalculator velocityPositionCalculator = new VelocityPositionCalculator { Mass = 35 };
 
         public Vector3  Rotation;
         public Vector3  Position;
         public Vector3  Velocity;
-
-        internal Vector3  oldPosition;
 
         private BoundingSphere boundingSphere;
         private bool prevFire;
@@ -68,14 +67,53 @@ namespace TurboPort
             Vector3 distance = other.Position - Position;
             if(distance.Length() < (boundingSphere.Radius * scale))
             {
-                Position = oldPosition;
-                other.Position = other.oldPosition;
+                Collide(this, other);
 
-                Vector3 tmp = other.Velocity;
-                other.Velocity = Velocity;
-                Velocity = tmp;
                 SoundHandler.Shipcollide();
             }
+        }
+
+        // Collision from http://www.gamasutra.com/view/feature/3015/pool_hall_lessons_fast_accurate_.php?page=3
+        private static void Collide(ObjectShip circle1, ObjectShip circle2)
+        {
+            // First, find the normalized vector n from the center of 
+            // circle1 to the center of circle2
+            Vector3 n = circle1.Position - circle2.Position;
+            n.Normalize();
+            // Find the length of the component of each of the movement
+            // vectors along n. 
+            // a1 = v1 . n
+            // a2 = v2 . n
+            float a1 = Vector3.Dot(circle1.Velocity, n);
+            float a2 = Vector3.Dot(circle2.Velocity, n);
+
+            float mass1 = circle1.velocityPositionCalculator.Mass;
+            if (circle1.HasLanded)
+                mass1 *= 10;
+            float mass2 = circle2.velocityPositionCalculator.Mass;
+            if (circle2.HasLanded)
+                mass2 *= 10;
+            // Using the optimized version, 
+            // optimizedP =  2(a1 - a2)
+            //              -----------
+            //                m1 + m2
+            float optimizedP = (2.0f * (a1 - a2)) / (mass1  + mass2);
+
+            // Math.min added to prevent collisions between balls moving away
+            // from one another, thus preventing "entanglement".
+            // http://gamedev.stackexchange.com/a/15936
+            //optimizedP = MathHelper.Max(optimizedP, 0);
+
+            // Calculate v1', the new movement vector of circle1
+            // v1' = v1 - optimizedP * m2 * n
+            Vector3 v1n = circle1.Velocity - optimizedP * mass2 * n;
+
+            // Calculate v1', the new movement vector of circle1
+            // v2' = v2 + optimizedP * m1 * n
+            Vector3 v2n = circle2.Velocity + optimizedP * mass1 * n;
+
+            circle1.Velocity = v1n;
+            circle2.Velocity = v2n;
         }
 
         private static void CorrectModel(Model model)
@@ -170,18 +208,21 @@ namespace TurboPort
 
         public void ProcessControllerInput(PlayerControl control, double elapsedTime)
         {
-            oldPosition = Position;
-
             float rotation = control.Rotation;
             float thrust = control.Thrust;
             if (thrust != 0)
                 HasLanded = false;
 
             Rotation.Y = rotation * 3.14f / 2f;
-            if (!HasLanded)
+            if (HasLanded)
+            {
+                Rotation = Vector3.Zero;
+                Velocity = Vector3.Zero;
+            }
+            else
             {
                 Rotation.Z += (float)(-rotation * elapsedTime * 7);
-                velocityPosistionCalculator.CalcVelocityAndPosition(ref Position, ref Velocity,
+                velocityPositionCalculator.CalcVelocityAndPosition(ref Position, ref Velocity,
                     elapsedTime, Rotation.Z, thrust*100);}
 
             if (!prevFire && control.Fire)

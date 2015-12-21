@@ -75,7 +75,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="ShipBase.cs" />
     <Compile Include="SoundHandler.cs" />
-    <Compile Include="VelocityPosistionCalculator.cs" />
+    <Compile Include="VelocityPositionCalculator.cs" />
     <Compile Include="World.cs" />
     <Compile Include="Bullet.cs" />
   </ItemGroup>
