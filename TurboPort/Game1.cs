@@ -48,7 +48,7 @@ namespace TurboPort
             gameWorld = new GameWorld(missileProjectileFactory);
             gameInteraction = new GameInteraction(gameWorld);
 
-            replay.Load(new MemoryStream(File.ReadAllBytes("eventstream.turboport")));
+            //replay.Load(new MemoryStream(File.ReadAllBytes("eventstream.turboport")));
             replay.StartPlay(-0.5);
         }
 
@@ -90,12 +90,11 @@ namespace TurboPort
             bulletBuffer = new BulletBuffer(Content);
 
             ObjectShip.Initialize(Content);
-            GameObjectStore.RegisterCreation<ObjectShip, ObjectShipCreated>(
-                e =>
+            GameObjectStore.RegisterCreation(
+                () =>
                 {
                     var objectShip = new ObjectShip(missileProjectileFactory);
                     gameWorld.AddPlayerShip(objectShip);
-                    objectShip.FromEvent(e);
                     return objectShip;
                 });
 
@@ -103,11 +102,8 @@ namespace TurboPort
             {
                 for (var i = 0; i < 2; i++)
                 {
-                    GameObjectStore.AddCreationEvent(
-                        new ObjectShipCreated
-                        {
-                            Position = gameWorld.PlayerShipBases[i].Position
-                        });
+                    GameObjectStore.CreateAsOwner<ObjectShip>()
+                        .CreateInitialize(gameWorld.PlayerShipBases[i].Position);
                 }
             }
             base.LoadContent();
@@ -121,7 +117,6 @@ namespace TurboPort
         protected override void Update(GameTime gameTime)
         {
             SoundHandler.SetGameTime(gameTime);
-            GameObjectStore.SetGameTime(gameTime);
 
             // For Mobile devices, this logic will close the Game when the Back button is pressed
             // Exit() is obsolete on iOS
@@ -143,15 +138,17 @@ namespace TurboPort
 
             if (replay.PlayStatus == GameReplay.Status.Playing)
             {
-                foreach (var gameEvent in replay.GetEventsUntilTime(gameTime.TotalGameTime.TotalSeconds))
-                {
-                    GameObjectStore.ProcessEvent(gameEvent);
-                }
+                replay.ProcessEventsUntilTime(gameTime.TotalGameTime.TotalSeconds);
             }
             else
             {
                 if (keyboardState.IsKeyDown(Keys.F7))
-                    GameObjectStore.Store();
+                {
+                    using(var fs = new FileStream("eventstream.turboport", FileMode.Create))
+                    {
+                        GameObjectStore.Store(fs);
+                    }
+                }
 
 
                 InputHandler.HandleInput();
@@ -165,6 +162,8 @@ namespace TurboPort
             base.Update(gameTime);
 
             gameInteraction.DoInteraction();
+
+            GameObjectStore.StoreModifiedObjects(gameTime.TotalGameTime.TotalSeconds);
         }
 
         private static Matrix CalculateView(GlobalData gd, Vector3 target)

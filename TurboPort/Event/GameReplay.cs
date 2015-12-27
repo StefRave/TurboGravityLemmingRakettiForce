@@ -9,8 +9,8 @@ namespace TurboPort.Event
         private Stream inputStream;
         public double GameTimeDelta { get; private set; }
         public Status PlayStatus { get; private set; }
-        private GameEvent nextEvent;
-        
+        private readonly GameSerializer.ObjectInfo nextObjectInfo = new GameSerializer.ObjectInfo();
+
 
         static GameReplay()
         {
@@ -26,7 +26,7 @@ namespace TurboPort.Event
         public void Load(Stream inputStream)
         {
             this.inputStream = inputStream;
-            nextEvent = s.Deserialize(inputStream);
+            s.DeserializeObjectInfo(inputStream, nextObjectInfo);
             PlayStatus = Status.Paused;
         }
 
@@ -35,27 +35,42 @@ namespace TurboPort.Event
             if (PlayStatus != Status.Paused)
                 return;
 
-            if (nextEvent != null)
-                GameTimeDelta = nextEvent.GameTime - currentGameTime;
+            GameTimeDelta = nextObjectInfo.GameTime - currentGameTime;
 
             PlayStatus = Status.Playing;
         }
 
-        public IEnumerable<GameEvent> GetEventsUntilTime(double currentGameTime)
+        public void ProcessEventsUntilTime(double currentGameTime)
         {
             if(PlayStatus != Status.Playing)
-                yield break;
+                return;
 
-            while (nextEvent != null)
+            while (PlayStatus == Status.Playing)
             {
-                if (currentGameTime < nextEvent.GameTime - GameTimeDelta)
-                    yield break;
+                if (currentGameTime < nextObjectInfo.GameTime - GameTimeDelta)
+                    return;
 
-                nextEvent.GameTime += GameTimeDelta;
-                yield return nextEvent;
-                nextEvent = s.Deserialize(inputStream);
+                GameObject gameObject;
+                if (nextObjectInfo.CreateTypeId != 0)
+                {
+                    gameObject = GameObjectStore.CreateFromExternal(nextObjectInfo.CreateTypeId, nextObjectInfo.ObjectId);
+                }
+                else
+                {
+                    gameObject = GameObjectStore.GetGameObject(nextObjectInfo.ObjectId);
+                    if(gameObject == null)
+                        continue;
+                }
+                gameObject.LastUpdatedGameTime = nextObjectInfo.GameTime;
+
+                s.Deserialize(inputStream, gameObject);
+                gameObject.ProcessGameEvents();
+
+                s.DeserializeObjectInfo(inputStream, nextObjectInfo);
+
+                if (inputStream.Position == inputStream.Length)
+                    PlayStatus = Status.Finnished;
             }
-            PlayStatus = Status.Finnished;
         }
 
         public enum Status 

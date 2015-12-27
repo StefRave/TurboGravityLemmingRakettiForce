@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using Microsoft.Xna.Framework;
 
 namespace TurboPort.Event
 {
@@ -11,10 +9,12 @@ namespace TurboPort.Event
     {
         private static int idCounter;
         private static MemoryStream gameEvents = new MemoryStream(10000000);
-        private static double currentGameTime;
         private static GameSerializer s;
         private static readonly Dictionary<int, GameObject> gameObjects = new Dictionary<int, GameObject>();
-        private static readonly Dictionary<Type, Func<GameEvent, GameObject>> objectCreators = new Dictionary<Type, Func<GameEvent, GameObject>>();
+        private static readonly List<GameObject> modifiedGameObjects = new List<GameObject>(10000);
+        private static readonly List<GameObject> newGameObjects = new List<GameObject>(10000);
+        private static readonly Dictionary<Type, Func<GameObject>> objectCreators = new Dictionary<Type, Func<GameObject>>();
+        private static readonly GameSerializer.ObjectInfo objectInfo = new GameSerializer.ObjectInfo();
 
         static GameObjectStore()
         {
@@ -22,82 +22,109 @@ namespace TurboPort.Event
             s.Initialize();
         }
 
+        public static void Clear()
+        {
+            gameObjects.Clear();
+            gameEvents.Position = 0;
+        }
+
         private static int CreateUniqueId()
         {
             return Interlocked.Increment(ref idCounter);
         }
 
-        public static void SetGameTime(GameTime gameTime)
+        public static void StoreModifiedObjects(double totalGameTimeSeconds)
         {
-            currentGameTime = gameTime.TotalGameTime.TotalSeconds;
+            foreach (var gameObject in newGameObjects)
+            {
+                gameObject.LastUpdatedGameTime = totalGameTimeSeconds;
+                objectInfo.GameTime = totalGameTimeSeconds;
+                objectInfo.CreateTypeId = s.GetTypeId(gameObject.GetType());
+                objectInfo.ObjectId = gameObject.ObjectId;
+
+                s.Serialize(gameEvents, gameObject, objectInfo);
+                gameObject.WillBeSerialized = false;
+                gameObject.ObjectStored();
+            }
+            newGameObjects.Clear();
+
+            foreach (var gameObject in modifiedGameObjects)
+            {
+                gameObject.LastUpdatedGameTime = totalGameTimeSeconds;
+                objectInfo.GameTime = totalGameTimeSeconds;
+                objectInfo.CreateTypeId = 0;
+                objectInfo.ObjectId = gameObject.ObjectId;
+
+                s.Serialize(gameEvents, gameObject, objectInfo);
+                gameObject.WillBeSerialized = false;
+                gameObject.ObjectStored();
+            }
+            modifiedGameObjects.Clear();
         }
 
-        public static void AddEvent(GameObject gameObject, GameEvent gameEvent)
+        public static void AddEvent(GameObject gameObject)
         {
-            gameEvent.ObjectId = gameObject.ObjectId;
-            gameEvent.GameTime = currentGameTime;
+            if (gameObject.WillBeSerialized)
+                return;
 
-            s.Serialize(gameEvents, gameEvent);
-
-            gameObject.ApplyGameEvent(gameEvent);
+            gameObject.WillBeSerialized = true;
+            modifiedGameObjects.Add(gameObject);
         }
 
-        public static GameObject AddCreationEvent(GameEvent gameEvent)
+        public static void RegisterCreation<TGameObject>(Func<TGameObject> creator) 
+            where TGameObject : GameObject
         {
-            gameEvent.ObjectId = CreateUniqueId();
-            gameEvent.GameTime = currentGameTime;
+            objectCreators.Add(typeof(TGameObject), creator);
+        }
 
-            s.Serialize(gameEvents, gameEvent);
+        public static TObject CreateAsOwner<TObject>() where TObject : GameObject
+        {
+            TObject gameObject = (TObject)Create(typeof(TObject));
 
-            Func<GameEvent, GameObject> creator;
-            if(!objectCreators.TryGetValue(gameEvent.GetType(), out creator))
-                throw new Exception($"No creator registered to create GameObject from {gameEvent.GetType().FullName}");
-
-            var gameObject = creator.Invoke(gameEvent);
-            gameObject.ObjectId = gameEvent.ObjectId;
             gameObject.IsOwner = true;
-
+            gameObject.ObjectId = CreateUniqueId();
             gameObjects.Add(gameObject.ObjectId, gameObject);
+
+            gameObject.WillBeSerialized = true;
+            newGameObjects.Add(gameObject);
+
             return gameObject;
         }
 
-        public static void Store()
+        public static GameObject CreateFromExternal(int typeId, int objectId)
         {
-            File.WriteAllBytes("eventstream.turboport", gameEvents.ToArray());
-        }
+            var gameObject = Create(s.GetTypeFromTypeId(typeId));
 
-        public static void ProcessEvent(GameEvent gameEvent)
-        {
-            if (gameEvent is IGameObjectCreation)
-            {
-                ProcessCreationEvent(gameEvent);
-            }
-            else
-            {
-                GameObject gameObject;
-                if (!gameObjects.TryGetValue(gameEvent.ObjectId, out gameObject))
-                    return;
-
-                gameObject.ApplyGameEvent(gameEvent);
-            }
-        }
-
-        private static void ProcessCreationEvent(GameEvent gameEvent)
-        {
-            Func<GameEvent, GameObject> creator;
-            if (!objectCreators.TryGetValue(gameEvent.GetType(), out creator))
-                return;//throw new Exception($"No creator registered to create GameObject from {gameEvent.GetType().FullName}");
-
-            var gameObject = creator.Invoke(gameEvent);
-            gameObject.ObjectId = gameEvent.ObjectId;
+            gameObject.IsOwner = false;
+            gameObject.ObjectId = objectId;
             gameObjects.Add(gameObject.ObjectId, gameObject);
+
+            return gameObject;
         }
 
-        public static void RegisterCreation<TGameObject, TGameEvent>(Func<TGameEvent, TGameObject> creator) 
-            where TGameObject : GameObject 
-            where TGameEvent : GameEvent, IGameObjectCreation
+        private static GameObject Create(Type type)
         {
-            objectCreators.Add(typeof(TGameEvent), ge => creator.Invoke((TGameEvent)ge));
+            Func<GameObject> creator;
+            if (!objectCreators.TryGetValue(type, out creator))
+                throw new Exception($"No creator registered to create GameObject from {type.FullName}");
+
+            GameObject gameObject = creator.Invoke();
+
+            return gameObject;
+        }
+
+        public static GameObject GetGameObject(int objectId)
+        {
+            GameObject gameObject;
+            if (!gameObjects.TryGetValue(objectId, out gameObject))
+                return null;
+
+            return gameObject;
+        }
+
+        public static void Store(Stream stream)
+        {
+            stream.Write(gameEvents.GetBuffer(), 0, (int)gameEvents.Length);
         }
     }
 }

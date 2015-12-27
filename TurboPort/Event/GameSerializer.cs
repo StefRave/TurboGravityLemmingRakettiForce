@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -12,10 +13,14 @@ namespace TurboPort.Event
     {
         private RuntimeTypeModel model;
         private MetaType gameEventMetaType;
+        private readonly Dictionary<int, Type> typeForTypeId = new Dictionary<int, Type>();
+        private readonly Dictionary<Type, int> typeIdForType = new Dictionary<Type, int>();
 
         public void Initialize()
         {
             model = TypeModel.Create();
+            model.UseImplicitZeroDefaults = false;
+
             RegisterEventTypes();
             RegisterGameEvents();
         }
@@ -23,36 +28,66 @@ namespace TurboPort.Event
         private void RegisterEventTypes()
         {
             model.Add(typeof (Vector3), false).Add(1, "X").Add(2, "Y").Add(3, "Z");
-            gameEventMetaType = model.Add(typeof (GameEvent), true);
+            model.Add(typeof (ObjectInfo), true);
+            //gameEventMetaType = model.Add(typeof (GameObject), false);
         }
 
         private void RegisterGameEvents()
         {
-            var eventTypes = typeof (GameEvent).Assembly.GetTypes()
-                .Where(t => t.IsSubclassOf(typeof (GameEvent)));
+            var objectTypes = typeof (GameObject).Assembly.GetTypes()
+                .Where(t => t.IsSubclassOf(typeof (GameObject)));
 
-            foreach (var eventType in eventTypes)
+            foreach (var derivedType in objectTypes)
             {
-                var gameEventAttribute = eventType.GetCustomAttribute<GameEventAttribute>();
+                var gameEventAttribute = derivedType.GetCustomAttribute<GameEventAttribute>();
                 if (gameEventAttribute == null)
-                    throw new Exception($"GameEventAttribute missing on type {eventType.FullName}");
+                    throw new Exception($"GameEventAttribute missing on type {derivedType.FullName}");
 
-                if (eventType.GetCustomAttribute<ProtoContractAttribute>() == null)
-                    throw new Exception($"ProtoContractAttribute missing on type {eventType.FullName}");
+                if (derivedType.GetCustomAttribute<ProtoContractAttribute>() == null)
+                    throw new Exception($"ProtoContractAttribute missing on type {derivedType.FullName}");
 
-                gameEventMetaType.AddSubType(gameEventAttribute.IdFromFourLetters, eventType);
+                var metaType = model.Add(derivedType, true);
+                //metaType.AddField(1, "position");
+
+                //gameEventMetaType.AddSubType(gameEventAttribute.IdFromFourLetters, derivedType);
+
+                typeForTypeId.Add(gameEventAttribute.IdFromFourLetters, derivedType);
+                typeIdForType.Add(derivedType, gameEventAttribute.IdFromFourLetters);
             }
         }
 
-        public void Serialize(Stream stream, GameEvent gameEvent)
+        public Type GetTypeFromTypeId(int typeId)
         {
-            model.SerializeWithLengthPrefix(stream, gameEvent, null, PrefixStyle.Fixed32BigEndian, 0);
+            return typeForTypeId[typeId];
         }
 
-        public GameEvent Deserialize(Stream stream)
+        public int GetTypeId(Type type)
         {
-            var result = (GameEvent)model.DeserializeWithLengthPrefix(stream, null, typeof(GameEvent), PrefixStyle.Fixed32BigEndian, 0);
-            return result;
+            return typeIdForType[type];
+        }
+
+        public void Serialize(Stream stream, GameObject gameObject, ObjectInfo objectInfo)
+        {
+            model.SerializeWithLengthPrefix(stream, objectInfo, typeof(ObjectInfo), PrefixStyle.Fixed32BigEndian, 0);
+            model.SerializeWithLengthPrefix(stream, gameObject, gameObject.GetType(), PrefixStyle.Fixed32BigEndian, 0);
+        }
+
+        public void DeserializeObjectInfo(Stream stream, ObjectInfo objectInfo)
+        {
+            model.DeserializeWithLengthPrefix(stream, objectInfo, typeof(ObjectInfo), PrefixStyle.Fixed32BigEndian, 0);
+        }
+
+        public void Deserialize(Stream stream, GameObject gameObject)
+        {
+            model.DeserializeWithLengthPrefix(stream, gameObject, gameObject.GetType(), PrefixStyle.Fixed32BigEndian, 0);
+        }
+
+        [ProtoContract]
+        public class ObjectInfo
+        {
+            [ProtoMember(1)] public int ObjectId;
+            [ProtoMember(2)] public double GameTime;
+            [ProtoMember(3)] public int CreateTypeId;
         }
     }
 }

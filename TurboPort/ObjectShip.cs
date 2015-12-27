@@ -1,13 +1,15 @@
 using System;
-using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ProtoBuf;
 using TurboPort.Event;
 using TurboPort.Input;
 
 namespace TurboPort
 {
+    [ProtoContract()]
+    [GameEvent("Ship")]
     public class ObjectShip : GameObject, IControllerInputProcessor, I3DCollistionObject
     {
         private readonly IMissileProjectileFactory missileProjectileFactory;
@@ -17,10 +19,15 @@ namespace TurboPort
 
         private readonly VelocityPositionCalculator velocityPositionCalculator = new VelocityPositionCalculator { Mass = 35 };
         private Vector3  rotation;
-        private Vector3  position;
-        public Vector3  velocity;
-        private float controlRotation;
-        private float controlThrust;
+        [ProtoMember(1)] private Vector3 position;
+        [ProtoMember(2)] private Vector3  velocity;
+        [ProtoMember(3)] private float controlRotation;
+        [ProtoMember(4)] private float controlThrust;
+
+        [ProtoMember(5)]
+        private int EventsWire { get { return (int) events; } set { events = (Event) value; } }
+
+        private Event events;
 
         private bool prevFire;
         private Matrix renderMatrix;
@@ -30,12 +37,12 @@ namespace TurboPort
         private static BasicEffect screenEffect;
 
         private static Model model;
-        public bool HasLanded { get; set; }
+        public bool HasLanded { get; private set; }
         public bool Hit { get; set; }
-
         public Vector3 Rotation => rotation;
         public Vector3 Position => position;
         public Vector3 Velocity => velocity;
+
 
         static bool colorSwitchHack;
 
@@ -43,6 +50,7 @@ namespace TurboPort
         public ObjectShip(IMissileProjectileFactory missileProjectileFactory)
         {
             this.missileProjectileFactory = missileProjectileFactory;
+            events = Event.Create;
         }
 
         public static void Initialize(ContentManager content)
@@ -126,6 +134,8 @@ namespace TurboPort
         {
             double elapsedTime = gameTime.ElapsedGameTime.TotalSeconds;
             rotation.Y = controlRotation * 3.14f / 2f;
+            if (controlThrust > 0)
+                HasLanded = false;
             if (!HasLanded)
             {
                 rotation.Z += (float)(-controlRotation * elapsedTime * 7);
@@ -137,9 +147,6 @@ namespace TurboPort
                 Matrix.CreateTranslation(new Vector3(centerOffset.X, centerOffset.Y, centerOffset.Z))*
                 Matrix.CreateRotationY(rotation.Y)*
                 Matrix.CreateRotationZ(rotation.Z);
-
-            if (HasLanded && velocity.Y == 0)
-                return;
         }
 
         public bool CheckCollision(Vector3 projectilePosition, CollisionPositionInTexture collisionPositionInTexture)
@@ -217,13 +224,9 @@ namespace TurboPort
             if ((controlRotation != control.Rotation) ||
                 (controlThrust != control.Thrust))
             {
-                PublishEvent(new ObjectShipControlChanged
-                             {
-                                 Rotation = control.Rotation,
-                                 Thrust = control.Thrust,
-                                 Position = Position,
-                                 Velocity = Velocity,
-                });
+                controlRotation = control.Rotation;
+                controlThrust = control.Thrust;
+                PublishEvent();
             }
 
             if (!prevFire && control.Fire)
@@ -234,74 +237,86 @@ namespace TurboPort
             prevFire = control.Fire;
         }
 
-        public void ApplyGameEvent(ObjectShipControlChanged e)
-        {
-            controlRotation = e.Rotation;
-            controlThrust = e.Thrust;
+        //public void ApplyGameEvent(ObjectShipControlChanged e)
+        //{
+        //    controlRotation = e.Rotation;
+        //    controlThrust = e.Thrust;
             
            
-            Debug.Assert(Math.Abs((Velocity - e.Velocity).Length()) <= 0.1);
-            Debug.Assert(Math.Abs((position - e.Position).Length()) <= 0.1);
+        //    Debug.Assert(Math.Abs((Velocity - e.Velocity).Length()) <= 0.1);
+        //    Debug.Assert(Math.Abs((position - e.Position).Length()) <= 0.1);
 
-            velocity = e.Velocity;
-            position = e.Position;
+        //    velocity = e.Velocity;
+        //    position = e.Position;
 
-            if (e.Thrust > 0)
-                HasLanded = false;
+        //    if (e.Thrust > 0)
+        //        HasLanded = false;
+        //}
+
+
+        protected internal override void ProcessGameEvents()
+        {
+            if (events.HasFlag(Event.Create))
+                ApplyCreate();
+            if (events.HasFlag(Event.Landed))
+                ApplyHasLanded();
+            events = 0;
+        }
+
+        protected internal override void ObjectStored()
+        {
+            events = 0;
         }
 
         public void LandShip(float positionY)
         {
-            Vector3 newPosition = position;
-            newPosition.Y = positionY;
-            PublishEvent(new ObjectShipHasLanded
-            {
-                Position = newPosition
-            });
+            position.Y = positionY;
+            rotation.Z = 0;
+
+            events |= Event.Landed;
+            PublishEvent();
+            ApplyHasLanded();
         }
 
-        public void ApplyGameEvent(ObjectShipHasLanded e)
+        public void ApplyHasLanded()
         {
             HasLanded = true;
-            velocity = Vector3.Zero;
-            position.Y = e.Position.Y;
             rotation.Z = 0;
+            velocity = Vector3.Zero;
+            controlRotation = 0;
 
             SoundHandler.TochDown();
         }
 
-        public override void ApplyGameEvent(GameEvent e)
-        {
-            if(e is ObjectShipControlChanged)
-                ApplyGameEvent((ObjectShipControlChanged)e);
-            else if(e is ObjectShipHasLanded)
-                ApplyGameEvent((ObjectShipHasLanded)e);
-            else if(e is ObjectShipHitBackground)
-                ApplyGameEvent((ObjectShipHitBackground)e);
-        }
-
-        public ObjectShip FromEvent(ObjectShipCreated e)
-        {
-            velocity = Vector3.Zero;
-            rotation = Vector3.Zero;
-            position = e.Position;
-            HasLanded = true;
-
-            return this;
-        }
-
         public void HitWithBackground()
         {
-            PublishEvent(
-                new ObjectShipHitBackground
-                {
-                    Velocity = Velocity * 0.3f
-                });
+            velocity = velocity * 0.3f;
+            events |= Event.HitBackground;
+            PublishEvent();
+            ApplyHitWithBackground();
         }
 
-        public void ApplyGameEvent(ObjectShipHitBackground e)
+        public void ApplyHitWithBackground()
         {
-            velocity = Vector3.Zero;
+        }
+
+        public void ApplyCreate()
+        {
+            HasLanded = true;
+        }
+
+        [Flags]
+        public enum Event
+        {
+            Create = 1 << 0,
+            Landed = 1 << 1,
+            HitBackground = 1 << 2,
+        }
+
+        public void CreateInitialize(Vector3 startPosition)
+        {
+            position = startPosition;
+            ApplyCreate();
         }
     }
 }

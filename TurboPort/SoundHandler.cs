@@ -54,6 +54,9 @@ namespace TurboPort
 #if DONT_KNOW_HOW_TO_INSTALL_SOUND
 			return;
 #endif
+            if (soundEffect == null)
+                return;
+
             // too basic protection against too many Play calls which will cause crashes
             if (soundEffect == lastPlayedSoundEffect)
             {

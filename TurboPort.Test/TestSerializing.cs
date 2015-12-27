@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using FakeItEasy;
 using Microsoft.Xna.Framework;
 using NUnit.Framework;
 using TurboPort.Event;
@@ -11,38 +12,39 @@ namespace TurboPort.Test
         [Test]
         public void TestObjectShipHasLanded()
         {
-            var s = new GameSerializer();
-            s.Initialize();
+            var missileProjectileFactory = A.Fake<IMissileProjectileFactory>();
 
-            var file = new MemoryStream();
-            var x = new ObjectShipHasLanded { GameTime = 1.2, ObjectId = 2, Position = new Vector3(1, 2, 3) };
-            s.Serialize(file, x);
-            s.Serialize(file, x);
+            GameObjectStore.RegisterCreation(() => new ObjectShip(missileProjectileFactory));
 
-            file.Position = 0;
-            var y = (ObjectShipHasLanded)s.Deserialize(file);
-            Assert.AreEqual(x.Position, y.Position);
-            Assert.AreEqual(x.GameTime, y.GameTime);
-            Assert.AreEqual(x.ObjectId, y.ObjectId);
+            var objectShip = GameObjectStore.CreateAsOwner<ObjectShip>();
+
+            objectShip.LandShip(10);
+            objectShip.HitWithBackground();
+            GameObjectStore.StoreModifiedObjects(0);
+
+            var ms = new MemoryStream();
+            GameObjectStore.Store(ms);
+            ms.Position = 0;
+
+            GameObjectStore.Clear();
+            var replay = new GameReplay();
+            replay.Load(ms);
+            replay.StartPlay(0);
+            replay.ProcessEventsUntilTime(1000);
+
+
+            //var x = new ObjectShipState { GameTime = 1.2, ObjectId = 2, Position = new Vector3(1, 2, 3), Events = ObjectShipState.Event.HitBackground | ObjectShipState.Event.Create };
+            //s.Serialize(file, x);
+            //s.Serialize(file, x);
+
+            //file.Position = 0;
+            //var y = (ObjectShipState)s.Deserialize(file);
+            //Assert.AreEqual(x.Position, y.Position);
+            //Assert.AreEqual(x.GameTime, y.GameTime);
+            //Assert.AreEqual(x.ObjectId, y.ObjectId);
+            //Assert.AreEqual(x.Events, y.Events);
         }
 
-        [Test]
-        public void TestObjectShipControlChanged()
-        {
-            var s = new GameSerializer();
-            s.Initialize();
 
-            var file = new MemoryStream();
-            var x = new ObjectShipControlChanged { GameTime = 1.2, ObjectId = 2, Rotation = 3, Thrust = 5 };
-            s.Serialize(file, x);
-            s.Serialize(file, x);
-
-            file.Position = 0;
-            var y = (ObjectShipControlChanged)s.Deserialize(file);
-            Assert.AreEqual(x.Rotation, y.Rotation);
-            Assert.AreEqual(x.Thrust, y.Thrust);
-            Assert.AreEqual(x.GameTime, y.GameTime);
-            Assert.AreEqual(x.ObjectId, y.ObjectId);
-        }
     }
 }
