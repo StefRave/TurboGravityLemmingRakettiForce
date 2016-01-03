@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace TurboPort
 {
@@ -13,9 +14,9 @@ namespace TurboPort
         public IReadOnlyList<ShipBase> PlayerShipBases { get { return playerShipBases; } }
         public IReadOnlyList<ObjectShip> PlayerShips { get { return playerShips; } }
 
-        public GameWorld(MissileProjectileFactory missileProjectileFactory)
+        public GameWorld(Game game)
         {
-            ProjectileFactory = missileProjectileFactory;
+            ProjectileFactory = new MissileProjectileFactory(game, this);
         }
 
         public void AddPlayerShip(ObjectShip ship)

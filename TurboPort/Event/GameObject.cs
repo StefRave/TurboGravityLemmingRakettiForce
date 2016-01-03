@@ -21,6 +21,5 @@ namespace TurboPort.Event
 
         protected internal abstract void ProcessGameEvents();
         protected internal abstract void ObjectStored();
-
     }
 }

@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using TurboPort.Event;
 using TurboPort.ParticleSystems;
 
 namespace TurboPort
@@ -17,7 +17,7 @@ namespace TurboPort
         private readonly FireParticleSystem fireParticles;
         private readonly SmokePlumeParticleSystem smokePlumeParticles;
 
-        public MissileProjectileFactory(Game game) : base(game)
+        public MissileProjectileFactory(Game game, GameWorld gameWorld) : base(game)
         {
             var contentLoader = game.Content.FromPath("particle3d");
             explosionParticles = new ExplosionParticleSystem(game, contentLoader);
@@ -40,16 +40,21 @@ namespace TurboPort
             Game.Components.Add(projectileTrailParticles);
             Game.Components.Add(smokePlumeParticles);
             Game.Components.Add(fireParticles);
+
+            GameObjectStore.RegisterCreation(
+                () =>
+                {
+                    var result = new MissileProjectile(gameWorld.LevelBackground, explosionParticles, explosionSmokeParticles,
+                        projectileTrailParticles, p => projectiles.Remove(p));
+                    projectiles.Add(result);
+                    return result;
+                });
         }
 
         public void Fire(Vector3 position, float angleInDegrees, Vector3 velocity)
         {
-            SoundHandler.Fire();
-
-            projectiles.Add(new MissileProjectile(explosionParticles,
-                               explosionSmokeParticles,
-                               projectileTrailParticles,
-                               position, angleInDegrees, velocity));
+            GameObjectStore.CreateAsOwner<MissileProjectile>()
+                .CreateInitialize(position, angleInDegrees, velocity);
         }
 
         /// <summary>
@@ -77,12 +82,14 @@ namespace TurboPort
 
             while (i < projectiles.Count)
             {
-                if (background.CheckCollision(projectiles[i].Position))
+                var missileProjectile = projectiles[i];
+                if (missileProjectile.IsOwner)
                 {
-                    projectiles[i].Explode();
-                    projectiles.RemoveAt(i);
-                    SoundHandler.Bullethit();
-                    continue;
+                    if (background.CheckCollision(missileProjectile.Position))
+                    {
+                        missileProjectile.Explode();
+                        continue;
+                    }
                 }
                 i++;
             }
@@ -97,7 +104,6 @@ namespace TurboPort
                 if (ship.CheckCollision(projectiles[i].Position, collisionPositionInTexture))
                 {
                     projectiles[i].Explode();
-                    projectiles.RemoveAt(i);
                     continue;
                 }
                 i++;

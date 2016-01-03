@@ -21,7 +21,6 @@ namespace TurboPort
         private SpriteFont spriteFont;
 
         private readonly GameInteraction gameInteraction;
-        private MissileProjectileFactory missileProjectileFactory;
         private readonly GameReplay replay = new GameReplay();
 
         public Game1()
@@ -44,8 +43,7 @@ namespace TurboPort
             }
 #endif
 
-            missileProjectileFactory = new MissileProjectileFactory(this);
-            gameWorld = new GameWorld(missileProjectileFactory);
+            gameWorld = new GameWorld(this);
             gameInteraction = new GameInteraction(gameWorld);
 
             //replay.Load(new MemoryStream(File.ReadAllBytes("eventstream.turboport")));
@@ -93,7 +91,7 @@ namespace TurboPort
             GameObjectStore.RegisterCreation(
                 () =>
                 {
-                    var objectShip = new ObjectShip(missileProjectileFactory);
+                    var objectShip = new ObjectShip(gameWorld.ProjectileFactory);
                     gameWorld.AddPlayerShip(objectShip);
                     return objectShip;
                 });
@@ -117,6 +115,7 @@ namespace TurboPort
         protected override void Update(GameTime gameTime)
         {
             SoundHandler.SetGameTime(gameTime);
+            GameObjectStore.SetGameTime(gameTime);
 
             // For Mobile devices, this logic will close the Game when the Back button is pressed
             // Exit() is obsolete on iOS
@@ -157,13 +156,13 @@ namespace TurboPort
                     gameWorld.PlayerShips[i].ProcessControllerInput(InputHandler.Player[i]);
             }
 
-            missileProjectileFactory.UpdateProjectiles(gameTime);
+            gameWorld.ProjectileFactory.UpdateProjectiles(gameTime);
 
             base.Update(gameTime);
 
             gameInteraction.DoInteraction();
 
-            GameObjectStore.StoreModifiedObjects(gameTime.TotalGameTime.TotalSeconds);
+            GameObjectStore.StoreModifiedObjects();
         }
 
         private static Matrix CalculateView(GlobalData gd, Vector3 target)
@@ -247,16 +246,16 @@ namespace TurboPort
                         gameWorld.PlayerShips[i].Render(GraphicsDevice, basicEffect);
                     }
 
-                    //DrawInfo("{0:00.00}x {1:00.00}y\nSpeed {2}",
-                    //    gameWorld.PlayerShips[player].Position.X,
-                    //    gameWorld.PlayerShips[player].Position.Y,
-                    //    gameWorld.PlayerShips[player].Velocity.Length());
-                    DrawInfo(TouchControl.Info);
+                    DrawInfo("{0:00.00}x {1:00.00}y\nSpeed {2}",
+                        gameWorld.PlayerShips[player].Position.X,
+                        gameWorld.PlayerShips[player].Position.Y,
+                        gameWorld.PlayerShips[player].Velocity.Length());
+                    //DrawInfo(TouchControl.Info);
 
                     bulletBuffer.Render(GraphicsDevice, (BasicEffect) basicEffect.Clone());
                     //End the scene
 
-                    missileProjectileFactory.Draw(view, projection);
+                    gameWorld.ProjectileFactory.Draw(view, projection);
 
                     base.Draw(gameTime);
                     GraphicsDevice.BlendState = BlendState.NonPremultiplied;

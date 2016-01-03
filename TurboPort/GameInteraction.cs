@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.Remoting.Messaging;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -13,6 +16,7 @@ namespace TurboPort
         private RenderTarget2D collisionRenderTarget;
         private int[] collisionRenderTargetBytes;
         private readonly Dictionary<object, CollisionPositionInTexture> dictje = new Dictionary<object, CollisionPositionInTexture>();
+        private long[] collisionTexture;
 
         public GameInteraction(GameWorld gameWorld)
         {
@@ -23,10 +27,11 @@ namespace TurboPort
         {
             this.graphicsDevice = graphicsDevice;
 
-            const int width = 40;
-            const int height = 40;
+            const int width = 64; // must be multiple of 64
+            const int height = 64;
             collisionRenderTarget = new RenderTarget2D(graphicsDevice, width, height);
-            collisionRenderTargetBytes = new int[width * height * 4];
+            collisionRenderTargetBytes = new int[width * height];
+            collisionTexture = new long[width / 64 * height + 1]; // +1 for collision detection algorithm
         }
 
         public void DoInteraction()
@@ -63,7 +68,7 @@ namespace TurboPort
             }
         }
 
-        public void DrawToColisionDetectionTexture()
+        public unsafe void DrawToColisionDetectionTexture()
         {
             if (gameWorld.PlayerShips.Count == 0)
                 return;
@@ -103,7 +108,7 @@ namespace TurboPort
                     new CollisionPositionInTexture
                     {
                         Rect = new Rectangle(x, y, radiusInt * 2, radiusInt * 2),
-                        ByteData = collisionRenderTargetBytes,
+                        CollisionData = collisionTexture,
                         Size = new Point(collisionRenderTarget.Width, collisionRenderTarget.Height)
                     });
 
@@ -113,6 +118,28 @@ namespace TurboPort
             }
             collisionRenderTarget.GetData(collisionRenderTargetBytes);
             graphicsDevice.SetRenderTarget(null);
+            fixed (long* collisionptrFix = collisionTexture)
+            fixed (int* textureptrFix = collisionRenderTargetBytes)
+            {
+                long* collisionptr = collisionptrFix;
+                int* textureptr = textureptrFix;
+
+                int width = collisionRenderTarget.Width;
+                long collistion = 0;
+                for (int y = 0; y < collisionRenderTarget.Height; y++)
+                {
+                    for (int x = 0; x < width; x+=64)
+                    {
+                        for (int i = 0; i < 64; i++)
+                        {
+                            collistion <<= 1;
+                            if ((*textureptr++ & 0xffffff) != 0)
+                                collistion++;
+                        }
+                        *collisionptr++ = collistion;
+                    }
+                }
+            }
         }
 
 
@@ -132,7 +159,7 @@ namespace TurboPort
     public class CollisionPositionInTexture
     {
         public Rectangle Rect { get; set; }
-        public int[] ByteData { get; set; }
+        public long[] CollisionData { get; set; }
         public Point Size { get; set; }
     }
 }

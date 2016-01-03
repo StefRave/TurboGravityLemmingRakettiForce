@@ -20,7 +20,7 @@ namespace TurboPort.Test
 
             objectShip.LandShip(10);
             objectShip.HitWithBackground();
-            GameObjectStore.StoreModifiedObjects(0);
+            GameObjectStore.StoreModifiedObjects();
 
             var ms = new MemoryStream();
             GameObjectStore.Store(ms);

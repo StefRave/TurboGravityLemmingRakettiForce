@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using Microsoft.Xna.Framework;
 
 namespace TurboPort.Event
 {
@@ -15,6 +16,7 @@ namespace TurboPort.Event
         private static readonly List<GameObject> newGameObjects = new List<GameObject>(10000);
         private static readonly Dictionary<Type, Func<GameObject>> objectCreators = new Dictionary<Type, Func<GameObject>>();
         private static readonly GameSerializer.ObjectInfo objectInfo = new GameSerializer.ObjectInfo();
+        private static double totalGameTimeSeconds;
 
         static GameObjectStore()
         {
@@ -33,7 +35,12 @@ namespace TurboPort.Event
             return Interlocked.Increment(ref idCounter);
         }
 
-        public static void StoreModifiedObjects(double totalGameTimeSeconds)
+        public static void SetGameTime(GameTime gameTime)
+        {
+            totalGameTimeSeconds = gameTime.TotalGameTime.TotalSeconds;
+        }
+
+        public static void StoreModifiedObjects()
         {
             foreach (var gameObject in newGameObjects)
             {
@@ -109,7 +116,7 @@ namespace TurboPort.Event
                 throw new Exception($"No creator registered to create GameObject from {type.FullName}");
 
             GameObject gameObject = creator.Invoke();
-
+            gameObject.LastUpdatedGameTime = totalGameTimeSeconds;
             return gameObject;
         }
 

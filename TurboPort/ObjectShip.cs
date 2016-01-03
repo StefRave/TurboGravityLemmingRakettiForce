@@ -159,7 +159,7 @@ namespace TurboPort
                               (int) projectileRelativeToCenter.X;
                 int offsetY = collisionPositionInTexture.Rect.Y + (collisionPositionInTexture.Rect.Height / 2) +
                               (int) projectileRelativeToCenter.Y;
-                int textureDataAtLocation = collisionPositionInTexture.ByteData[offsetX + offsetY * collisionPositionInTexture.Size.X];
+                int textureDataAtLocation = 0;//!!!!!!!!collisionPositionInTexture.CollisionData[offsetX + offsetY * collisionPositionInTexture.Size.X];
                 if (textureDataAtLocation == 0)
                     return false;
 
@@ -232,27 +232,14 @@ namespace TurboPort
             if (!prevFire && control.Fire)
             {
                 var gunLocation = Vector3.Transform(new Vector3(0, boundingSphere.Radius, 0), renderMatrix);
-                missileProjectileFactory.Fire(position + gunLocation, rotation.Z, velocity);
+                Vector3 vector3 = velocity;
+                Vector3 myRotation = gunLocation;
+                myRotation.Normalize();
+
+                missileProjectileFactory.Fire(position + gunLocation, rotation.Z, vector3 + (myRotation * 140));
             }
             prevFire = control.Fire;
         }
-
-        //public void ApplyGameEvent(ObjectShipControlChanged e)
-        //{
-        //    controlRotation = e.Rotation;
-        //    controlThrust = e.Thrust;
-            
-           
-        //    Debug.Assert(Math.Abs((Velocity - e.Velocity).Length()) <= 0.1);
-        //    Debug.Assert(Math.Abs((position - e.Position).Length()) <= 0.1);
-
-        //    velocity = e.Velocity;
-        //    position = e.Position;
-
-        //    if (e.Thrust > 0)
-        //        HasLanded = false;
-        //}
-
 
         protected internal override void ProcessGameEvents()
         {
@@ -300,7 +287,13 @@ namespace TurboPort
         {
         }
 
-        public void ApplyCreate()
+        public void CreateInitialize(Vector3 startPosition)
+        {
+            position = startPosition;
+            ApplyCreate();
+        }
+
+        private void ApplyCreate()
         {
             HasLanded = true;
         }
@@ -311,12 +304,6 @@ namespace TurboPort
             Create = 1 << 0,
             Landed = 1 << 1,
             HitBackground = 1 << 2,
-        }
-
-        public void CreateInitialize(Vector3 startPosition)
-        {
-            position = startPosition;
-            ApplyCreate();
         }
     }
 }
