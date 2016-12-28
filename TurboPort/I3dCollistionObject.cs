@@ -6,5 +6,6 @@ namespace TurboPort
     {
         float CollisionRadius();
         void DrawToCollistionTexture(Matrix view, Matrix projection, Vector3 position);
+        Vector3 Position { get; }
     }
 }

@@ -55,8 +55,6 @@ namespace TurboPort
                 gfl.BitmapData[((int) point.X - 1) + (texture.Width*((int) point.Y))] = 0;
                 gfl.BitmapData[((int) point.X + 1) + (texture.Width*((int) point.Y))] = 0;
             }
-
-
             return hit;
         }
 
@@ -75,36 +73,9 @@ namespace TurboPort
         public bool Interact(ObjectShip ship, CollisionPositionInTexture collisionPositionInTexture)
         {
 
-            var isHit = CollisionDetection2D.IntersectPixels2(collisionPositionInTexture,
-                collisionData,
-                collistionDataWidth / 64, 
-                texture.Width, ship.Position, collisionPositionInTexture.CollisionData, textureData, texture);
-
-
-            //ship.Hit = false;
-            //int xStart = (int)ship.Position.X - (collisionPositionInTexture.Rect.Width/2) + 1;
-            //int yStart = (int)ship.Position.Y - (collisionPositionInTexture.Rect.Height/2) + 1;
-            //int xEnd = xStart + collisionPositionInTexture.Rect.Width;
-            //int yEnd = yStart + collisionPositionInTexture.Rect.Height;
-            //int offsetShip = (collisionPositionInTexture.Rect.Height - 1) * collisionPositionInTexture.Size.Y + collisionPositionInTexture.Rect.X + 1;
-            //int offsetShipLineDelta = collisionPositionInTexture.Size.Y + collisionPositionInTexture.Rect.Width;
-            //var byteData = collisionPositionInTexture.ByteData;
-            //for (int y = yStart; y < yEnd; y++)
-            //{
-            //    for (int x = xStart; x < xEnd; x++)
-            //    {
-            //        if ((byteData[offsetShip++] & 0xffffff) != 0)
-            //        {
-            //            if (gfl.BitmapData[x + texture.Width*y] != 0)
-            //            {
-            //                ship.Hit = true;
-            //                gfl.BitmapData[x + texture.Width*y] = 0;
-            //                textureData[x + texture.Width*(texture.Height - y - 1)] = 0;
-            //            }
-            //        }
-            //    }
-            //    offsetShip -= offsetShipLineDelta;
-            //}
+            var isHit = CollisionDetection2D.DetectCollistionAndUpdateTexture(collisionPositionInTexture,
+                collisionData, collistionDataWidth,
+                textureData, texture.Width, texture.Height);
 
             ship.Hit = isHit;
 
@@ -142,20 +113,20 @@ namespace TurboPort
             for (int y = 0; y < result.texture.Height; y++)
             {
                 int i;
-                long collisionData = 0;
+                long mask64Bits = 0;
                 for (i = 0; i < result.texture.Width; i++)
                 {
-                    collisionData *= 2;
+                    mask64Bits *= 2;
                     if ((result.textureData[offsetTexture++] & 0xffffff) != 0)
-                        collisionData++;
+                        mask64Bits++;
 
                     if ((i & 0x3f) == 0x3f)
-                        result.collisionData[offsetCollision++] = collisionData;
+                        result.collisionData[offsetCollision++] = mask64Bits;
                 }
                 if(i != result.collistionDataWidth)
                 {
-                    collisionData <<= result.collistionDataWidth - i;
-                    result.collisionData[offsetCollision++] = collisionData;
+                    mask64Bits <<= result.collistionDataWidth - i;
+                    result.collisionData[offsetCollision++] = mask64Bits;
                 }
             }
 

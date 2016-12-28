@@ -109,7 +109,8 @@ namespace TurboPort
                     {
                         Rect = new Rectangle(x, y, radiusInt * 2, radiusInt * 2),
                         CollisionData = collisionTexture,
-                        Size = new Point(collisionRenderTarget.Width, collisionRenderTarget.Height)
+                        Size = new Point(collisionRenderTarget.Width, collisionRenderTarget.Height),
+                        Position = collistionObject.Position,
                     });
 
                 position.X += radiusInt;
@@ -161,5 +162,6 @@ namespace TurboPort
         public Rectangle Rect { get; set; }
         public long[] CollisionData { get; set; }
         public Point Size { get; set; }
+        public Vector3 Position { get; set; }
     }
 }
