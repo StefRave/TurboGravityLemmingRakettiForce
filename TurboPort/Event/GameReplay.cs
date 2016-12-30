@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 
 namespace TurboPort.Event
 {
     public class GameReplay
     {
+        private readonly GameObjectStore gameStore;
         private static readonly GameSerializer s;
         private Stream inputStream;
         public double GameTimeDelta { get; private set; }
@@ -18,8 +18,9 @@ namespace TurboPort.Event
             s.Initialize();
         }
 
-        public GameReplay()
+        public GameReplay(GameObjectStore gameStore)
         {
+            this.gameStore = gameStore;
             PlayStatus = Status.Inactive;
         }
 
@@ -40,6 +41,13 @@ namespace TurboPort.Event
             PlayStatus = Status.Playing;
         }
 
+        public void ReplayAll(double currentGameTime)
+        {
+            PlayStatus = Status.Playing;
+            GameTimeDelta = nextObjectInfo.GameTime - currentGameTime;
+            ProcessEventsUntilTime(10000000);
+        }
+
         public void ProcessEventsUntilTime(double currentGameTime)
         {
             if(PlayStatus != Status.Playing)
@@ -47,21 +55,22 @@ namespace TurboPort.Event
 
             while (PlayStatus == Status.Playing)
             {
-                if (currentGameTime < nextObjectInfo.GameTime - GameTimeDelta)
-                    return;
+                double gameObjectGameTime = nextObjectInfo.GameTime - GameTimeDelta;
+                if (currentGameTime < gameObjectGameTime)
+                    break;
 
                 GameObject gameObject;
                 if (nextObjectInfo.CreateTypeId != 0)
                 {
-                    gameObject = GameObjectStore.CreateFromExternal(nextObjectInfo.CreateTypeId, nextObjectInfo.ObjectId);
+                    gameObject = gameStore.CreateFromExternal(nextObjectInfo.CreateTypeId, nextObjectInfo.ObjectId);
                 }
                 else
                 {
-                    gameObject = GameObjectStore.GetGameObject(nextObjectInfo.ObjectId);
+                    gameObject = gameStore.GetGameObject(nextObjectInfo.ObjectId);
                     if(gameObject == null)
                         continue;
                 }
-                gameObject.LastUpdatedGameTime = nextObjectInfo.GameTime;
+                gameObject.LastUpdatedGameTime = gameObjectGameTime;
 
                 s.Deserialize(inputStream, gameObject);
                 gameObject.ProcessGameEvents();

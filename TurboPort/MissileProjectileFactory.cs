@@ -7,6 +7,7 @@ namespace TurboPort
 {
     public class MissileProjectileFactory : GameComponent, IMissileProjectileFactory
     {
+        private readonly GameObjectStore gameStore;
         // The explosions effect works by firing projectiles up into the
         // air, so we need to keep track of all the active projectiles.
         private readonly List<MissileProjectile> projectiles = new List<MissileProjectile>();
@@ -17,8 +18,9 @@ namespace TurboPort
         private readonly FireParticleSystem fireParticles;
         private readonly SmokePlumeParticleSystem smokePlumeParticles;
 
-        public MissileProjectileFactory(Game game, GameWorld gameWorld) : base(game)
+        public MissileProjectileFactory(Game game, GameWorld gameWorld, GameObjectStore gameStore) : base(game)
         {
+            this.gameStore = gameStore;
             var contentLoader = game.Content.FromPath("particle3d");
             explosionParticles = new ExplosionParticleSystem(game, contentLoader);
             explosionSmokeParticles = new ExplosionSmokeParticleSystem(game, contentLoader);
@@ -41,7 +43,7 @@ namespace TurboPort
             Game.Components.Add(smokePlumeParticles);
             Game.Components.Add(fireParticles);
 
-            GameObjectStore.RegisterCreation(
+            gameStore.RegisterCreation(
                 () =>
                 {
                     var result = new MissileProjectile(gameWorld.LevelBackground, explosionParticles, explosionSmokeParticles,
@@ -53,7 +55,7 @@ namespace TurboPort
 
         public void Fire(Vector3 position, float angleInDegrees, Vector3 velocity)
         {
-            GameObjectStore.CreateAsOwner<MissileProjectile>()
+            gameStore.CreateAsOwner<MissileProjectile>()
                 .CreateInitialize(position, angleInDegrees, velocity);
         }
 

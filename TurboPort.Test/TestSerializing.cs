@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using FakeItEasy;
-using Microsoft.Xna.Framework;
 using NUnit.Framework;
 using TurboPort.Event;
 
@@ -14,21 +13,20 @@ namespace TurboPort.Test
         {
             var missileProjectileFactory = A.Fake<IMissileProjectileFactory>();
 
-            GameObjectStore.RegisterCreation(() => new ObjectShip(missileProjectileFactory));
+            var sut = CreateSutWithRegistrations(missileProjectileFactory);
 
-            var objectShip = GameObjectStore.CreateAsOwner<ObjectShip>();
+            var objectShip = sut.CreateAsOwner<ObjectShip>();
 
             objectShip.LandShip(10);
             objectShip.HitWithBackground();
-            GameObjectStore.StoreModifiedObjects();
+            MemoryStream gameEvents = new MemoryStream();
 
-            var ms = new MemoryStream();
-            GameObjectStore.Store(ms);
-            ms.Position = 0;
+            sut.StoreModifiedObjects(gameEvents);
 
-            GameObjectStore.Clear();
-            var replay = new GameReplay();
-            replay.Load(ms);
+            gameEvents.Position = 0;
+            sut = CreateSutWithRegistrations(missileProjectileFactory);
+            var replay = new GameReplay(sut);
+            replay.Load(gameEvents);
             replay.StartPlay(0);
             replay.ProcessEventsUntilTime(1000);
 
@@ -45,6 +43,11 @@ namespace TurboPort.Test
             //Assert.AreEqual(x.Events, y.Events);
         }
 
-
+        private static GameObjectStore CreateSutWithRegistrations(IMissileProjectileFactory missileProjectileFactory)
+        {
+            GameObjectStore sut = new GameObjectStore();
+            sut.RegisterCreation(() => new ObjectShip(missileProjectileFactory));
+            return sut;
+        }
     }
 }

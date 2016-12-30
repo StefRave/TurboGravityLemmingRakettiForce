@@ -38,6 +38,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Threading.Tasks.Dataflow, Version=4.5.24.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Tpl.Dataflow.4.5.24\lib\portable-net45+win8+wpa81\System.Threading.Tasks.Dataflow.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="MonoGame.Framework, Version=3.4.0.459, Culture=neutral, PublicKeyToken=null">
@@ -49,6 +53,8 @@
     <Compile Include="Event\GameEventAttribute.cs" />
     <Compile Include="Event\GameReplay.cs" />
     <Compile Include="Event\GameSerializer.cs" />
+    <Compile Include="Event\UdpEventReceiver.cs" />
+    <Compile Include="Event\UdpBroadcastEvents.cs" />
     <Compile Include="GameInteraction.cs" />
     <Compile Include="CollisionDetection2d.cs" />
     <Compile Include="Game1.cs" />

@@ -1,6 +1,7 @@
 ﻿#region Using Statements
 
 using System;
+using System.Diagnostics;
 
 #if MONOMAC
 using MonoMac.AppKit;
@@ -14,25 +15,25 @@ using MonoTouch.UIKit;
 
 namespace TurboPort
 {
-	#if __IOS__
+#if __IOS__
 	[Register("AppDelegate")]
 	class Program : UIApplicationDelegate
 	
 #else
-	static class Program
-	#endif
+    static class Program
+#endif
     {
-		private static Game1 game;
+        private static Game1 game;
 
-		internal static void RunGame ()
-		{
-			game = new Game1 ();
-		    try
-		    {
+        internal static void RunGame(Game1.GameMode gameMode = 0)
+        {
+            game = new Game1(gameMode);
+            try
+            {
                 game.Run();
             }
             catch (NullReferenceException)
-		    {
+            {
                 // This is caused by Dispose(true); 
                 // But is is added as a workaround to 
                 // https://github.com/mono/MonoGame/issues/3749
@@ -40,37 +41,40 @@ namespace TurboPort
             }
         }
 
-		/// <summary>
-		/// The main entry point for the application.
-		/// </summary>
-		#if !MONOMAC && !__IOS__		 
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+#if !MONOMAC && !__IOS__
         [STAThread]
-		#endif
-		static void Main (string[] args)
-		{
-			#if MONOMAC
+#endif
+        static void Main(string[] args)
+        {
+#if MONOMAC
 			NSApplication.Init ();
 
 			using (var p = new NSAutoreleasePool ()) {
 				NSApplication.SharedApplication.Delegate = new AppDelegate();
 				NSApplication.Main(args);
 			}
-			#elif __IOS__
+#elif __IOS__
 			UIApplication.Main(args, null, "AppDelegate");
-			#else
-			RunGame ();
-			#endif
-		}
+#else
+            Game1.GameMode gameMode = 0;
+            if (args.Length >= 1)
+                Enum.TryParse(args[0], true, out gameMode);
+            RunGame(gameMode);
+#endif
+        }
 
-		#if __IOS__
+#if __IOS__
 		public override void FinishedLaunching(UIApplication app)
 		{
 			RunGame();
 		}
-		#endif
-	}
+#endif
+    }
 
-	#if MONOMAC
+#if MONOMAC
 	class AppDelegate : NSApplicationDelegate
 	{
 		public override void FinishedLaunching (MonoMac.Foundation.NSObject notification)
@@ -89,6 +93,6 @@ namespace TurboPort
 			return true;
 		}
 	}  
-	#endif
+#endif
 }
 

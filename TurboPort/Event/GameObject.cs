@@ -4,6 +4,7 @@ namespace TurboPort.Event
 {
     public abstract class GameObject
     {
+        protected internal GameObjectStore gameStore;
         public int ObjectId { get; internal set; }
 
         public double LastUpdatedGameTime { get; internal set; }
@@ -16,7 +17,7 @@ namespace TurboPort.Event
 
         protected void PublishEvent()
         {
-            GameObjectStore.AddEvent(this);
+            gameStore.AddEvent(this);
         }
 
         protected internal abstract void ProcessGameEvents();

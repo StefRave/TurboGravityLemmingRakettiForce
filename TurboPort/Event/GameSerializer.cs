@@ -12,7 +12,6 @@ namespace TurboPort.Event
     public class GameSerializer
     {
         private RuntimeTypeModel model;
-        private MetaType gameEventMetaType;
         private readonly Dictionary<int, Type> typeForTypeId = new Dictionary<int, Type>();
         private readonly Dictionary<Type, int> typeIdForType = new Dictionary<Type, int>();
 
@@ -29,7 +28,6 @@ namespace TurboPort.Event
         {
             model.Add(typeof (Vector3), false).Add(1, "X").Add(2, "Y").Add(3, "Z");
             model.Add(typeof (ObjectInfo), true);
-            //gameEventMetaType = model.Add(typeof (GameObject), false);
         }
 
         private void RegisterGameEvents()
@@ -45,11 +43,6 @@ namespace TurboPort.Event
 
                 if (derivedType.GetCustomAttribute<ProtoContractAttribute>() == null)
                     throw new Exception($"ProtoContractAttribute missing on type {derivedType.FullName}");
-
-                var metaType = model.Add(derivedType, true);
-                //metaType.AddField(1, "position");
-
-                //gameEventMetaType.AddSubType(gameEventAttribute.IdFromFourLetters, derivedType);
 
                 typeForTypeId.Add(gameEventAttribute.IdFromFourLetters, derivedType);
                 typeIdForType.Add(derivedType, gameEventAttribute.IdFromFourLetters);

@@ -83,6 +83,7 @@ namespace TurboPort
         // Collision from http://www.gamasutra.com/view/feature/3015/pool_hall_lessons_fast_accurate_.php?page=3
         private static void Collide(ObjectShip circle1, ObjectShip circle2)
         {
+
             // First, find the normalized vector n from the center of 
             // circle1 to the center of circle2
             Vector3 n = circle1.position - circle2.position;
@@ -258,7 +259,6 @@ namespace TurboPort
         public void LandShip(float positionY)
         {
             position.Y = positionY;
-            rotation.Z = 0;
 
             events |= Event.Landed;
             PublishEvent();

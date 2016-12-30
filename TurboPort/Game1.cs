@@ -3,6 +3,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -15,16 +16,32 @@ namespace TurboPort
 {
     public class Game1 : Game
     {
+        private readonly GameMode gameMode;
         private readonly GameWorld gameWorld;
+        private readonly GameObjectStore gameStore;
         private BulletBuffer bulletBuffer;
         private readonly GraphicsDeviceManager graphics;
         private SpriteFont spriteFont;
+        private UdpBroadcastEvents eventBroadCaster;
+        private UdpEventReceiver eventReceiver;
+        private MemoryStream gameEvents = new MemoryStream(10000000);
 
         private readonly GameInteraction gameInteraction;
-        private readonly GameReplay replay = new GameReplay();
+        private readonly GameReplay replay;
 
-        public Game1()
+        [Flags]
+        public enum GameMode
         {
+            UdpBroadCast = 1,
+            UdpReceive   = 2,
+            ReadFromFile = 4,
+        }
+
+        public Game1(GameMode gameMode)
+        {
+            this.gameMode = gameMode;
+            gameStore = new GameObjectStore();
+            replay = new GameReplay(gameStore);
             graphics = new GraphicsDeviceManager(this);
 
             Content.RootDirectory = "Content";
@@ -43,10 +60,20 @@ namespace TurboPort
             }
 #endif
 
-            gameWorld = new GameWorld(this);
+            gameWorld = new GameWorld(this, gameStore);
             gameInteraction = new GameInteraction(gameWorld);
 
-            //replay.Load(new MemoryStream(File.ReadAllBytes("eventstream.turboport")));
+            if(gameMode.HasFlag(GameMode.UdpBroadCast)) 
+                eventBroadCaster = new UdpBroadcastEvents();
+            if (gameMode.HasFlag(GameMode.UdpReceive))
+            {
+                eventReceiver = new UdpEventReceiver();
+                
+                // ReSharper disable once UnusedVariable
+                Task receivingTask = eventReceiver.StartReceivingAsync();
+            }
+            if (gameMode.HasFlag(GameMode.ReadFromFile))
+                replay.Load(new MemoryStream(File.ReadAllBytes("eventstream.turboport")));
             replay.StartPlay(-0.5);
         }
 
@@ -88,7 +115,7 @@ namespace TurboPort
             bulletBuffer = new BulletBuffer(Content);
 
             ObjectShip.Initialize(Content);
-            GameObjectStore.RegisterCreation(
+            gameStore.RegisterCreation(
                 () =>
                 {
                     var objectShip = new ObjectShip(gameWorld.ProjectileFactory);
@@ -96,11 +123,12 @@ namespace TurboPort
                     return objectShip;
                 });
 
-            if (replay.PlayStatus == GameReplay.Status.Inactive)
+            if ((replay.PlayStatus == GameReplay.Status.Inactive) &&
+                (eventReceiver == null))
             {
                 for (var i = 0; i < 2; i++)
                 {
-                    GameObjectStore.CreateAsOwner<ObjectShip>()
+                    gameStore.CreateAsOwner<ObjectShip>()
                         .CreateInitialize(gameWorld.PlayerShipBases[i].Position);
                 }
             }
@@ -115,7 +143,7 @@ namespace TurboPort
         protected override void Update(GameTime gameTime)
         {
             SoundHandler.SetGameTime(gameTime);
-            GameObjectStore.SetGameTime(gameTime);
+            gameStore.SetGameTime(gameTime);
 
             // For Mobile devices, this logic will close the Game when the Back button is pressed
             // Exit() is obsolete on iOS
@@ -129,6 +157,8 @@ namespace TurboPort
                 return;
             }
 #endif
+            base.Update(gameTime);
+            gameWorld.ProjectileFactory.UpdateProjectiles(gameTime);
 
             foreach (var playerShip in gameWorld.PlayerShips)
             {
@@ -139,13 +169,22 @@ namespace TurboPort
             {
                 replay.ProcessEventsUntilTime(gameTime.TotalGameTime.TotalSeconds);
             }
+            else if (eventReceiver != null)
+            {
+                var enumerable = eventReceiver.GetEvents();
+                foreach (byte[] eventData in enumerable)
+                {
+                    replay.Load(new MemoryStream(eventData, writable: false));
+                    replay.ReplayAll(gameTime.TotalGameTime.TotalSeconds);
+                }
+            }
             else
             {
                 if (keyboardState.IsKeyDown(Keys.F7))
                 {
                     using(var fs = new FileStream("eventstream.turboport", FileMode.Create))
                     {
-                        GameObjectStore.Store(fs);
+                        gameEvents.CopyTo(fs);
                     }
                 }
 
@@ -156,13 +195,19 @@ namespace TurboPort
                     gameWorld.PlayerShips[i].ProcessControllerInput(InputHandler.Player[i]);
             }
 
-            gameWorld.ProjectileFactory.UpdateProjectiles(gameTime);
-
-            base.Update(gameTime);
-
             gameInteraction.DoInteraction();
 
-            GameObjectStore.StoreModifiedObjects();
+            gameStore.StoreModifiedObjects(gameEvents);
+
+            if (eventBroadCaster != null)
+            {
+                if (gameEvents.Length > 0)
+                {
+                    eventBroadCaster.BroadCast(gameEvents.GetBuffer(), (int) gameEvents.Length);
+                    gameEvents.Position = 0;
+                    gameEvents.SetLength(0);
+                }
+            }
         }
 
         private static Matrix CalculateView(GlobalData gd, Vector3 target)

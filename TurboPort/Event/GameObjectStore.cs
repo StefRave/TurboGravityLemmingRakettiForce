@@ -9,25 +9,24 @@ namespace TurboPort.Event
     public class GameObjectStore
     {
         private static int idCounter;
-        private static MemoryStream gameEvents = new MemoryStream(10000000);
-        private static GameSerializer s;
-        private static readonly Dictionary<int, GameObject> gameObjects = new Dictionary<int, GameObject>();
-        private static readonly List<GameObject> modifiedGameObjects = new List<GameObject>(10000);
-        private static readonly List<GameObject> newGameObjects = new List<GameObject>(10000);
-        private static readonly Dictionary<Type, Func<GameObject>> objectCreators = new Dictionary<Type, Func<GameObject>>();
-        private static readonly GameSerializer.ObjectInfo objectInfo = new GameSerializer.ObjectInfo();
-        private static double totalGameTimeSeconds;
+        private static readonly GameSerializer Serializer;
+        private readonly Dictionary<int, GameObject> gameObjects = new Dictionary<int, GameObject>();
+        private readonly List<GameObject> modifiedGameObjects = new List<GameObject>(10000);
+        private readonly List<GameObject> newGameObjects = new List<GameObject>(10000);
+        private readonly Dictionary<Type, Func<GameObject>> objectCreators = new Dictionary<Type, Func<GameObject>>();
+        private readonly GameSerializer.ObjectInfo objectInfo = new GameSerializer.ObjectInfo();
+        private double totalGameTimeSeconds;
 
         static GameObjectStore()
         {
-            s = new GameSerializer();
-            s.Initialize();
+            Serializer = new GameSerializer();
+            Serializer.Initialize();
         }
 
-        public static void Clear()
+        public void ClearRecordedObjects()
         {
-            gameObjects.Clear();
-            gameEvents.Position = 0;
+            modifiedGameObjects.Clear();
+            newGameObjects.Clear();
         }
 
         private static int CreateUniqueId()
@@ -35,25 +34,24 @@ namespace TurboPort.Event
             return Interlocked.Increment(ref idCounter);
         }
 
-        public static void SetGameTime(GameTime gameTime)
+        public void SetGameTime(GameTime gameTime)
         {
             totalGameTimeSeconds = gameTime.TotalGameTime.TotalSeconds;
         }
 
-        public static void StoreModifiedObjects()
+        public void StoreModifiedObjects(Stream eventStream)
         {
             foreach (var gameObject in newGameObjects)
             {
                 gameObject.LastUpdatedGameTime = totalGameTimeSeconds;
                 objectInfo.GameTime = totalGameTimeSeconds;
-                objectInfo.CreateTypeId = s.GetTypeId(gameObject.GetType());
+                objectInfo.CreateTypeId = Serializer.GetTypeId(gameObject.GetType());
                 objectInfo.ObjectId = gameObject.ObjectId;
 
-                s.Serialize(gameEvents, gameObject, objectInfo);
+                Serializer.Serialize(eventStream, gameObject, objectInfo);
                 gameObject.WillBeSerialized = false;
                 gameObject.ObjectStored();
             }
-            newGameObjects.Clear();
 
             foreach (var gameObject in modifiedGameObjects)
             {
@@ -62,14 +60,14 @@ namespace TurboPort.Event
                 objectInfo.CreateTypeId = 0;
                 objectInfo.ObjectId = gameObject.ObjectId;
 
-                s.Serialize(gameEvents, gameObject, objectInfo);
+                Serializer.Serialize(eventStream, gameObject, objectInfo);
                 gameObject.WillBeSerialized = false;
                 gameObject.ObjectStored();
             }
-            modifiedGameObjects.Clear();
+            ClearRecordedObjects();
         }
 
-        public static void AddEvent(GameObject gameObject)
+        public void AddEvent(GameObject gameObject)
         {
             if (gameObject.WillBeSerialized)
                 return;
@@ -78,18 +76,19 @@ namespace TurboPort.Event
             modifiedGameObjects.Add(gameObject);
         }
 
-        public static void RegisterCreation<TGameObject>(Func<TGameObject> creator) 
+        public void RegisterCreation<TGameObject>(Func<TGameObject> creator) 
             where TGameObject : GameObject
         {
             objectCreators.Add(typeof(TGameObject), creator);
         }
 
-        public static TObject CreateAsOwner<TObject>() where TObject : GameObject
+        public TObject CreateAsOwner<TObject>() where TObject : GameObject
         {
             TObject gameObject = (TObject)Create(typeof(TObject));
 
             gameObject.IsOwner = true;
             gameObject.ObjectId = CreateUniqueId();
+            gameObject.gameStore = this;
             gameObjects.Add(gameObject.ObjectId, gameObject);
 
             gameObject.WillBeSerialized = true;
@@ -98,18 +97,23 @@ namespace TurboPort.Event
             return gameObject;
         }
 
-        public static GameObject CreateFromExternal(int typeId, int objectId)
+        public GameObject CreateFromExternal(int typeId, int objectId)
         {
-            var gameObject = Create(s.GetTypeFromTypeId(typeId));
+            GameObject gameObject;
+            if (gameObjects.TryGetValue(objectId, out gameObject))
+                return gameObject; // probably caused by duplicate package on udp
+
+            gameObject = Create(Serializer.GetTypeFromTypeId(typeId));
 
             gameObject.IsOwner = false;
             gameObject.ObjectId = objectId;
+            gameObject.gameStore = this;
             gameObjects.Add(gameObject.ObjectId, gameObject);
 
             return gameObject;
         }
 
-        private static GameObject Create(Type type)
+        private GameObject Create(Type type)
         {
             Func<GameObject> creator;
             if (!objectCreators.TryGetValue(type, out creator))
@@ -120,18 +124,13 @@ namespace TurboPort.Event
             return gameObject;
         }
 
-        public static GameObject GetGameObject(int objectId)
+        public GameObject GetGameObject(int objectId)
         {
             GameObject gameObject;
             if (!gameObjects.TryGetValue(objectId, out gameObject))
                 return null;
 
             return gameObject;
-        }
-
-        public static void Store(Stream stream)
-        {
-            stream.Write(gameEvents.GetBuffer(), 0, (int)gameEvents.Length);
         }
     }
 }

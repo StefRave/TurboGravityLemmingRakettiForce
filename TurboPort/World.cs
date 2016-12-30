@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using TurboPort.Event;
 
 namespace TurboPort
 {
@@ -11,12 +12,12 @@ namespace TurboPort
         public ILevelBackground LevelBackground { get; set; }
         
 
-        public IReadOnlyList<ShipBase> PlayerShipBases { get { return playerShipBases; } }
-        public IReadOnlyList<ObjectShip> PlayerShips { get { return playerShips; } }
+        public IReadOnlyList<ShipBase> PlayerShipBases => playerShipBases;
+        public IReadOnlyList<ObjectShip> PlayerShips => playerShips;
 
-        public GameWorld(Game game)
+        public GameWorld(Game game, GameObjectStore gameStore)
         {
-            ProjectileFactory = new MissileProjectileFactory(game, this);
+            ProjectileFactory = new MissileProjectileFactory(game, this, gameStore);
         }
 
         public void AddPlayerShip(ObjectShip ship)
