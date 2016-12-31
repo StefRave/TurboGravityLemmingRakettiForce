@@ -5,18 +5,12 @@ namespace TurboPort.Event
     public class GameReplay
     {
         private readonly GameObjectStore gameStore;
-        private static readonly GameSerializer s;
+        private static readonly GameSerializer s = GameSerializer.Instance;
         private Stream inputStream;
+
         public double GameTimeDelta { get; private set; }
         public Status PlayStatus { get; private set; }
         private readonly GameSerializer.ObjectInfo nextObjectInfo = new GameSerializer.ObjectInfo();
-
-
-        static GameReplay()
-        {
-            s = new GameSerializer();
-            s.Initialize();
-        }
 
         public GameReplay(GameObjectStore gameStore)
         {
@@ -62,7 +56,7 @@ namespace TurboPort.Event
                 GameObject gameObject;
                 if (nextObjectInfo.CreateTypeId != 0)
                 {
-                    gameObject = gameStore.CreateFromExternal(nextObjectInfo.CreateTypeId, nextObjectInfo.ObjectId);
+                    gameObject = gameStore.CreateFromExternal(nextObjectInfo.CreateTypeId, nextObjectInfo.ObjectId, gameObjectGameTime);
                 }
                 else
                 {
@@ -70,7 +64,6 @@ namespace TurboPort.Event
                     if(gameObject == null)
                         continue;
                 }
-                gameObject.LastUpdatedGameTime = gameObjectGameTime;
 
                 s.Deserialize(inputStream, gameObject);
                 gameObject.ProcessGameEvents();

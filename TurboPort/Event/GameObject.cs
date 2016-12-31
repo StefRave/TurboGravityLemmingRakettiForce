@@ -17,7 +17,7 @@ namespace TurboPort.Event
 
         protected void PublishEvent()
         {
-            gameStore.AddEvent(this);
+            gameStore.EventStore.AddEvent(this);
         }
 
         protected internal abstract void ProcessGameEvents();

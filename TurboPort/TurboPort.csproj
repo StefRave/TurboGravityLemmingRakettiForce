@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Event\GameEventAttribute.cs" />
+    <Compile Include="Event\GameEventStore.cs" />
     <Compile Include="Event\GameReplay.cs" />
     <Compile Include="Event\GameSerializer.cs" />
     <Compile Include="Event\UdpEventReceiver.cs" />

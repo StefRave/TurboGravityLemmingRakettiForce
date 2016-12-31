@@ -22,12 +22,13 @@ namespace TurboPort
         private BulletBuffer bulletBuffer;
         private readonly GraphicsDeviceManager graphics;
         private SpriteFont spriteFont;
-        private UdpBroadcastEvents eventBroadCaster;
-        private UdpEventReceiver eventReceiver;
-        private MemoryStream gameEvents = new MemoryStream(10000000);
+        private readonly UdpBroadcastEvents eventBroadCaster;
+        private readonly UdpEventReceiver eventReceiver;
+        private readonly MemoryStream gameEvents = new MemoryStream(10000000);
 
         private readonly GameInteraction gameInteraction;
         private readonly GameReplay replay;
+        private readonly GameEventStore gameEventStore;
 
         [Flags]
         public enum GameMode
@@ -40,7 +41,8 @@ namespace TurboPort
         public Game1(GameMode gameMode)
         {
             this.gameMode = gameMode;
-            gameStore = new GameObjectStore();
+            gameEventStore = new GameEventStore();
+            gameStore = new GameObjectStore(gameEventStore);
             replay = new GameReplay(gameStore);
             graphics = new GraphicsDeviceManager(this);
 
@@ -143,7 +145,7 @@ namespace TurboPort
         protected override void Update(GameTime gameTime)
         {
             SoundHandler.SetGameTime(gameTime);
-            gameStore.SetGameTime(gameTime);
+            gameEventStore.SetGameTime(gameTime);
 
             // For Mobile devices, this logic will close the Game when the Back button is pressed
             // Exit() is obsolete on iOS
@@ -197,8 +199,7 @@ namespace TurboPort
 
             gameInteraction.DoInteraction();
 
-            gameStore.StoreModifiedObjects(gameEvents);
-
+            gameEventStore.SerializeModifiedObjects(gameEvents);
             if (eventBroadCaster != null)
             {
                 if (gameEvents.Length > 0)

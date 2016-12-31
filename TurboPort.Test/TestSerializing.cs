@@ -12,20 +12,23 @@ namespace TurboPort.Test
         public void TestObjectShipHasLanded()
         {
             var missileProjectileFactory = A.Fake<IMissileProjectileFactory>();
+            var gameEventStore = new GameEventStore();
+            GameObjectStore gameObjectStore = new GameObjectStore(gameEventStore);
+            gameObjectStore.RegisterCreation(() => new ObjectShip(missileProjectileFactory));
 
-            var sut = CreateSutWithRegistrations(missileProjectileFactory);
 
-            var objectShip = sut.CreateAsOwner<ObjectShip>();
+            var objectShip = gameObjectStore.CreateAsOwner<ObjectShip>();
 
             objectShip.LandShip(10);
             objectShip.HitWithBackground();
             MemoryStream gameEvents = new MemoryStream();
 
-            sut.StoreModifiedObjects(gameEvents);
+
+            gameEventStore.SerializeModifiedObjects(gameEvents);
+            gameEventStore.ClearRecordedObjects();
 
             gameEvents.Position = 0;
-            sut = CreateSutWithRegistrations(missileProjectileFactory);
-            var replay = new GameReplay(sut);
+            var replay = new GameReplay(gameObjectStore);
             replay.Load(gameEvents);
             replay.StartPlay(0);
             replay.ProcessEventsUntilTime(1000);
@@ -41,13 +44,6 @@ namespace TurboPort.Test
             //Assert.AreEqual(x.GameTime, y.GameTime);
             //Assert.AreEqual(x.ObjectId, y.ObjectId);
             //Assert.AreEqual(x.Events, y.Events);
-        }
-
-        private static GameObjectStore CreateSutWithRegistrations(IMissileProjectileFactory missileProjectileFactory)
-        {
-            GameObjectStore sut = new GameObjectStore();
-            sut.RegisterCreation(() => new ObjectShip(missileProjectileFactory));
-            return sut;
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using Microsoft.Xna.Framework;
 using ProtoBuf;
@@ -11,9 +10,38 @@ namespace TurboPort.Event
 {
     public class GameSerializer
     {
+        private static GameSerializer instance;
         private RuntimeTypeModel model;
-        private readonly Dictionary<int, Type> typeForTypeId = new Dictionary<int, Type>();
         private readonly Dictionary<Type, int> typeIdForType = new Dictionary<Type, int>();
+
+        private GameSerializer()
+        {
+        }
+
+        public static GameSerializer Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    lock (typeof(GameSerializer))
+                    {
+                        if (instance == null)
+                        {
+                            var gameSerializer = new GameSerializer();
+                            gameSerializer.Initialize();
+
+                            // ensures that the instance is well initialized,
+                            // and only then, it assigns the static variable.
+                            // http://stackoverflow.com/a/12945510/3714267
+                            System.Threading.Thread.MemoryBarrier();
+                            instance = gameSerializer;
+                        }
+                    }
+                }
+                return instance;
+            }
+        }
 
         public void Initialize()
         {
@@ -21,7 +49,6 @@ namespace TurboPort.Event
             model.UseImplicitZeroDefaults = false;
 
             RegisterEventTypes();
-            RegisterGameEvents();
         }
 
         private void RegisterEventTypes()
@@ -30,28 +57,18 @@ namespace TurboPort.Event
             model.Add(typeof (ObjectInfo), true);
         }
 
-        private void RegisterGameEvents()
+        public int RegisterGameEvents(Type gameObjectType)
         {
-            var objectTypes = typeof (GameObject).Assembly.GetTypes()
-                .Where(t => t.IsSubclassOf(typeof (GameObject)));
+            var gameEventAttribute = gameObjectType.GetCustomAttribute<GameEventAttribute>();
+            if (gameEventAttribute == null)
+                throw new Exception($"GameEventAttribute missing on type {gameObjectType.FullName}");
 
-            foreach (var derivedType in objectTypes)
-            {
-                var gameEventAttribute = derivedType.GetCustomAttribute<GameEventAttribute>();
-                if (gameEventAttribute == null)
-                    throw new Exception($"GameEventAttribute missing on type {derivedType.FullName}");
+            if (gameObjectType.GetCustomAttribute<ProtoContractAttribute>() == null)
+                throw new Exception($"ProtoContractAttribute missing on type {gameObjectType.FullName}");
 
-                if (derivedType.GetCustomAttribute<ProtoContractAttribute>() == null)
-                    throw new Exception($"ProtoContractAttribute missing on type {derivedType.FullName}");
+            typeIdForType.Add(gameObjectType, gameEventAttribute.IdFromFourLetters);
 
-                typeForTypeId.Add(gameEventAttribute.IdFromFourLetters, derivedType);
-                typeIdForType.Add(derivedType, gameEventAttribute.IdFromFourLetters);
-            }
-        }
-
-        public Type GetTypeFromTypeId(int typeId)
-        {
-            return typeForTypeId[typeId];
+            return gameEventAttribute.IdFromFourLetters;
         }
 
         public int GetTypeId(Type type)
