@@ -57,7 +57,7 @@ namespace TurboPort.Event
             model.Add(typeof (ObjectInfo), true);
         }
 
-        public int RegisterGameEvents(Type gameObjectType)
+        public int RegisterGameMessageType(Type gameObjectType)
         {
             var gameEventAttribute = gameObjectType.GetCustomAttribute<GameEventAttribute>();
             if (gameEventAttribute == null)
@@ -73,13 +73,16 @@ namespace TurboPort.Event
 
         public int GetTypeId(Type type)
         {
-            return typeIdForType[type];
+            int result;
+            if(!typeIdForType.TryGetValue(type, out result))
+                throw new Exception($"Type {type.FullName} is not registered in GameSerializer");
+            return result;
         }
 
-        public void Serialize(Stream stream, GameObject gameObject, ObjectInfo objectInfo)
+        public void Serialize(Stream stream, object obj, ObjectInfo objectInfo)
         {
             model.SerializeWithLengthPrefix(stream, objectInfo, typeof(ObjectInfo), PrefixStyle.Fixed32BigEndian, 0);
-            model.SerializeWithLengthPrefix(stream, gameObject, gameObject.GetType(), PrefixStyle.Fixed32BigEndian, 0);
+            model.SerializeWithLengthPrefix(stream, obj, obj.GetType(), PrefixStyle.Fixed32BigEndian, 0);
         }
 
         public void DeserializeObjectInfo(Stream stream, ObjectInfo objectInfo)
@@ -90,6 +93,11 @@ namespace TurboPort.Event
         public void Deserialize(Stream stream, GameObject gameObject)
         {
             model.DeserializeWithLengthPrefix(stream, gameObject, gameObject.GetType(), PrefixStyle.Fixed32BigEndian, 0);
+        }
+
+        public void Deserialize(Stream stream, IGameMessage gameMessage)
+        {
+            model.DeserializeWithLengthPrefix(stream, gameMessage, gameMessage.GetType(), PrefixStyle.Fixed32BigEndian, 0);
         }
 
         [ProtoContract]

@@ -21,9 +21,8 @@ namespace TurboPort.Test
 
             objectShip.LandShip(10);
             objectShip.HitWithBackground();
+
             MemoryStream gameEvents = new MemoryStream();
-
-
             gameEventStore.SerializeModifiedObjects(gameEvents);
             gameEventStore.ClearRecordedObjects();
 
@@ -45,5 +44,29 @@ namespace TurboPort.Test
             //Assert.AreEqual(x.ObjectId, y.ObjectId);
             //Assert.AreEqual(x.Events, y.Events);
         }
+
+        [Test]
+        public void TestSerializingActions()
+        {
+            bool actionPerformed = false;
+            var gameEventStore = new GameEventStore();
+            GameObjectStore gameObjectStore = new GameObjectStore(gameEventStore);
+            gameObjectStore.SubscribeToGameMessage<AnybodyThereGameMessage>(msg => actionPerformed = true);
+
+            gameObjectStore.EventStore.AddMessage(new AnybodyThereGameMessage());
+
+            MemoryStream gameEvents = new MemoryStream();
+            gameEventStore.SerializeModifiedObjects(gameEvents);
+            gameEventStore.ClearRecordedObjects();
+            gameEvents.Position = 0;
+
+            var replay = new GameReplay(gameObjectStore);
+            replay.Load(gameEvents);
+            replay.StartPlay(0);
+            replay.ProcessEventsUntilTime(1000);
+
+            Assert.IsTrue(actionPerformed);
+        }
+
     }
 }

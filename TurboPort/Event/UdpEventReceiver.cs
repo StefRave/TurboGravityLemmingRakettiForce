@@ -12,8 +12,7 @@ namespace TurboPort.Event
     {
         private UdpClient udpClient;
         private readonly IPEndPoint broadcastIp;
-        private BufferBlock<byte[]> bufferBlock;
-        private IPAddress remoteEndPoint;
+        private readonly BufferBlock<byte[]> bufferBlock;
 
         public UdpEventReceiver()
         {
@@ -31,10 +30,6 @@ namespace TurboPort.Event
                 while (true)
                 {
                     var receiveResult = await udpClient.ReceiveAsync();
-                    if(remoteEndPoint == null)
-                        remoteEndPoint = receiveResult.RemoteEndPoint.Address;
-                    else if (!remoteEndPoint.Equals(receiveResult.RemoteEndPoint.Address))
-                        continue;
                     bufferBlock.Post(receiveResult.Buffer);
                 }
 
@@ -51,15 +46,24 @@ namespace TurboPort.Event
             udpClient?.Close();
         }
 
-        public IEnumerable<byte[]> GetEvents()
+        public IEnumerable<NetworkData> GetEvents()
         {
             while (true)
             {
                 byte[] item;
                 if (!bufferBlock.TryReceive(null, out item))
                     break;
-                yield return item;
+                if(item.Length < 2)
+                    continue;
+                int senderId = item[0] * 256 + item[1];
+                yield return new NetworkData {PlayerId = senderId, Data = new ArraySegment<byte>(item, 2, item.Length - 2)};
             }
         }
+    }
+
+    public struct NetworkData
+    {
+        public int PlayerId;
+        public ArraySegment<byte> Data;
     }
 }

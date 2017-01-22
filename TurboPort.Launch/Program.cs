@@ -25,7 +25,7 @@ namespace TurboPort
     {
         private static Game1 game;
 
-        internal static void RunGame(Game1.GameMode gameMode = 0)
+        internal static void RunGame(GameMode gameMode = 0)
         {
             game = new Game1(gameMode);
             try
@@ -59,7 +59,7 @@ namespace TurboPort
 #elif __IOS__
 			UIApplication.Main(args, null, "AppDelegate");
 #else
-            Game1.GameMode gameMode = 0;
+            GameMode gameMode = GameMode.Multiplayer;
             if (args.Length >= 1)
                 Enum.TryParse(args[0], true, out gameMode);
             RunGame(gameMode);

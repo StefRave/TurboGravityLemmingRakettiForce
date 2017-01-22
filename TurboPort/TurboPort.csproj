@@ -50,8 +50,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DelayService.cs" />
     <Compile Include="Event\GameEventAttribute.cs" />
     <Compile Include="Event\GameEventStore.cs" />
+    <Compile Include="Event\DisposeAction.cs" />
     <Compile Include="Event\GameReplay.cs" />
     <Compile Include="Event\GameSerializer.cs" />
     <Compile Include="Event\UdpEventReceiver.cs" />
@@ -61,14 +63,17 @@
     <Compile Include="Game1.cs" />
     <Compile Include="Event\GameObject.cs" />
     <Compile Include="Event\GameObjectStore.cs" />
+    <Compile Include="GameMode.cs" />
     <Compile Include="I3dCollistionObject.cs" />
     <Compile Include="IControllerInputProcessor.cs" />
+    <Compile Include="IDelayService.cs" />
     <Compile Include="IMissileProjectileFactory.cs" />
     <Compile Include="Input\GamePadControl.cs" />
     <Compile Include="Input\IInputControl.cs" />
     <Compile Include="Input\KeyboardControl.cs" />
     <Compile Include="Input\PlayerControl.cs" />
     <Compile Include="Input\TouchControl.cs" />
+    <Compile Include="MasterControl.cs" />
     <Compile Include="MeshUtil.cs" />
     <Compile Include="MissileParticleEmitter.cs" />
     <Compile Include="MissileProjectileFactory.cs" />

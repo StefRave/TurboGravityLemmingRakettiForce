@@ -3,6 +3,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,7 +17,7 @@ namespace TurboPort
 {
     public class Game1 : Game
     {
-        private readonly GameMode gameMode;
+        private readonly MasterControl masterControl;
         private readonly GameWorld gameWorld;
         private readonly GameObjectStore gameStore;
         private BulletBuffer bulletBuffer;
@@ -30,17 +31,8 @@ namespace TurboPort
         private readonly GameReplay replay;
         private readonly GameEventStore gameEventStore;
 
-        [Flags]
-        public enum GameMode
-        {
-            UdpBroadCast = 1,
-            UdpReceive   = 2,
-            ReadFromFile = 4,
-        }
-
         public Game1(GameMode gameMode)
         {
-            this.gameMode = gameMode;
             gameEventStore = new GameEventStore();
             gameStore = new GameObjectStore(gameEventStore);
             replay = new GameReplay(gameStore);
@@ -61,22 +53,12 @@ namespace TurboPort
                 Window.IsBorderless = true;
             }
 #endif
+            eventReceiver = new UdpEventReceiver();
+            eventBroadCaster = new UdpBroadcastEvents();
 
             gameWorld = new GameWorld(this, gameStore);
             gameInteraction = new GameInteraction(gameWorld);
-
-            if(gameMode.HasFlag(GameMode.UdpBroadCast)) 
-                eventBroadCaster = new UdpBroadcastEvents();
-            if (gameMode.HasFlag(GameMode.UdpReceive))
-            {
-                eventReceiver = new UdpEventReceiver();
-                
-                // ReSharper disable once UnusedVariable
-                Task receivingTask = eventReceiver.StartReceivingAsync();
-            }
-            if (gameMode.HasFlag(GameMode.ReadFromFile))
-                replay.Load(new MemoryStream(File.ReadAllBytes("eventstream.turboport")));
-            replay.StartPlay(-0.5);
+            masterControl = new MasterControl(gameStore, gameWorld) { GameMode = gameMode };
         }
 
 
@@ -93,6 +75,19 @@ namespace TurboPort
             SoundHandler.Initialize(Content);
 
             base.Initialize();
+
+            masterControl.Initialize();
+            Task.Run(() => masterControl.Start(CancellationToken.None));
+
+            if ((masterControl.GameMode == GameMode.UdpReceive) || (masterControl.GameMode == GameMode.Multiplayer))
+            {
+                Task.Run(() => eventReceiver.StartReceivingAsync());
+            }
+            if (masterControl.GameMode == GameMode.ReadFromFile)
+            {
+                replay.Load(new MemoryStream(File.ReadAllBytes("eventstream.turboport")));
+                replay.StartPlay(-0.5);
+            }
         }
 
         /// <summary>
@@ -116,24 +111,8 @@ namespace TurboPort
 
             bulletBuffer = new BulletBuffer(Content);
 
-            ObjectShip.Initialize(Content);
-            gameStore.RegisterCreation(
-                () =>
-                {
-                    var objectShip = new ObjectShip(gameWorld.ProjectileFactory);
-                    gameWorld.AddPlayerShip(objectShip);
-                    return objectShip;
-                });
+            ObjectShip.Initialize(Content, gameStore, gameWorld);
 
-            if ((replay.PlayStatus == GameReplay.Status.Inactive) &&
-                (eventReceiver == null))
-            {
-                for (var i = 0; i < 2; i++)
-                {
-                    gameStore.CreateAsOwner<ObjectShip>()
-                        .CreateInitialize(gameWorld.PlayerShipBases[i].Position);
-                }
-            }
             base.LoadContent();
         }
 
@@ -167,34 +146,48 @@ namespace TurboPort
                 playerShip.Update(gameTime);
             }
 
-            if (replay.PlayStatus == GameReplay.Status.Playing)
+            if (masterControl.GameMode == GameMode.ReadFromFile)
             {
-                replay.ProcessEventsUntilTime(gameTime.TotalGameTime.TotalSeconds);
-            }
-            else if (eventReceiver != null)
-            {
-                var enumerable = eventReceiver.GetEvents();
-                foreach (byte[] eventData in enumerable)
+                if (replay.PlayStatus == GameReplay.Status.Playing)
                 {
-                    replay.Load(new MemoryStream(eventData, writable: false));
-                    replay.ReplayAll(gameTime.TotalGameTime.TotalSeconds);
+                    replay.ProcessEventsUntilTime(gameTime.TotalGameTime.TotalSeconds);
                 }
             }
             else
             {
+                var enumerable = eventReceiver.GetEvents();
+                foreach (NetworkData eventData in enumerable)
+                {
+                    bool myOwnData = eventData.PlayerId == masterControl.PlayerId;
+                    if (myOwnData)
+                    {
+                        bool broadCast = eventData.PlayerId == 0;
+                        if(!broadCast)
+                            continue;
+                    }
+
+                    replay.Load(new MemoryStream(eventData.Data.Array, writable: false, index: eventData.Data.Offset, count: eventData.Data.Count, publiclyVisible: true));
+                    replay.ReplayAll(gameTime.TotalGameTime.TotalSeconds);
+                }
+
                 if (keyboardState.IsKeyDown(Keys.F7))
                 {
-                    using(var fs = new FileStream("eventstream.turboport", FileMode.Create))
+                    using (var fs = new FileStream("eventstream.turboport", FileMode.Create))
                     {
                         gameEvents.CopyTo(fs);
                     }
                 }
+                if (masterControl.GameMode != GameMode.UdpReceive)
+                {
+                    InputHandler.HandleInput();
 
-
-                InputHandler.HandleInput();
-
-                for (var i = 0; i < gameWorld.PlayerShips.Count; i++)
-                    gameWorld.PlayerShips[i].ProcessControllerInput(InputHandler.Player[i]);
+                    for (var i = 0; i < gameWorld.PlayerShips.Count; i++)
+                    {
+                        var ship = gameWorld.PlayerShips[i];
+                        if(ship.IsOwner)
+                            ship.ProcessControllerInput(InputHandler.Player[i]);
+                    }
+                }
             }
 
             gameInteraction.DoInteraction();
@@ -204,7 +197,7 @@ namespace TurboPort
             {
                 if (gameEvents.Length > 0)
                 {
-                    eventBroadCaster.BroadCast(gameEvents.GetBuffer(), (int) gameEvents.Length);
+                    eventBroadCaster.BroadCast(new NetworkData {PlayerId =  masterControl.PlayerId, Data = new ArraySegment<byte>(gameEvents.GetBuffer(), 0, (int) gameEvents.Length)});
                     gameEvents.Position = 0;
                     gameEvents.SetLength(0);
                 }
@@ -287,7 +280,7 @@ namespace TurboPort
                     //GraphicsDevice.RenderState.DepthBufferEnable = true;
 
                     SetUpLights(basicEffect);
-                    for (var i = 0; i < InputHandler.Player.Length; i++)
+                    for (var i = 0; i < gameWorld.PlayerShips.Count; i++)
                     {
                         gameWorld.PlayerShips[i].Render(GraphicsDevice, basicEffect);
                     }

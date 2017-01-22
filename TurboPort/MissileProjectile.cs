@@ -41,8 +41,8 @@ namespace TurboPort
         #region Fields
 
         private readonly ILevelBackground levelBackground;
-        ParticleSystem explosionParticles;
-        ParticleSystem explosionSmokeParticles;
+        readonly ParticleSystem explosionParticles;
+        readonly ParticleSystem explosionSmokeParticles;
         private readonly ParticleSystem projectileTrailParticles;
         private readonly Action<MissileProjectile> removeAction;
         MissileParticleEmitter trailEmitter;
@@ -54,7 +54,7 @@ namespace TurboPort
         [ProtoMember(4)] private bool explode;
         #endregion
 
-        public Vector3 Position { get { return position; } }
+        public Vector3 Position => position;
 
         /// <summary>
         /// Constructs a new projectile.

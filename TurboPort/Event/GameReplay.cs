@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace TurboPort.Event
 {
@@ -53,26 +54,48 @@ namespace TurboPort.Event
                 if (currentGameTime < gameObjectGameTime)
                     break;
 
-                GameObject gameObject;
-                if (nextObjectInfo.CreateTypeId != 0)
-                {
-                    gameObject = gameStore.CreateFromExternal(nextObjectInfo.CreateTypeId, nextObjectInfo.ObjectId, gameObjectGameTime);
-                }
-                else
-                {
-                    gameObject = gameStore.GetGameObject(nextObjectInfo.ObjectId);
-                    if(gameObject == null)
-                        continue;
-                }
-
-                s.Deserialize(inputStream, gameObject);
-                gameObject.ProcessGameEvents();
-
-                s.DeserializeObjectInfo(inputStream, nextObjectInfo);
+                ProcessEvent(gameObjectGameTime);
 
                 if (inputStream.Position == inputStream.Length)
                     PlayStatus = Status.Finnished;
             }
+        }
+
+        private void ProcessEvent(double gameObjectGameTime)
+        {
+            if (nextObjectInfo.ObjectId != 0)
+                ProcessGameObject(gameObjectGameTime);
+            else
+                ProcessGameMessage();
+        }
+
+        private void ProcessGameObject(double gameObjectGameTime)
+        {
+            GameObject gameObject;
+            if (nextObjectInfo.CreateTypeId != 0)
+            {
+                gameObject = gameStore.CreateFromExternal(nextObjectInfo.CreateTypeId, nextObjectInfo.ObjectId,
+                    gameObjectGameTime);
+            }
+            else
+            {
+                gameObject = gameStore.GetGameObject(nextObjectInfo.ObjectId);
+                if (gameObject == null)
+                    throw new Exception("Unknown object id");
+            }
+
+            s.Deserialize(inputStream, gameObject);
+            if(!gameObject.IsOwner) // If we own the object the events would already have been processed (explosions etc..)
+                gameObject.ProcessGameEvents();
+
+            s.DeserializeObjectInfo(inputStream, nextObjectInfo);
+        }
+
+        private void ProcessGameMessage()
+        {
+            var gameMessage = gameStore.CreateMessageObject(nextObjectInfo.CreateTypeId);
+            s.Deserialize(inputStream, gameMessage);
+            gameStore.InvokeGameMessageAction(nextObjectInfo.CreateTypeId, gameMessage);
         }
 
         public enum Status 

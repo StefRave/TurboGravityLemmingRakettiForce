@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -53,7 +54,7 @@ namespace TurboPort
             events = Event.Create;
         }
 
-        public static void Initialize(ContentManager content)
+        public static void Initialize(ContentManager content, GameObjectStore gameStore, GameWorld gameWorld)
         {
             model = content.Load<Model>(@"objects/pop_simple_lemming3");
             CorrectModel(model);
@@ -67,6 +68,14 @@ namespace TurboPort
             centerOffset = new Vector3(0f, 0f, 0f);
             scale = 1.0f;
             boundingSphere = MeshUtil.GetBoundingFromMeshes(model.Meshes, scale);
+
+            gameStore.RegisterCreation(
+                () =>
+                {
+                    var objectShip = new ObjectShip(gameWorld.ProjectileFactory);
+                    gameWorld.AddPlayerShip(objectShip);
+                    return objectShip;
+                });
         }
 
         public void Bots(ObjectShip other)
@@ -127,7 +136,7 @@ namespace TurboPort
         private static void CorrectModel(Model model)
         {
             foreach (var mesh in model.Meshes)
-                foreach (BasicEffect leffect in mesh.Effects)
+                foreach (var leffect in mesh.Effects.OfType<BasicEffect>())
                     leffect.Alpha = 1;
         }
 
@@ -182,7 +191,7 @@ namespace TurboPort
 
             foreach (ModelMesh mesh in model.Meshes)
             {
-                foreach (BasicEffect effect in mesh.Effects)
+                foreach (BasicEffect effect in mesh.Effects.OfType<BasicEffect>())
                 {
                     effect.LightingEnabled = be.LightingEnabled;
                     effect.DirectionalLight0.DiffuseColor = be.DirectionalLight0.DiffuseColor;
@@ -209,7 +218,7 @@ namespace TurboPort
 
             foreach (ModelMesh mesh in model.Meshes)
             {
-                foreach (BasicEffect effect in mesh.Effects)
+                foreach (BasicEffect effect in mesh.Effects.OfType<BasicEffect>())
                 {
                     effect.LightingEnabled = false;
                     effect.Projection = projection;
