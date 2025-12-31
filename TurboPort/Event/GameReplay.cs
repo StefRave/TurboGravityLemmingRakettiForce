@@ -6,12 +6,12 @@ namespace TurboPort.Event
     public class GameReplay
     {
         private readonly GameObjectStore gameStore;
-        private static readonly GameSerializer s = GameSerializer.Instance;
+        private static readonly GameSerializer S = GameSerializer.Instance;
         private Stream inputStream;
 
         public double GameTimeDelta { get; private set; }
         public Status PlayStatus { get; private set; }
-        private readonly GameSerializer.ObjectInfo nextObjectInfo = new GameSerializer.ObjectInfo();
+        private readonly GameSerializer.ObjectInfo nextObjectInfo = new();
 
         public GameReplay(GameObjectStore gameStore)
         {
@@ -22,7 +22,7 @@ namespace TurboPort.Event
         public void Load(Stream inputStream)
         {
             this.inputStream = inputStream;
-            s.DeserializeObjectInfo(inputStream, nextObjectInfo);
+            S.DeserializeObjectInfo(inputStream, nextObjectInfo);
             PlayStatus = Status.Paused;
         }
 
@@ -57,7 +57,7 @@ namespace TurboPort.Event
                 ProcessEvent(gameObjectGameTime);
 
                 if (inputStream.Position == inputStream.Length)
-                    PlayStatus = Status.Finnished;
+                    PlayStatus = Status.Finished;
             }
         }
 
@@ -84,17 +84,17 @@ namespace TurboPort.Event
                     throw new Exception("Unknown object id");
             }
 
-            s.Deserialize(inputStream, gameObject);
+            S.Deserialize(inputStream, gameObject);
             if(!gameObject.IsOwner) // If we own the object the events would already have been processed (explosions etc..)
                 gameObject.ProcessGameEvents();
 
-            s.DeserializeObjectInfo(inputStream, nextObjectInfo);
+            S.DeserializeObjectInfo(inputStream, nextObjectInfo);
         }
 
         private void ProcessGameMessage()
         {
             var gameMessage = gameStore.CreateMessageObject(nextObjectInfo.CreateTypeId);
-            s.Deserialize(inputStream, gameMessage);
+            S.Deserialize(inputStream, gameMessage);
             gameStore.InvokeGameMessageAction(nextObjectInfo.CreateTypeId, gameMessage);
         }
 
@@ -103,7 +103,7 @@ namespace TurboPort.Event
             Inactive,
             Paused,
             Playing,
-            Finnished,
+            Finished,
         }
     }
 }

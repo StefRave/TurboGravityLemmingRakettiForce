@@ -2,10 +2,10 @@ using Microsoft.Xna.Framework;
 
 namespace TurboPort
 {
-    public interface I3DCollistionObject
+    public interface I3DCollisionObject
     {
         float CollisionRadius();
-        void DrawToCollistionTexture(Matrix view, Matrix projection, Vector3 position);
+        void DrawToCollisionTexture(Matrix view, Matrix projection, Vector3 position);
         Vector3 Position { get; }
     }
 }

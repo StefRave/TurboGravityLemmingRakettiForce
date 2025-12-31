@@ -97,21 +97,21 @@ namespace TurboPort
 
             dictje.Clear();
 
-            foreach (I3DCollistionObject collistionObject in gameWorld.PlayerShips)
+            foreach (var collisionObject in gameWorld.PlayerShips)
             {
                 int x = position.X + collisionRenderTarget.Width / 2;
                 var y = position.Y + radiusInt - collisionRenderTarget.Height / 2;
-                dictje.Add(collistionObject,
+                dictje.Add(collisionObject,
                     new CollisionPositionInTexture
                     {
                         Rect = new Rectangle(x, y, radiusInt * 2, radiusInt * 2),
                         CollisionData = collisionTexture,
                         Size = new Point(collisionRenderTarget.Width, collisionRenderTarget.Height),
-                        Position = collistionObject.Position,
+                        Position = collisionObject.Position,
                     });
 
                 position.X += radiusInt;
-                collistionObject.DrawToCollistionTexture(view, projection, new Vector3(position.X, position.Y, 0));
+                collisionObject.DrawToCollisionTexture(view, projection, new Vector3(position.X, position.Y, 0));
                 position.X += radiusInt;
             }
             collisionRenderTarget.GetData(collisionRenderTargetBytes);

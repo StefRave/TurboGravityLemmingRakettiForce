@@ -11,7 +11,7 @@ namespace TurboPort
 {
     [ProtoContract()]
     [GameEvent("Ship")]
-    public class ObjectShip : GameObject, IControllerInputProcessor, I3DCollistionObject
+    public class ObjectShip : GameObject, IControllerInputProcessor, I3DCollisionObject
     {
         private readonly IMissileProjectileFactory missileProjectileFactory;
         private static Vector3  centerOffset;
@@ -210,7 +210,7 @@ namespace TurboPort
             return boundingSphere.Radius;
         }
 
-        public void DrawToCollistionTexture(Matrix view, Matrix projection, Vector3 position)
+        public void DrawToCollisionTexture(Matrix view, Matrix projection, Vector3 position)
         {
             Matrix world =
                 renderMatrix *

@@ -1,12 +1,12 @@
 
 #----------------------------- Global Properties ----------------------------#
 
-/outputDir:bin
-/intermediateDir:obj
-/platform:WindowsGL
+/outputDir:bin/$(Platform)
+/intermediateDir:obj/$(Platform)
+/platform:DesktopGL
 /config:
-/profile:Reach
-/compress:False
+/profile:HiDef
+/compress:True
 
 #-------------------------------- References --------------------------------#
 

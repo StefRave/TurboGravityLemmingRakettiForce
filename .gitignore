@@ -34,3 +34,4 @@ lib/
 TestResult.xml
 # Vim
 .*.sw[po]
+/.vs/

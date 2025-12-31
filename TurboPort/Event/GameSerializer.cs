@@ -45,7 +45,7 @@ namespace TurboPort.Event
 
         public void Initialize()
         {
-            model = TypeModel.Create();
+            model = RuntimeTypeModel.Create();
             model.UseImplicitZeroDefaults = false;
 
             RegisterEventTypes();
@@ -53,8 +53,8 @@ namespace TurboPort.Event
 
         private void RegisterEventTypes()
         {
-            model.Add(typeof (Vector3), false).Add(1, "X").Add(2, "Y").Add(3, "Z");
-            model.Add(typeof (ObjectInfo), true);
+            model.Add(typeof(Vector3), false).Add(1, "X").Add(2, "Y").Add(3, "Z");
+            model.Add(typeof(ObjectInfo), true);
         }
 
         public int RegisterGameMessageType(Type gameObjectType)
@@ -74,7 +74,7 @@ namespace TurboPort.Event
         public int GetTypeId(Type type)
         {
             int result;
-            if(!typeIdForType.TryGetValue(type, out result))
+            if (!typeIdForType.TryGetValue(type, out result))
                 throw new Exception($"Type {type.FullName} is not registered in GameSerializer");
             return result;
         }

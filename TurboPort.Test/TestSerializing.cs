@@ -65,7 +65,7 @@ namespace TurboPort.Test
             replay.StartPlay(0);
             replay.ProcessEventsUntilTime(1000);
 
-            Assert.IsTrue(actionPerformed);
+            Assert.That(actionPerformed, Is.True);
         }
 
     }

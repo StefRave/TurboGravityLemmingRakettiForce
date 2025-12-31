@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="TurboPort.Launch/TurboPort.Launch.Windows.csproj">
+  </Project>
+  <Project Path="TurboPort.Test/TurboPort.Test.csproj" />
+  <Project Path="TurboPort/TurboPort.csproj">
+  </Project>
+</Solution>

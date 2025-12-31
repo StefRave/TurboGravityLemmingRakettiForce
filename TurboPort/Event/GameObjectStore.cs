@@ -24,7 +24,7 @@ namespace TurboPort.Event
             return Interlocked.Increment(ref idCounter);
         }
 
-        public void RegisterCreation<TGameObject>(Func<TGameObject> creator) 
+        public void RegisterCreation<TGameObject>(Func<TGameObject> creator)
             where TGameObject : GameObject
         {
             int typeId = Serializer.RegisterGameMessageType(typeof(TGameObject));
@@ -48,10 +48,10 @@ namespace TurboPort.Event
             gameMessageActions.Add(typeId, msg => messageAction((TGameMessage)msg));
 
             return new DisposeAction(() =>
-                                     {
-                                         gameMessageActions.Remove(typeId);
-                                         gameMessageCreators.Remove(typeId);
-                                     });
+            {
+                gameMessageActions.Remove(typeId);
+                gameMessageCreators.Remove(typeId);
+            });
         }
 
         public TObject CreateAsOwner<TObject>() where TObject : GameObject
@@ -97,7 +97,7 @@ namespace TurboPort.Event
         public IGameMessage CreateMessageObject(int typeId)
         {
             Func<IGameMessage> creator;
-            if(!gameMessageCreators.TryGetValue(typeId, out creator))
+            if (!gameMessageCreators.TryGetValue(typeId, out creator))
                 return null;
 
             IGameMessage gameMessage = creator.Invoke();
@@ -116,7 +116,7 @@ namespace TurboPort.Event
         public void InvokeGameMessageAction(int typeId, IGameMessage gameMessage)
         {
             Action<IGameMessage> messageAction;
-            if(gameMessageActions.TryGetValue(typeId, out messageAction))
+            if (gameMessageActions.TryGetValue(typeId, out messageAction))
                 messageAction.Invoke(gameMessage);
         }
 

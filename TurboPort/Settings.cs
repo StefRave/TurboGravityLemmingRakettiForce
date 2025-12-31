@@ -10,8 +10,8 @@ namespace TurboPort
     /// </summary>
     public class Settings
     {
-        static public Settings Current = new Settings();
-        static public readonly string CurrentProfileName = "Config.xml";
+        public static Settings Current = new Settings();
+        public static readonly string CurrentProfileName = "Config.xml";
         public void Save(Stream stream)
         {
             XmlSerializer serializer = new XmlSerializer(this.GetType());

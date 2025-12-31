@@ -59,7 +59,7 @@ namespace TurboPort
 #elif __IOS__
 			UIApplication.Main(args, null, "AppDelegate");
 #else
-            GameMode gameMode = GameMode.Multiplayer;
+            GameMode gameMode = GameMode.UdpBroadCast;
             if (args.Length >= 1)
                 Enum.TryParse(args[0], true, out gameMode);
             RunGame(gameMode);
