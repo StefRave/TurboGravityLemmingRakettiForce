@@ -10,49 +10,14 @@ namespace TurboPort.Event
 {
     public class GameSerializer
     {
-        private static GameSerializer instance;
-        private RuntimeTypeModel model;
-        private readonly Dictionary<Type, int> typeIdForType = new Dictionary<Type, int>();
+        private readonly RuntimeTypeModel model;
+        private readonly Dictionary<Type, int> typeIdForType = new();
 
-        private GameSerializer()
-        {
-        }
-
-        public static GameSerializer Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    lock (typeof(GameSerializer))
-                    {
-                        if (instance == null)
-                        {
-                            var gameSerializer = new GameSerializer();
-                            gameSerializer.Initialize();
-
-                            // ensures that the instance is well initialized,
-                            // and only then, it assigns the static variable.
-                            // http://stackoverflow.com/a/12945510/3714267
-                            System.Threading.Thread.MemoryBarrier();
-                            instance = gameSerializer;
-                        }
-                    }
-                }
-                return instance;
-            }
-        }
-
-        public void Initialize()
+        public GameSerializer()
         {
             model = RuntimeTypeModel.Create();
             model.UseImplicitZeroDefaults = false;
 
-            RegisterEventTypes();
-        }
-
-        private void RegisterEventTypes()
-        {
             model.Add(typeof(Vector3), false).Add(1, "X").Add(2, "Y").Add(3, "Z");
             model.Add(typeof(ObjectInfo), true);
         }
@@ -73,10 +38,14 @@ namespace TurboPort.Event
 
         public int GetTypeId(Type type)
         {
-            int result;
-            if (!typeIdForType.TryGetValue(type, out result))
+            if (!typeIdForType.TryGetValue(type, out var result))
                 throw new Exception($"Type {type.FullName} is not registered in GameSerializer");
             return result;
+        }
+
+        public bool TryGetTypeId(Type type, out int typeId)
+        {
+            return typeIdForType.TryGetValue(type, out typeId);
         }
 
         public void Serialize(Stream stream, object obj, ObjectInfo objectInfo)

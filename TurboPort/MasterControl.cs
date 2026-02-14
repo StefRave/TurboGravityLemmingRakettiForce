@@ -2,7 +2,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using TurboPort.Event;
-using TurboPort.Test;
 
 namespace TurboPort
 {
@@ -28,13 +27,6 @@ namespace TurboPort
 
         public GameMode GameMode { get; set; }
 
-        public void Initialize()
-        {
-            objectStore.RegisterGameMessage(typeof(AnybodyThereGameMessage));
-            objectStore.RegisterGameMessage(typeof(MasterIsHere));
-            objectStore.RegisterGameMessage(typeof(GameStateRequest));
-        }
-
         public async Task Start(CancellationToken cancellationToken)
         {
             this.cancellationToken = cancellationToken;
@@ -59,7 +51,7 @@ namespace TurboPort
                 }
                 else
                 {
-                    objectStore.EventStore.AddMessage(new GameStateRequest());
+                    objectStore.AddMessage(new GameStateRequest());
                 }
 
                 // Anybody there?
@@ -79,7 +71,7 @@ namespace TurboPort
         {
             try
             {
-                objectStore.EventStore.AddMessage(new MasterIsHere());
+                objectStore.AddMessage(new MasterIsHere());
 
                 using (objectStore.SubscribeToGameMessage<AnybodyThereGameMessage>(HandleAsMaster))
                 using (objectStore.SubscribeToGameMessage<GameStateRequest>(HandleAsMaster))
@@ -101,7 +93,7 @@ namespace TurboPort
 
         private void HandleAsMaster(AnybodyThereGameMessage obj)
         {
-            objectStore.EventStore.AddMessage(new MasterIsHere());
+            objectStore.AddMessage(new MasterIsHere());
         }
 
 
@@ -126,7 +118,7 @@ namespace TurboPort
 
         private void SendAnybodyThere()
         {
-            objectStore.EventStore.AddMessage(new AnybodyThereGameMessage());
+            objectStore.AddMessage(new AnybodyThereGameMessage());
         }
     }
 }

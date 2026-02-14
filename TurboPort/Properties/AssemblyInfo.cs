@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("TurboPort.Test")]
+
 #if __ANDROID__
 using Android.App;
 #endif

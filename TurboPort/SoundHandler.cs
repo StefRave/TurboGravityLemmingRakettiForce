@@ -6,8 +6,10 @@ using Microsoft.Xna.Framework.Content;
 namespace TurboPort
 {
 
-    public class SoundHandler
+    public class SoundHandler : ISoundHandler
     {
+        public static ISoundHandler Current { get; set; } = NullSoundHandler.Instance;
+
         private static GameTime gameTime;
         private static SoundEffect lastPlayedSoundEffect;
         private static TimeSpan lastPlayedSoundEffectGameTime;
@@ -69,15 +71,28 @@ namespace TurboPort
             soundEffect.Play(volume, 0, 0);
         }
 
-        static public void Bigexp(float volume = 1.0f)         { Play(bigexp, volume); }
-        static public void Bingo(float volume = 1.0f)          { Play(bingo, volume); }
-        static public void Bullethit(float volume = 1.0f)      { Play(bullethit, volume); }
-        static public void Checkpoint(float volume = 1.0f)     { Play(checkpoint, volume); }
-        static public void Fire(float volume = 1.0f)           { Play(fire, volume); }
-        static public void FireMissile(float volume = 1.0f)     { Play(fireMissile, volume); }
-        static public void Shipcollide(float volume = 1.0f)    { Play(shipcollide, volume); }
-        static public void Splash(float volume = 1.0f)         { Play(splash, volume);  }
-        static public void Tingaling(float volume = 1.0f)      { Play(tingaling, volume); }
-        static public void TochDown(float volume = 1.0f)       { Play(touchdown, volume); }
+        // Instance methods (ISoundHandler implementation)
+        void ISoundHandler.Bigexp(float volume)         { Play(bigexp, volume); }
+        void ISoundHandler.Bingo(float volume)          { Play(bingo, volume); }
+        void ISoundHandler.Bullethit(float volume)      { Play(bullethit, volume); }
+        void ISoundHandler.Checkpoint(float volume)     { Play(checkpoint, volume); }
+        void ISoundHandler.Fire(float volume)           { Play(fire, volume); }
+        void ISoundHandler.FireMissile(float volume)     { Play(fireMissile, volume); }
+        void ISoundHandler.Shipcollide(float volume)    { Play(shipcollide, volume); }
+        void ISoundHandler.Splash(float volume)         { Play(splash, volume);  }
+        void ISoundHandler.Tingaling(float volume)      { Play(tingaling, volume); }
+        void ISoundHandler.TochDown(float volume)       { Play(touchdown, volume); }
+
+        // Static convenience methods that delegate to Current
+        static public void Bigexp(float volume = 1.0f)         { Current.Bigexp(volume); }
+        static public void Bingo(float volume = 1.0f)          { Current.Bingo(volume); }
+        static public void Bullethit(float volume = 1.0f)      { Current.Bullethit(volume); }
+        static public void Checkpoint(float volume = 1.0f)     { Current.Checkpoint(volume); }
+        static public void Fire(float volume = 1.0f)           { Current.Fire(volume); }
+        static public void FireMissile(float volume = 1.0f)     { Current.FireMissile(volume); }
+        static public void Shipcollide(float volume = 1.0f)    { Current.Shipcollide(volume); }
+        static public void Splash(float volume = 1.0f)         { Current.Splash(volume);  }
+        static public void Tingaling(float volume = 1.0f)      { Current.Tingaling(volume); }
+        static public void TochDown(float volume = 1.0f)       { Current.TochDown(volume); }
     }
 }

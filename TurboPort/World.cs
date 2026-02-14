@@ -7,6 +7,7 @@ namespace TurboPort
     public class GameWorld
     {
         public MissileProjectileFactory ProjectileFactory { get; private set; }
+        public IMissileProjectileFactory ProjectileFactoryInterface { get; private set; }
         private readonly List<ShipBase> playerShipBases = new List<ShipBase>();
         private readonly List<ObjectShip> playerShips = new List<ObjectShip>();
         public ILevelBackground LevelBackground { get; set; }
@@ -18,6 +19,15 @@ namespace TurboPort
         public GameWorld(Game game, GameObjectStore gameStore)
         {
             ProjectileFactory = new MissileProjectileFactory(game, this, gameStore);
+            ProjectileFactoryInterface = ProjectileFactory;
+        }
+
+        /// <summary>
+        /// Constructor for testing — accepts an IMissileProjectileFactory without requiring a Game instance.
+        /// </summary>
+        public GameWorld(IMissileProjectileFactory projectileFactory)
+        {
+            ProjectileFactoryInterface = projectileFactory;
         }
 
         public void AddPlayerShip(ObjectShip ship)

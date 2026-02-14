@@ -6,7 +6,7 @@ namespace TurboPort.Event
     public class GameReplay
     {
         private readonly GameObjectStore gameStore;
-        private static readonly GameSerializer S = GameSerializer.Instance;
+        private readonly GameSerializer serializer;
         private Stream inputStream;
 
         public double GameTimeDelta { get; private set; }
@@ -16,13 +16,14 @@ namespace TurboPort.Event
         public GameReplay(GameObjectStore gameStore)
         {
             this.gameStore = gameStore;
+            this.serializer = gameStore.Serializer;
             PlayStatus = Status.Inactive;
         }
 
         public void Load(Stream inputStream)
         {
             this.inputStream = inputStream;
-            S.DeserializeObjectInfo(inputStream, nextObjectInfo);
+            serializer.DeserializeObjectInfo(inputStream, nextObjectInfo);
             PlayStatus = Status.Paused;
         }
 
@@ -84,17 +85,17 @@ namespace TurboPort.Event
                     throw new Exception("Unknown object id");
             }
 
-            S.Deserialize(inputStream, gameObject);
+            serializer.Deserialize(inputStream, gameObject);
             if(!gameObject.IsOwner) // If we own the object the events would already have been processed (explosions etc..)
                 gameObject.ProcessGameEvents();
 
-            S.DeserializeObjectInfo(inputStream, nextObjectInfo);
+            serializer.DeserializeObjectInfo(inputStream, nextObjectInfo);
         }
 
         private void ProcessGameMessage()
         {
             var gameMessage = gameStore.CreateMessageObject(nextObjectInfo.CreateTypeId);
-            S.Deserialize(inputStream, gameMessage);
+            serializer.Deserialize(inputStream, gameMessage);
             gameStore.InvokeGameMessageAction(nextObjectInfo.CreateTypeId, gameMessage);
         }
 

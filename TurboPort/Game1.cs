@@ -29,12 +29,10 @@ namespace TurboPort
 
         private readonly GameInteraction gameInteraction;
         private readonly GameReplay replay;
-        private readonly GameEventStore gameEventStore;
 
         public Game1(GameMode gameMode)
         {
-            gameEventStore = new GameEventStore();
-            gameStore = new GameObjectStore(gameEventStore);
+            gameStore = new GameObjectStore();
             replay = new GameReplay(gameStore);
             graphics = new GraphicsDeviceManager(this);
 
@@ -76,7 +74,6 @@ namespace TurboPort
 
             base.Initialize();
 
-            masterControl.Initialize();
             Task.Run(() => masterControl.Start(CancellationToken.None));
 
             if ((masterControl.GameMode == GameMode.UdpReceive) || (masterControl.GameMode == GameMode.Multiplayer))
@@ -124,7 +121,7 @@ namespace TurboPort
         protected override void Update(GameTime gameTime)
         {
             SoundHandler.SetGameTime(gameTime);
-            gameEventStore.SetGameTime(gameTime);
+            gameStore.SetGameTime(gameTime);
 
             // For Mobile devices, this logic will close the Game when the Back button is pressed
             // Exit() is obsolete on iOS
@@ -192,7 +189,7 @@ namespace TurboPort
 
             gameInteraction.DoInteraction();
 
-            gameEventStore.SerializeModifiedObjects(gameEvents);
+            gameStore.SerializeModifiedObjects(gameEvents);
             if (eventBroadCaster != null)
             {
                 if (gameEvents.Length > 0)

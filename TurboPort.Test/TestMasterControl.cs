@@ -11,7 +11,6 @@ namespace TurboPort.Test
     [TestFixture]
     public class TestMasterControl
     {
-        private GameEventStore eventStore;
         private GameObjectStore gameStore;
         private GameWorld gameWorld;
         private DelayServiceMock delayServiceMock;
@@ -20,8 +19,7 @@ namespace TurboPort.Test
         [SetUp]
         public void SetUp()
         {
-            eventStore = new GameEventStore();
-            gameStore = new GameObjectStore(eventStore);
+            gameStore = new GameObjectStore();
             gameWorld = new GameWorld(new Game(), gameStore);
             delayServiceMock = new DelayServiceMock();
             sut = new MasterControl(gameStore, gameWorld, delayServiceMock) {GameMode = GameMode.Multiplayer};
@@ -40,7 +38,6 @@ namespace TurboPort.Test
 
             var synchronizationContext = new SynchronizationContext();
             SynchronizationContext.SetSynchronizationContext(synchronizationContext);
-            sut.Initialize();
         }
 
         [Test]
@@ -51,19 +48,19 @@ namespace TurboPort.Test
             Task task = sut.Start(cancellationTokenSource.Token);
 
             await delayServiceMock.WaitForDelayCall();
-            eventStore.GameMessages.Count.ShouldBe(1);
-            var anybodyThereGameMessage = eventStore.GameMessages.OfType<AnybodyThereGameMessage>().FirstOrDefault();
+            gameStore.GameMessages.Count.ShouldBe(1);
+            var anybodyThereGameMessage = gameStore.GameMessages.OfType<AnybodyThereGameMessage>().FirstOrDefault();
             anybodyThereGameMessage.ShouldNotBeNull();
-            eventStore.ClearRecordedObjects();
+            gameStore.ClearRecordedObjects();
 
             gameStore.InvokeGameMessageAction(new MasterIsHere());
             delayServiceMock.Continue();
 
             await task;
-            eventStore.GameMessages.Count.ShouldBe(1);
-            var gameStateRequest = eventStore.GameMessages.OfType<GameStateRequest>().FirstOrDefault();
+            gameStore.GameMessages.Count.ShouldBe(1);
+            var gameStateRequest = gameStore.GameMessages.OfType<GameStateRequest>().FirstOrDefault();
             gameStateRequest.ShouldNotBeNull();
-            eventStore.ClearRecordedObjects();
+            gameStore.ClearRecordedObjects();
 
             //await delayServiceMock.WaitForDelayCall();
 

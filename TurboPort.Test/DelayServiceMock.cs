@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace TurboPort.Test
 {
-    public class DelayServiceMock : IDelayService
+    public class DelayServiceMock : TurboPort.IDelayService
     {
         private TaskCompletionSource<bool> completionSource;
         private TaskCompletionSource<bool> waitForDelayCompletionSource;

@@ -12,8 +12,7 @@ namespace TurboPort.Test
         public void TestObjectShipHasLanded()
         {
             var missileProjectileFactory = A.Fake<IMissileProjectileFactory>();
-            var gameEventStore = new GameEventStore();
-            GameObjectStore gameObjectStore = new GameObjectStore(gameEventStore);
+            var gameObjectStore = new GameObjectStore();
             gameObjectStore.RegisterCreation(() => new ObjectShip(missileProjectileFactory));
 
 
@@ -23,8 +22,8 @@ namespace TurboPort.Test
             objectShip.HitWithBackground();
 
             MemoryStream gameEvents = new MemoryStream();
-            gameEventStore.SerializeModifiedObjects(gameEvents);
-            gameEventStore.ClearRecordedObjects();
+            gameObjectStore.SerializeModifiedObjects(gameEvents);
+            gameObjectStore.ClearRecordedObjects();
 
             gameEvents.Position = 0;
             var replay = new GameReplay(gameObjectStore);
@@ -49,15 +48,14 @@ namespace TurboPort.Test
         public void TestSerializingActions()
         {
             bool actionPerformed = false;
-            var gameEventStore = new GameEventStore();
-            GameObjectStore gameObjectStore = new GameObjectStore(gameEventStore);
+            var gameObjectStore = new GameObjectStore();
             gameObjectStore.SubscribeToGameMessage<AnybodyThereGameMessage>(msg => actionPerformed = true);
 
-            gameObjectStore.EventStore.AddMessage(new AnybodyThereGameMessage());
+            gameObjectStore.AddMessage(new AnybodyThereGameMessage());
 
             MemoryStream gameEvents = new MemoryStream();
-            gameEventStore.SerializeModifiedObjects(gameEvents);
-            gameEventStore.ClearRecordedObjects();
+            gameObjectStore.SerializeModifiedObjects(gameEvents);
+            gameObjectStore.ClearRecordedObjects();
             gameEvents.Position = 0;
 
             var replay = new GameReplay(gameObjectStore);

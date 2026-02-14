@@ -15,10 +15,11 @@ namespace TurboPort
     {
         private readonly IMissileProjectileFactory missileProjectileFactory;
         private static Vector3  centerOffset;
-        private static float    scale;
-        private static BoundingSphere boundingSphere;
+        private static float    scale = 1.0f;
+        private static BoundingSphere boundingSphere = new BoundingSphere(Vector3.Zero, 5f);
 
         private readonly VelocityPositionCalculator velocityPositionCalculator = new VelocityPositionCalculator { Mass = 35 };
+        internal VelocityPositionCalculator VelocityPositionCalculatorInstance => velocityPositionCalculator;
         private Vector3  rotation;
         [ProtoMember(1)] private Vector3 position;
         [ProtoMember(2)] private Vector3  velocity;
@@ -38,11 +39,14 @@ namespace TurboPort
         private static BasicEffect screenEffect;
 
         private static Model model;
-        public bool HasLanded { get; private set; }
+        public bool HasLanded { get; internal set; }
         public bool Hit { get; set; }
         public Vector3 Rotation => rotation;
         public Vector3 Position => position;
         public Vector3 Velocity => velocity;
+
+        internal void SetVelocity(Vector3 value) => velocity = value;
+        internal void SetRotation(Vector3 value) => rotation = value;
 
 
         static bool colorSwitchHack;
